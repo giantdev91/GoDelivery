@@ -288,20 +288,65 @@ exports.dailyCount = async (req, res) => {
 
     const orderCounts = await Order.findAll({
       attributes: [
-        [sequelize.fn("DATE", sequelize.col("createdAt")), "date"],
-        [sequelize.fn("COUNT", sequelize.col("id")), "count"],
+        [Sequelize.fn("DATE", Sequelize.col("createdAt")), "date"],
+        [Sequelize.fn("COUNT", Sequelize.col("id")), "count"],
       ],
       where: {
-        [Op.and]: [
-          sequelize.where(sequelize.col("createdAt"), ">=", dateStart),
-          sequelize.where(sequelize.col("createdAt"), "<", dateEnd),
-        ],
+        createdAt: {
+          [Op.between]: [dateStart, dateEnd],
+        },
       },
-      group: [sequelize.fn("DATE", sequelize.col("createdAt"))],
+      group: [Sequelize.fn("DATE", Sequelize.col("createdAt"))],
+      raw: true,
     });
 
+    res.status(200).send({
+      status: "success",
+      code: 200,
+      message: "Get daily count success",
+      data: orderCounts,
+    });
     console.log("Order Counts by Day in the Specified Month:", orderCounts);
   } catch (error) {
     console.error("Error connecting to the database:", error);
+  }
+};
+
+exports.orderList = async (req, res) => {
+  try {
+    const { sender, receiver, status, startDate, endDate } = req.body;
+
+    // Build the where condition based on the provided criteria
+    const whereCondition = {};
+    if (sender !== undefined) {
+      whereCondition.sender = sender;
+    }
+    if (receiver !== undefined) {
+      whereCondition.receiver = receiver;
+    }
+    if (status !== undefined) {
+      whereCondition.status = status;
+    }
+    if (startDate !== undefined && endDate !== undefined) {
+      whereCondition.createdAt = {
+        [Op.between]: [startDate, endDate],
+      };
+    }
+
+    // Find orders that match the provided criteria
+    const orders = await Order.findAll({
+      where: whereCondition,
+    });
+    res.status(200).send({
+      status: "success",
+      code: 200,
+      message: "orderlist success",
+      data: orders,
+    });
+    console.log("Orders matching the criteria:", orders);
+  } catch (error) {
+    console.error("Error connecting to the database:", error);
+  } finally {
+    // Close the database connection when done
   }
 };

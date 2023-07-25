@@ -107,22 +107,33 @@ exports.save_location = async (req, res) => {
 
 exports.searchClient = async (req, res) => {
   try {
-    const { name, phone, beginCreatedAt, endCreatedAt, pageNo, pageSize } =
-      req.body;
-    const client = await Client.findAll({
-      where: {
-        name: {
-          [Op.substring]: name,
-        },
-        phone: phone,
-        createdAt: {
-          [Op.between]: [beginCreatedAt, endCreatedAt],
-        },
-        offset: (pageNo - 1) * pageSize,
-        limit: pageSize,
-      },
+    const { name, phone, startDate, endDate, pageNo, pageSize } = req.body;
+
+    // Build the where condition based on the provided criteria
+    const whereCondition = {};
+    if (name !== undefined) {
+      whereCondition.name = name;
+    }
+    if (phone !== undefined) {
+      whereCondition.phone = phone;
+    }
+    if (startDate !== undefined && endDate !== undefined) {
+      whereCondition.createdAt = {
+        [Op.between]: [startDate, endDate],
+      };
+    }
+
+    // Find orders that match the provided criteria
+    const clients = await Client.findAll({
+      where: whereCondition,
     });
-    console.log("search result", client);
+    res.status(200).send({
+      status: "success",
+      code: 200,
+      message: "Clientlist success",
+      data: clients,
+    });
+    console.log("Orders matching the criteria:", orders);
   } catch (error) {
     console.error("Error connecting to the database:", error);
   }

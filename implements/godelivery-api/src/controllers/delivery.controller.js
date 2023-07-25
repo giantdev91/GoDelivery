@@ -180,3 +180,36 @@ exports.updateState = async (req, res) => {
     console.error("Error connecting to the database:", error);
   }
 };
+
+exports.deliverymanList = async (req, res) => {
+  try {
+    const { name, phone, startDate, endDate, pageNo, pageSize } = req.body;
+
+    // Build the where condition based on the provided criteria
+    const whereCondition = {};
+    if (name !== undefined) {
+      whereCondition.name = name;
+    }
+    if (phone !== undefined) {
+      whereCondition.phone = phone;
+    }
+    if (startDate !== undefined && endDate !== undefined) {
+      whereCondition.createdAt = {
+        [Op.between]: [startDate, endDate],
+      };
+    }
+
+    // Find orders that match the provided criteria
+    const deliverymans = await Delivery_man.findAll({
+      where: whereCondition,
+    });
+    res.status(200).send({
+      status: "success",
+      code: 200,
+      message: "Deliverymanlist success",
+      data: deliverymans,
+    });
+  } catch (error) {
+    console.error("Error connecting to the database:", error);
+  }
+};

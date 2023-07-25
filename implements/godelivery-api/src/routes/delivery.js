@@ -18,5 +18,8 @@ router.route("/orderlist").post(asyncHandler(deliveryController.orderList));
 router.route("/delete").post(asyncHandler(deliveryController.deleteClient));
 
 router.route("/updatestate").post(asyncHandler(deliveryController.updateState));
+router
+  .route("/deliverymanlist")
+  .post(asyncHandler(deliveryController.deliverymanList));
 
 module.exports = router;
