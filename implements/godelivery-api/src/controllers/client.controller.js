@@ -26,12 +26,18 @@ exports.getClientById = async (req, res) => {
       ],
     });
     res.status(200).send({
-      status: "success",
+      success: true,
       code: 200,
       message: "Get Client Detail Success",
       data: client,
     });
-  } catch (error) { }
+  } catch (error) {
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
+  }
 };
 
 exports.signup = async (req, res) => {
@@ -114,6 +120,11 @@ exports.signin = async (req, res) => {
     }
   } catch (error) {
     console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -127,7 +138,7 @@ exports.save_location = async (req, res) => {
     });
     console.log("location", client_saved_location);
     res.status(200).send({
-      status: "success",
+      success: true,
       code: 200,
       data: {
         client_saved_location,
@@ -135,6 +146,11 @@ exports.save_location = async (req, res) => {
     });
   } catch (error) {
     console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -161,14 +177,18 @@ exports.searchClient = async (req, res) => {
       where: whereCondition,
     });
     res.status(200).send({
-      status: "success",
+      success: true,
       code: 200,
       message: "Clientlist success",
       data: clients,
     });
     console.log("Orders matching the criteria:", orders);
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -192,6 +212,11 @@ exports.orderList = async (req, res) => {
     });
   } catch (error) {
     console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -200,7 +225,7 @@ exports.totalcount = async (req, res) => {
     const { count, clients } = await Client.findAndCountAll({});
 
     res.status(200).send({
-      status: "success",
+      success: true,
       code: 200,
       data: {
         totalcount: count,
@@ -208,6 +233,11 @@ exports.totalcount = async (req, res) => {
     });
   } catch (error) {
     console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -224,7 +254,7 @@ exports.deleteClient = async (req, res) => {
       // If the client is found, delete it from the database
       await client.destroy();
       res.status(200).send({
-        status: "success",
+        success: true,
         code: 200,
         message: "Delete success",
         data: {
@@ -239,7 +269,11 @@ exports.deleteClient = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -265,7 +299,7 @@ exports.updateClient = async (req, res) => {
 
       console.log("Client updated successfully.");
       res.status(200).send({
-        status: "success",
+        success: true,
         code: 200,
         message: "Update success",
         data: {
@@ -275,13 +309,17 @@ exports.updateClient = async (req, res) => {
     } else {
       console.log("Client not found.");
       res.status(200).send({
-        status: "error",
+        success: false,
         code: 400,
         message: "User not found",
       });
     }
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -296,18 +334,22 @@ exports.phoneCheck = async (req, res) => {
 
     if (client) {
       res.status(200).send({
-        status: "error",
+        success: false,
         code: 400,
         message: `Phone number ${phone}  already exists.`,
       });
     } else {
       res.status(200).send({
-        status: "success",
+        success: true,
         code: 200,
         message: `Phone number ${phone} is available.`,
       });
     }
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };

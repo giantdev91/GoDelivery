@@ -19,13 +19,18 @@ exports.signup = async (req, res) => {
     });
 
     res.status(200).send({
-      success: 1,
+      success: true,
       code: 200,
       message: "signup success",
       data: delivery_man.toJSON(),
     });
   } catch (error) {
     console.error("Error:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   } finally {
   }
 };
@@ -47,7 +52,7 @@ exports.signin = async (req, res) => {
       if (comparePassword(password.trim(), delivery_man.password)) {
         const token = generateToken(delivery_man.id);
         res.status(200).send({
-          status: "success",
+          success: true,
           code: 200,
           message: "Signin Success",
           data: {
@@ -58,17 +63,23 @@ exports.signin = async (req, res) => {
         return;
       }
       res.status(401).send({
-        status: "error",
+        success: false,
+        code: 401,
         message: "Incorrect password",
       });
     } else {
       res.status(404).send({
-        status: "error",
+        success: false,
+        code: 400,
         message: `User with phone ${phone} was not found`,
       });
     }
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -77,7 +88,7 @@ exports.totalcount = async (req, res) => {
     const { count, clients } = await Delivery_man.findAndCountAll({});
 
     res.status(200).send({
-      status: "success",
+      success: true,
       code: 200,
       message: "success receive",
       data: {
@@ -85,7 +96,11 @@ exports.totalcount = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -100,14 +115,18 @@ exports.orderList = async (req, res) => {
     // console.log("order", orders);
 
     res.status(200).send({
-      status: "success",
+      success: true,
       code: 200,
       data: {
         orders,
       },
     });
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -124,7 +143,7 @@ exports.deleteClient = async (req, res) => {
       // If the client is found, delete it from the database
       await deliveryman.destroy();
       res.status(200).send({
-        status: "success",
+        success: true,
         code: 200,
         message: "Delete success",
         data: {
@@ -133,13 +152,17 @@ exports.deleteClient = async (req, res) => {
       });
     } else {
       res.status(200).send({
-        status: "error",
-        code: 400,
+        success: false,
+        code: 200,
         message: "Deliveryman not found",
       });
     }
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -165,19 +188,23 @@ exports.updateState = async (req, res) => {
         }
       );
       res.status(200).send({
-        status: "success",
+        success: true,
         code: 200,
         message: "Status update success",
       });
     } else {
       res.status(200).send({
-        status: "error",
+        success: false,
         code: 400,
         message: "Deliveryman not found",
       });
     }
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -204,12 +231,16 @@ exports.deliverymanList = async (req, res) => {
       where: whereCondition,
     });
     res.status(200).send({
-      status: "success",
+      success: true,
       code: 200,
       message: "Deliverymanlist success",
       data: deliverymans,
     });
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };

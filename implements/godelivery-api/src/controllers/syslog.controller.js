@@ -18,12 +18,16 @@ exports.list = async (req, res) => {
       order: [["createdAt", "DESC"]],
     });
     res.status(200).send({
-      status: "success",
+      success: true,
       code: 200,
       message: "syslog list success",
       data: syslogs,
     });
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };

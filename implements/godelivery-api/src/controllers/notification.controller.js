@@ -13,9 +13,7 @@ async function createNotification(content, level, type, orderID, clientID) {
     });
     console.log("asdfasdf", notification);
     return notification;
-  } catch (error) {
-    console.error("error:", error);
-  }
+  } catch (error) {}
 }
 
 exports.create = async (req, res) => {
@@ -29,13 +27,17 @@ exports.create = async (req, res) => {
       clientID
     );
     res.status(200).send({
-      status: "success",
+      success: true,
       code: 200,
       message: "Notification add success",
       data: notification,
     });
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -52,7 +54,7 @@ exports.delete = async (req, res) => {
       // If the client is found, delete it from the database
       await notification.destroy();
       res.status(200).send({
-        status: "success",
+        success: true,
         code: 200,
         message: "Delete success",
         data: {
@@ -61,13 +63,17 @@ exports.delete = async (req, res) => {
       });
     } else {
       res.status(400).send({
-        status: "error",
+        success: false,
         code: 400,
         message: "Notification not found",
       });
     }
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 exports.list = async (req, res) => {
@@ -81,7 +87,7 @@ exports.list = async (req, res) => {
         order: [["createdAt", "DESC"]],
       });
       res.status(200).send({
-        status: "success",
+        success: true,
         code: 200,
         message: "Notification list found",
         data: notifications,
@@ -91,13 +97,17 @@ exports.list = async (req, res) => {
         order: [["createdAt", "DESC"]],
       });
       res.status(200).send({
-        status: "success",
-        code: 200,
+        success: false,
+        code: 400,
         message: "Notification list found",
         data: notifications,
       });
     }
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };

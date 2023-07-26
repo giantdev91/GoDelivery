@@ -40,13 +40,17 @@ exports.create = async (req, res) => {
     });
 
     res.status(200).send({
-      success: 1,
+      status: true,
       code: 200,
       message: "create success",
       data: order,
     });
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -68,19 +72,23 @@ exports.send = async (req, res) => {
         }
       );
       res.status(200).send({
-        status: "success",
+        status: true,
         code: 200,
         message: "Status update success",
       });
     } else {
       res.status(400).send({
-        status: "failed",
+        status: false,
         code: 400,
         message: "Order not found",
       });
     }
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -112,19 +120,23 @@ exports.cancel = async (req, res) => {
         );
       }
       res.status(200).send({
-        status: "success",
+        status: true,
         code: 200,
         message: "Order cancel success",
       });
     } else {
       res.status(400).send({
-        status: "failed",
+        status: false,
         code: 400,
         message: "Order not found",
       });
     }
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -154,19 +166,23 @@ exports.receive = async (req, res) => {
         }
       );
       res.status(200).send({
-        status: "success",
+        status: true,
         code: 200,
         message: "Order cancel success",
       });
     } else {
       res.status(400).send({
-        status: "failed",
+        status: false,
         code: 400,
         message: "Order not found",
       });
     }
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -189,19 +205,23 @@ exports.rate = async (req, res) => {
       );
 
       res.status(200).send({
-        status: "success",
+        status: true,
         code: 200,
         message: "rate success",
       });
     } else {
       res.status(400).send({
-        status: "failed",
+        status: false,
         code: 400,
         message: "Order not found",
       });
     }
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -224,20 +244,24 @@ exports.acceptRequest = async (req, res) => {
       );
       console.log("order", order);
       res.status(200).send({
-        status: "success",
+        status: true,
         code: 200,
         message: "Accept request success",
         data: order,
       });
     } else {
       res.status(400).send({
-        status: "failed",
+        status: false,
         code: 400,
         message: "Order not found",
       });
     }
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -250,13 +274,17 @@ exports.totalCount = async (req, res) => {
       },
     });
     res.status(200).send({
-      status: "success",
+      status: true,
       code: 200,
       message: "totalcount",
       data: count,
     });
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -269,13 +297,17 @@ exports.totalEarning = async (req, res) => {
       },
     });
     res.status(200).send({
-      status: "success",
+      status: true,
       code: 200,
       message: "Get totalprice success",
       data: totalprice,
     });
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -301,14 +333,17 @@ exports.dailyCount = async (req, res) => {
     });
 
     res.status(200).send({
-      status: "success",
+      status: true,
       code: 200,
       message: "Get daily count success",
       data: orderCounts,
     });
-    console.log("Order Counts by Day in the Specified Month:", orderCounts);
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -338,14 +373,18 @@ exports.orderList = async (req, res) => {
       where: whereCondition,
     });
     res.status(200).send({
-      status: "success",
+      status: true,
       code: 200,
       message: "orderlist success",
       data: orders,
     });
     console.log("Orders matching the criteria:", orders);
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
   } finally {
     // Close the database connection when done
   }
