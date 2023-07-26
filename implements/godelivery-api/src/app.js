@@ -5,6 +5,8 @@ const { sequelize } = require("./database/connection");
 const clientRoute = require("./routes/client");
 const deliveryRoute = require("./routes/delivery");
 const orderRoute = require("./routes/order");
+const notificationRoute = require("./routes/notification");
+const syslogRoute = require("./routes/sys_log");
 
 const { httpLogStream } = require("./utils/logger");
 
@@ -24,6 +26,8 @@ app.use(cors());
 app.use("/client", clientRoute);
 app.use("/deliveryman", deliveryRoute);
 app.use("/order", orderRoute);
+app.use("/notification", notificationRoute);
+app.use("/syslog", syslogRoute);
 
 app.get("/", (req, res) => {
   res.status(200).send({

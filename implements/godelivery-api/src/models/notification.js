@@ -5,23 +5,23 @@ const sequelize = require("../database/connection");
 const Notification = sequelize.define("notification", {
   content: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   level: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   type: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
-  orderId: {
+  orderID: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   clientID: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
