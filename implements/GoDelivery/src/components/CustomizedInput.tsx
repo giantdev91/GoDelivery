@@ -7,6 +7,7 @@ interface CustomizedInputProps {
     icon: string,
     placeHolder: string,
     keyboardType?: string,
+    handler: (val: string) => void,
 }
 
 const CustomizedInput = (props: CustomizedInputProps): JSX.Element => {
@@ -19,6 +20,7 @@ const CustomizedInput = (props: CustomizedInputProps): JSX.Element => {
                 <TextInput style={styles.inputText}
                     placeholder={props.placeHolder}
                     keyboardType={props.keyboardType == 'number' ? 'numeric' : 'default'}
+                    onChangeText={(value) => props.handler(value)}
                     secureTextEntry={false} />
             </View>
             <View style={styles.checkIconArea}>

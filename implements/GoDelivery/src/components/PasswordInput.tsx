@@ -4,6 +4,7 @@ import Icons from 'react-native-vector-icons/Ionicons';
 import GoDeliveryColors from '../styles/colors';
 
 interface PasswordInputProps {
+    handler: (val: string) => void,
 }
 
 const PasswordInput = (props: PasswordInputProps): JSX.Element => {
@@ -16,6 +17,7 @@ const PasswordInput = (props: PasswordInputProps): JSX.Element => {
                     color={GoDeliveryColors.place} />
                 <TextInput style={styles.inputText}
                     placeholder={'password'}
+                    onChangeText={(val) => props.handler(val)}
                     secureTextEntry={secureTextEntry} />
                 <TouchableOpacity onPress={() => { setSecureTextEntry(!secureTextEntry) }}>
                     <Icons name={secureTextEntry ? 'eye-outline' : 'eye-off-outline'}

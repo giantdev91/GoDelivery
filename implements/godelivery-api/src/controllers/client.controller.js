@@ -69,12 +69,12 @@ exports.signin = async (req, res) => {
         });
         return;
       }
-      res.status(401).send({
+      res.status(200).send({
         status: "error",
         message: "Incorrect password",
       });
     } else {
-      res.status(404).send({
+      res.status(200).send({
         status: "error",
         message: `User with phone ${phone} was not found`,
       });

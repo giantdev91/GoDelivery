@@ -32,7 +32,9 @@ import SignInScreen from './src/screens/authentication/SignIn';
 import OTPScreen from './src/screens/authentication/OTP';
 import TabNavigator from './src/navigators/TabNavigator';
 import DrawerNavigator from './src/navigators/DrawerNavigator';
-
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Provider } from 'react-redux';
+import store from './src/redux/store';
 const Stack = createNativeStackNavigator();
 
 function App(): JSX.Element {
@@ -43,17 +45,20 @@ function App(): JSX.Element {
   };
 
   return (
-
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{
-        headerShown: false,
-      }}>
-        <Stack.Screen name="Splash" component={SplashScreen} />
-        <Stack.Screen name="SignIn" component={SignInScreen} />
-        <Stack.Screen name="OTP" component={OTPScreen} />
-        <Stack.Screen name="Main" component={DrawerNavigator} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{
+            headerShown: false,
+          }}>
+            <Stack.Screen name="Splash" component={SplashScreen} />
+            <Stack.Screen name="SignIn" component={SignInScreen} />
+            <Stack.Screen name="OTP" component={OTPScreen} />
+            <Stack.Screen name="Main" component={DrawerNavigator} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </Provider>
   );
 }
 
