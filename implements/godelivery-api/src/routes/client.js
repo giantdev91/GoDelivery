@@ -9,6 +9,8 @@ const { verifyToken } = require("../utils/token");
 
 const clientController = require("../controllers/client.controller");
 
+router.route("/:id").get(asyncHandler(clientController.getClientById));
+
 router.route("/signup").post(asyncHandler(clientController.signup));
 
 router.route("/signin").post(asyncHandler(clientController.signin));

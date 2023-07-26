@@ -8,6 +8,32 @@ const {
 const { generate: generateToken } = require("../utils/token");
 const { Op } = require("sequelize");
 
+exports.getClientById = async (req, res) => {
+  try {
+    const clientId = req.query.id;
+    console.log("clientId:", clientId);
+    const client = await Client.findOne({
+      where: { id: clientId },
+      include: [
+        {
+          model: Client_saved_location,
+          as: "client_saved_location",
+        },
+        {
+          model: Order,
+          as: "orders",
+        },
+      ],
+    });
+    res.status(200).send({
+      status: "success",
+      code: 200,
+      message: "Get Client Detail Success",
+      data: client,
+    });
+  } catch (error) {}
+};
+
 exports.signup = async (req, res) => {
   try {
     const { name, phone, password, avatar } = req.body;
