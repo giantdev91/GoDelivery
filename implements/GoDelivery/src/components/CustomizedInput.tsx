@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, TextInput } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import GoDeliveryColors from '../styles/colors';
@@ -11,6 +11,11 @@ interface CustomizedInputProps {
 }
 
 const CustomizedInput = (props: CustomizedInputProps): JSX.Element => {
+    const [value, setValue] = useState('');
+    const handleValue = (val: string) => {
+        setValue(val);
+        props.handler(val);
+    }
     return (
         <View style={styles.background}>
             <View style={styles.inputBack}>
@@ -20,15 +25,15 @@ const CustomizedInput = (props: CustomizedInputProps): JSX.Element => {
                 <TextInput style={styles.inputText}
                     placeholder={props.placeHolder}
                     keyboardType={props.keyboardType == 'number' ? 'numeric' : 'default'}
-                    onChangeText={(value) => props.handler(value)}
+                    onChangeText={(value) => handleValue(value)}
                     secureTextEntry={false} />
             </View>
             <View style={styles.checkIconArea}>
-                <Icons
+                {value && (<Icons
                     name="checkmark-outline"
                     size={25}
                     color={GoDeliveryColors.green}
-                />
+                />)}
             </View>
         </View>
     )

@@ -31,7 +31,7 @@ exports.getClientById = async (req, res) => {
       message: "Get Client Detail Success",
       data: client,
     });
-  } catch (error) {}
+  } catch (error) { }
 };
 
 exports.signup = async (req, res) => {
@@ -50,12 +50,17 @@ exports.signup = async (req, res) => {
     });
 
     res.status(200).send({
-      success: 1,
+      success: true,
       code: 200,
       message: "signup success",
       data: client.toJSON(),
     });
   } catch (error) {
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
     console.error("Error:", error);
   } finally {
   }
@@ -85,7 +90,7 @@ exports.signin = async (req, res) => {
       if (comparePassword(password.trim(), client.password)) {
         const token = generateToken(client.id);
         res.status(200).send({
-          status: "success",
+          success: true,
           code: 200,
           message: "Signin Success",
           data: {
@@ -96,12 +101,14 @@ exports.signin = async (req, res) => {
         return;
       }
       res.status(200).send({
-        status: "error",
+        success: false,
+        code: 401,
         message: "Incorrect password",
       });
     } else {
       res.status(200).send({
-        status: "error",
+        success: false,
+        code: 401,
         message: `User with phone ${phone} was not found`,
       });
     }

@@ -3,14 +3,19 @@ import { StyleSheet, TouchableOpacity, View, Image, Text } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import GoDeliveryColors from '../styles/colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface DrawerMenuProps {
     navigation: any;
 }
 
 const DrawerMenu = ({ navigation }: DrawerMenuProps): JSX.Element => {
-    const logout = () => {
-        navigation.navigate('Splash');
+    const logout = async () => {
+        await AsyncStorage.removeItem('USER_DATA');
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'Splash', params: { initialIndex: 0 } }],
+        });
     }
     return (
         <SafeAreaView style={styles.drawerMenuContainer}>

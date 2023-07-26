@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector, useDispatch } from 'react-redux';
 import Action from '../../service';
 import allActions from '../../redux/actions';
+import TwillioService from '../../service/TwillioService';
 
 interface SignInScreenProps {
     route: any,
@@ -79,13 +80,15 @@ const SignInRoute = (props: SceneProps) => {
             if (argPhone) {
                 Action.authentication.login({ phone: phone.replace('+', ''), password: password })
                     .then(response => {
-                        console.log('response body ===> ', response.data);
                         const responseData = response.data;
                         if (responseData.status == "success") {
-                            console.log('responseData ===> ', responseData);
-                            dispatch(allActions.UserAction.setUser(responseData.data));
-                            storeData(responseData.data);
-                            navigation.navigate('Main');
+                            dispatch(allActions.UserAction.setUser(responseData.data.client));
+                            dispatch(allActions.UserAction.setToken(responseData.data.token))
+                            storeData(responseData.data.client);
+                            navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'Main', params: { initialIndex: 0 } }],
+                            });
                         }
                         else if (responseData.status == "error") {
                             Alert.alert(responseData.message);
@@ -110,8 +113,7 @@ const SignInRoute = (props: SceneProps) => {
 
     return (
         <ScrollView style={[GlobalStyles.container, GlobalStyles.contentAreaPadding]} >
-
-            <View style={{ height: 300, justifyContent: 'center' }}>
+            <View style={{ height: 350, justifyContent: 'center' }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                     <View style={{ flex: 1, }}>
                         <PhoneInput
@@ -139,7 +141,7 @@ const SignInRoute = (props: SceneProps) => {
                 <View style={styles.textFieldErrorMsgArea}>
                 </View>
             </View>
-            <View>
+            <View style={{ marginBottom: 80 }}>
                 <PrimaryButton buttonText='Login' handler={signInUser} />
                 <View style={{ marginTop: 30 }}>
                     <TouchableOpacity style={styles.footerTitleBack} onPress={navigateToSignup}>
@@ -154,28 +156,134 @@ const SignInRoute = (props: SceneProps) => {
 };
 
 const SignUpRoute = (props: SceneProps) => {
+    const [phone, setPhone] = useState('');
+    const [phoneError, setPhoneError] = useState('');
+    const [username, setUsername] = useState('');
+    const [usernameError, setUsernameError] = useState('');
+    const [password, setPassword] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [confirmPasswordError, setConfirmPasswordError] = useState('');
+    const [activityIndicator, setActivityIndicator] = useState(false);
+
     const navigation = useNavigation();
 
     const navigateToSignin = () => {
         props.jumpTo('signIn');
     }
-    const navigateToOTP = () => {
-        navigation.navigate('OTP');
+
+    // Function to validate phone number
+    const validatePhoneNumber = () => {
+        const argPhone = String(phone).replace(/[^\d]/g, '');
+        if (argPhone.length > 10) {
+            setPhoneError('');
+            return String('+' + argPhone);
+        } else if (argPhone.length == 10) {
+            setPhoneError('');
+            return String('+91' + argPhone);
+        } else {
+            setPhoneError('Please insert valid phone number.');
+            console.log('Please insert valid phone number.');
+            return '';
+        }
+        return argPhone;
+    };
+
+    const validateInputForm = () => {
+        let valid = true;
+        if (!username) {
+            setUsernameError('Please insert username.');
+            valid = false;
+        } else {
+            setUsernameError('');
+        }
+        if (!password) {
+            setPasswordError('Please set password');
+            valid = false;
+        } else {
+            setPasswordError('');
+        }
+        if (!confirmPassword) {
+            setConfirmPasswordError('Please confirm password.');
+            valid = false;
+        } else {
+            setConfirmPasswordError('');
+        }
+        if (password != confirmPassword) {
+            setConfirmPasswordError('password mismatch.');
+            valid = false;
+        } else {
+            setConfirmPasswordError('');
+        }
+        return valid;
+    }
+
+    const navigateToOTP = async () => {
+        setActivityIndicator(true);
+        if (validateInputForm()) {
+            const argPhone = validatePhoneNumber();
+            if (argPhone) {
+                console.log('argphone ===> ', argPhone);
+                if (await TwillioService.sendSMSVerfication(argPhone)) {
+                    const param = {
+                        phone: phone,
+                        password: password,
+                        name: username,
+                    }
+                    setActivityIndicator(false);
+                    navigation.navigate('OTP', param);
+                } else {
+                    Alert.alert('Phone number valid failed');
+                    setActivityIndicator(false);
+                }
+            } else {
+                setActivityIndicator(false);
+            }
+        } else {
+            setActivityIndicator(false);
+            return;
+        }
     }
     return (
         <ScrollView style={[GlobalStyles.container, GlobalStyles.contentAreaPadding]} >
-            <View style={{ height: 300, justifyContent: 'center' }}>
-                <CustomizedInput icon='call-outline' placeHolder='Phone number' keyboardType='number' />
-                <View style={styles.textFieldErrorMsgArea}>
+            <View style={{ height: 350, justifyContent: 'center' }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={{ flex: 1, }}>
+                        <PhoneInput
+                            containerStyle={{ padding: 0, height: 55, borderRadius: 30, width: '100%' }}
+                            textContainerStyle={{ borderTopRightRadius: 30, borderBottomRightRadius: 30 }}
+                            textInputStyle={{ padding: 0 }}
+                            defaultValue={phone}
+                            defaultCode='MZ'
+                            onChangeFormattedText={text => setPhone(text)}
+                            withShadow
+                        />
+                    </View>
+                    <View style={styles.checkIconArea}>
+                        {phone && (<Icons
+                            name="checkmark-outline"
+                            size={25}
+                            color={GoDeliveryColors.green}
+                        />)}
+                    </View>
                 </View>
-                <PasswordInput />
-                <View style={styles.textFieldErrorMsgArea}>
-                </View>
-                <PasswordInput />
-                <View style={styles.textFieldErrorMsgArea}>
-                </View>
+                <Text style={styles.textFieldErrorMsgArea}>
+                    {phoneError}
+                </Text>
+                <CustomizedInput icon='person-outline' placeHolder='User Name' handler={(val) => { setUsername(val) }} />
+                <Text style={styles.textFieldErrorMsgArea}>
+                    {usernameError}
+                </Text>
+                <PasswordInput handler={(val) => setPassword(val)} />
+                <Text style={styles.textFieldErrorMsgArea}>
+                    {passwordError}
+                </Text>
+                <PasswordInput placeholder='Confirm Password' handler={(val) => setConfirmPassword(val)} />
+                <Text style={styles.textFieldErrorMsgArea}>
+                    {confirmPasswordError}
+                </Text>
             </View>
-            <View>
+            <View style={{ marginBottom: 80 }}>
                 <PrimaryButton buttonText='Register' handler={navigateToOTP} />
                 <View style={{ marginTop: 30 }}>
                     <TouchableOpacity style={styles.footerTitleBack} onPress={navigateToSignin}>
@@ -236,11 +344,11 @@ const styles = StyleSheet.create({
     headerSection: {
         backgroundColor: GoDeliveryColors.white,
         alignItems: 'center',
-        height: 200,
+        height: 150,
         justifyContent: 'center'
     },
     logo: {
-        width: 380,
+        width: 320,
         resizeMode: 'contain',
     },
     tabLabelStyle: {

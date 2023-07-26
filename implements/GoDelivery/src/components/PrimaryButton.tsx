@@ -5,13 +5,15 @@ import GlobalStyles from '../styles/style';
 
 interface PrimaryButtonProps {
     buttonText: string,
+    disabled?: boolean,
     handler?: () => void,
 }
 
 const PrimaryButton = (props: PrimaryButtonProps): JSX.Element => {
     return (
         <TouchableOpacity
-            style={[GlobalStyles.primaryButton, GlobalStyles.shadowProp]}
+            disabled={props.disabled}
+            style={[GlobalStyles.primaryButton, GlobalStyles.shadowProp, { backgroundColor: props.disabled ? GoDeliveryColors.primayDisabled : GoDeliveryColors.primary }]}
             onPress={props.handler}
         >
             <Text style={[GlobalStyles.primaryLabel]}>{props.buttonText}</Text>

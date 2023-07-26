@@ -4,11 +4,19 @@ import Icons from 'react-native-vector-icons/Ionicons';
 import GoDeliveryColors from '../styles/colors';
 
 interface PasswordInputProps {
+    placeholder?: string,
     handler: (val: string) => void,
 }
 
 const PasswordInput = (props: PasswordInputProps): JSX.Element => {
     const [secureTextEntry, setSecureTextEntry] = useState(true);
+    const [value, setValue] = useState('');
+
+    const handleValue = (val: string) => {
+        setValue(val);
+        props.handler(val);
+    }
+
     return (
         <View style={styles.background}>
             <View style={styles.inputBack}>
@@ -16,8 +24,8 @@ const PasswordInput = (props: PasswordInputProps): JSX.Element => {
                     size={25}
                     color={GoDeliveryColors.place} />
                 <TextInput style={styles.inputText}
-                    placeholder={'password'}
-                    onChangeText={(val) => props.handler(val)}
+                    placeholder={props.placeholder ?? 'Password'}
+                    onChangeText={(val) => handleValue(val)}
                     secureTextEntry={secureTextEntry} />
                 <TouchableOpacity onPress={() => { setSecureTextEntry(!secureTextEntry) }}>
                     <Icons name={secureTextEntry ? 'eye-outline' : 'eye-off-outline'}
@@ -26,11 +34,11 @@ const PasswordInput = (props: PasswordInputProps): JSX.Element => {
                 </TouchableOpacity>
             </View>
             <View style={styles.checkIconArea}>
-                <Icons
+                {value && (<Icons
                     name="checkmark-outline"
                     size={25}
                     color={GoDeliveryColors.green}
-                />
+                />)}
             </View>
         </View>
     )

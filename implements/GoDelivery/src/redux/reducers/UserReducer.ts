@@ -1,4 +1,4 @@
-import { LOG_OUT, SET_USER } from '../actions/ActionType';
+import { LOG_OUT, SET_USER, SET_TOKEN } from '../actions/ActionType';
 
 const InitialState = {
     loggedIn: false,
@@ -12,9 +12,14 @@ const CurrentUser = (state = InitialState, action: { type: any; payload: any; })
             return {
                 ...state,
                 user: action.payload,
-                authToken: action.payload.token,
                 loggedIn: true,
             };
+        case SET_TOKEN:
+            return {
+                ...state,
+                authToken: action.payload,
+                loggedIn: true,
+            }
         case LOG_OUT:
             return {
                 ...state,
