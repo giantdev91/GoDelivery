@@ -1,19 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector, useDispatch } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface SplashScreenProps {
     navigation: any;
 }
 
 const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
+    const [loginFlag, setLoginFlag] = useState(true);
+    const [activityIndicator, setActivityIndicator] = useState(true);
+    const dispatch = useDispatch();
+
     const navigateToSignin = () => {
-        navigation.navigate('SignIn', {initialIndex: 0});
+        navigation.navigate('SignIn', { initialIndex: 0 });
     }
 
+    const checkUserLoginStatus = async () => {
+        setActivityIndicator(true);
+        const userData = await AsyncStorage.getItem('USER_DATA');
+        console.log('userData ===> ', userData);
+        if (userData) {
+
+        }
+    }
+
+    useEffect(() => {
+        checkUserLoginStatus();
+    })
+
     return (
-        <View style={[GlobalStyles.container, styles.background]}>
+        <SafeAreaView style={[GlobalStyles.container, styles.background]}>
             <View style={styles.logoSection}>
                 <View style={styles.logoBack}>
                     <Image source={require('../../../assets/images/company_logo.png')} style={styles.logo} />
@@ -27,7 +47,7 @@ const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
                     <Text style={[GlobalStyles.primaryLabel, { color: GoDeliveryColors.primary }]}>Get Started</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </SafeAreaView>
     );
 }
 

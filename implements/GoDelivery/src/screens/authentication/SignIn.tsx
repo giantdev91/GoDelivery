@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
-import { View, useWindowDimensions, Image, StyleSheet, Dimensions, Text, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, useWindowDimensions, Image, StyleSheet, Dimensions, Text, TouchableWithoutFeedback, Keyboard, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { TabView, SceneMap, TabBar, SceneRendererProps, NavigationState } from 'react-native-tab-view';
-
+import Icons from 'react-native-vector-icons/Ionicons';
+import PhoneInput from 'react-native-phone-number-input';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
 import CustomizedInput from '../../components/CustomizedInput';
@@ -9,6 +11,10 @@ import PasswordInput from '../../components/PasswordInput';
 import PrimaryButton from '../../components/PrimaryButton';
 import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector, useDispatch } from 'react-redux';
+import Action from '../../service';
+import allActions from '../../redux/actions';
 
 interface SignInScreenProps {
     route: any,
@@ -30,28 +36,111 @@ const HideKeyboard = ({ children }: HideKeyboardProps) => (
 )
 
 const SignInRoute = (props: SceneProps) => {
+    const [phone, setPhone] = useState('');
+    const [password, setPassword] = useState('');
+    const [phoneError, setPhoneError] = useState('');
+    const [activityIndicator, setActivityIndicator] = useState(false);
+    const dispatch = useDispatch();
     const navigation = useNavigation();
+
+    // Function to validate phone number
+    const validatePhoneNumber = () => {
+        const argPhone = String(phone).replace(/[^\d]/g, '');
+        if (argPhone.length > 10) {
+            setPhoneError('');
+            return String('+' + argPhone);
+        } else if (argPhone.length == 10) {
+            setPhoneError('');
+            return String('+91' + argPhone);
+        } else {
+            setPhoneError('Please insert valid phone number.');
+            console.log('Please insert valid phone number.');
+            return '';
+        }
+        return argPhone;
+    };
+
+    const storeData = async (userData: any) => {
+        try {
+            await AsyncStorage.setItem('USER_DATA', JSON.stringify(userData));
+        } catch {
+            console.log('error occured!');
+        }
+    }
+
+    const signInUser = async () => {
+        try {
+            if (!(phone && password)) {
+                return;
+            }
+            setActivityIndicator(true);
+            const argPhone = validatePhoneNumber();
+
+            if (argPhone) {
+                Action.authentication.login({ phone: phone.replace('+', ''), password: password })
+                    .then(response => {
+                        console.log('response body ===> ', response.data);
+                        const responseData = response.data;
+                        if (responseData.status == "success") {
+                            console.log('responseData ===> ', responseData);
+                            dispatch(allActions.UserAction.setUser(responseData.data));
+                            storeData(responseData.data);
+                            navigation.navigate('Main');
+                        }
+                        else if (responseData.status == "error") {
+                            Alert.alert(responseData.message);
+                        }
+                        setActivityIndicator(false);
+                    }).catch(error => {
+                        console.log('error ===> ', error);
+                        setActivityIndicator(false);
+                    })
+            } else {
+                setActivityIndicator(false);
+            }
+        } catch (error) {
+            console.log('error ===> ', error);
+            setActivityIndicator(false);
+        }
+    };
 
     const navigateToSignup = () => {
         props.jumpTo('signUp');
     }
 
-    const navigateToMain = () => {
-        navigation.navigate('Main');
-    }
-
     return (
-        <View style={[GlobalStyles.container, GlobalStyles.contentAreaPadding]} >
-            <View style={{ flex: 1, justifyContent: 'center' }}>
-                <CustomizedInput icon='call-outline' placeHolder='Phone number' keyboardType='number' />
-                <View style={styles.textFieldErrorMsgArea}>
+        <ScrollView style={[GlobalStyles.container, GlobalStyles.contentAreaPadding]} >
+
+            <View style={{ height: 300, justifyContent: 'center' }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={{ flex: 1, }}>
+                        <PhoneInput
+                            containerStyle={{ padding: 0, height: 55, borderRadius: 30, width: '100%' }}
+                            textContainerStyle={{ borderTopRightRadius: 30, borderBottomRightRadius: 30 }}
+                            textInputStyle={{ padding: 0 }}
+                            defaultValue={phone}
+                            defaultCode='MZ'
+                            onChangeFormattedText={text => setPhone(text)}
+                            withShadow
+                        />
+                    </View>
+                    <View style={styles.checkIconArea}>
+                        <Icons
+                            name="checkmark-outline"
+                            size={25}
+                            color={GoDeliveryColors.green}
+                        />
+                    </View>
                 </View>
-                <PasswordInput />
+                <Text style={styles.textFieldErrorMsgArea}>
+                    {phoneError}
+                </Text>
+                <PasswordInput handler={(val) => { setPassword(val) }} />
                 <View style={styles.textFieldErrorMsgArea}>
                 </View>
             </View>
             <View>
-                <PrimaryButton buttonText='Login' handler={navigateToMain} />
+                <PrimaryButton buttonText='Login' handler={signInUser} />
                 <View style={{ marginTop: 30 }}>
                     <TouchableOpacity style={styles.footerTitleBack} onPress={navigateToSignup}>
                         <Text style={GlobalStyles.primaryEmphasizeLabel}>You  don’t have an account ? </Text>
@@ -59,7 +148,8 @@ const SignInRoute = (props: SceneProps) => {
                     </TouchableOpacity>
                 </View>
             </View>
-        </View>
+            {activityIndicator && <ActivityIndicator size={'large'} style={{ position: 'absolute', alignSelf: 'center', bottom: 150, }} />}
+        </ScrollView>
     );
 };
 
@@ -73,8 +163,8 @@ const SignUpRoute = (props: SceneProps) => {
         navigation.navigate('OTP');
     }
     return (
-        <View style={[GlobalStyles.container, GlobalStyles.contentAreaPadding]} >
-            <View style={{ flex: 1, justifyContent: 'center' }}>
+        <ScrollView style={[GlobalStyles.container, GlobalStyles.contentAreaPadding]} >
+            <View style={{ height: 300, justifyContent: 'center' }}>
                 <CustomizedInput icon='call-outline' placeHolder='Phone number' keyboardType='number' />
                 <View style={styles.textFieldErrorMsgArea}>
                 </View>
@@ -94,7 +184,7 @@ const SignUpRoute = (props: SceneProps) => {
                     </TouchableOpacity>
                 </View>
             </View>
-        </View>
+        </ScrollView>
     );
 };
 
@@ -123,7 +213,8 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
     );
 
     return (
-        <View style={[GlobalStyles.container]}>
+
+        <SafeAreaView style={[GlobalStyles.container]}>
             <View style={styles.headerSection}>
                 <Image source={require('../../../assets/images/company_logo.png')}
                     style={styles.logo}
@@ -136,7 +227,8 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
                 renderTabBar={renderTabBar}
                 initialLayout={{ width: layout.width }}
             />
-        </View>
+
+        </SafeAreaView>
     );
 }
 
@@ -158,12 +250,17 @@ const styles = StyleSheet.create({
     textFieldErrorMsgArea: {
         height: 35,
         paddingLeft: 20,
+        color: 'red'
     },
     footerTitleBack: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center'
     },
+    checkIconArea: {
+        width: 35,
+        alignItems: 'flex-end'
+    }
 })
 
 export default SignInScreen;

@@ -9,7 +9,7 @@ const Client = sequelize.define("client", {
   },
   name: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   password: {
     type: DataTypes.STRING,
@@ -17,7 +17,7 @@ const Client = sequelize.define("client", {
   },
   avatar: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
 });
 

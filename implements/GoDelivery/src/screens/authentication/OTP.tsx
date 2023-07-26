@@ -21,7 +21,6 @@ const OTPScreen = ({ navigation }: ScreenProps): JSX.Element => {
     }
 
     const handleSubmit = () => {
-        console.log("this is called!!!");
         navigation.navigate('Main');
     }
 
