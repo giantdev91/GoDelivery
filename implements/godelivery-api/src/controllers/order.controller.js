@@ -37,15 +37,17 @@ exports.create = async (req, res) => {
       goodsVolumn: goodsVolumn,
       goodsWeight: goodsWeight,
       description: description,
+      orderNo: new Date().valueOf().toString()
     });
 
     res.status(200).send({
-      status: true,
+      success: true,
       code: 200,
       message: "create success",
       data: order,
     });
   } catch (error) {
+    console.log('error ===> ', error);
     res.status(200).send({
       success: false,
       code: 500,

@@ -19,6 +19,10 @@ const Client = sequelize.define("client", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  fcmToken: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
 
 module.exports = Client;

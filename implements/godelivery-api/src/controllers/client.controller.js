@@ -75,6 +75,8 @@ exports.signup = async (req, res) => {
 exports.signin = async (req, res) => {
   try {
     const { phone, password } = req.body;
+    console.log('phone ===> ', phone);
+    console.log('password ===> ', password);
     // Search for a record with the provided phone number
     const client = await Client.findOne({
       where: { phone: phone },

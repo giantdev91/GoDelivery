@@ -20,6 +20,10 @@ const Delivery_man = sequelize.define("delivery_man", {
     // allowNull: false,
     defaultValue: 0,
   },
+  fcmToken: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
 
 module.exports = Delivery_man;

@@ -35,9 +35,14 @@ import DrawerNavigator from './src/navigators/DrawerNavigator';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import store from './src/redux/store';
+import {enableLatestRenderer} from 'react-native-maps';
+
 const Stack = createNativeStackNavigator();
 
 function App(): JSX.Element {
+  
+  enableLatestRenderer();
+
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
@@ -52,9 +57,9 @@ function App(): JSX.Element {
             headerShown: false,
           }}>
             <Stack.Screen name="Splash" component={SplashScreen} />
+            <Stack.Screen name="Main" component={DrawerNavigator} />
             <Stack.Screen name="SignIn" component={SignInScreen} />
             <Stack.Screen name="OTP" component={OTPScreen} />
-            <Stack.Screen name="Main" component={DrawerNavigator} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>
