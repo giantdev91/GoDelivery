@@ -12,7 +12,7 @@ interface ScreenProps {
 
 const HomeScreen = ({ navigation }: ScreenProps): JSX.Element => {
     const handleNewOrder = () => {
-        navigation.navigate('NewOrderStep1');
+        navigation.navigate('NewOrderCreate');
     }
     return (
         <View style={[GlobalStyles.container]}>

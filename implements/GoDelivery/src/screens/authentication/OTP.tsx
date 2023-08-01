@@ -29,25 +29,22 @@ const OTPScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
             index: 0,
             routes: [{ name: 'SignIn', params: { initialIndex: 0 } }],
         });
-        // navigation.goBack();
     }
 
     const confirmCode = async () => {
         setActivityIndicator(true);
         if (await TwillioService.checkVerification(phone, value)) {
             const param = {
-                phone: phone,
+                phone: phone.replace('+', ''),
                 name: name,
                 password: password,
             }
             Action.authentication.signup(param)
                 .then(response => {
                     const responseData = response.data;
-                    if (responseData.status == "success") {
+                    if (responseData.success) {
                         setActivityIndicator(false);
-                        navigation.pop();
-                        navigation.pop();
-                        navigation.navigate('SignIn', { initialIndex: 0 });
+                        navigateToLogin();
                     } else {
                         Alert.alert(responseData.message);
                         setActivityIndicator(false);
@@ -104,7 +101,7 @@ const OTPScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
                     <Text style={[styles.labelStyle, { marginVertical: 10 }]}>We will send you a one time password on this <Text style={{ fontWeight: "700" }}>Mobile Number</Text></Text>
                     <Text style={{ fontSize: 15, fontWeight: '700' }}>{phone}</Text>
                 </View>
-                <View style={{ width: 400, height: 70, paddingHorizontal: 80, }}>
+                <View style={{ width: 450, height: 70, paddingHorizontal: 80, }}>
                     <OTPInputView
                         autoFocusOnLoad={false}
                         pinCount={6}

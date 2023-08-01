@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "935119643800",
+    "project_id": "godelivery-7eccd",
+    "storage_bucket": "godelivery-7eccd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:935119643800:android:54a67ee7e5e0ab97b01ced",
+        "android_client_info": {
+          "package_name": "com.godeliverywork"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "935119643800-mvbtfiq58k1ku7k28p386u5k52f4cpvt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHc5sRhvGFdQJDYgSM8yMj00J_kjr2N4g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "935119643800-mvbtfiq58k1ku7k28p386u5k52f4cpvt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

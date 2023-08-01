@@ -81,7 +81,7 @@ const SignInRoute = (props: SceneProps) => {
                 Action.authentication.login({ phone: phone.replace('+', ''), password: password })
                     .then(response => {
                         const responseData = response.data;
-                        if (responseData.status == "success") {
+                        if (responseData.success) {
                             dispatch(allActions.UserAction.setUser(responseData.data.client));
                             dispatch(allActions.UserAction.setToken(responseData.data.token))
                             storeData(responseData.data.client);
@@ -223,15 +223,26 @@ const SignUpRoute = (props: SceneProps) => {
         if (validateInputForm()) {
             const argPhone = validatePhoneNumber();
             if (argPhone) {
-                console.log('argphone ===> ', argPhone);
                 if (await TwillioService.sendSMSVerfication(argPhone)) {
-                    const param = {
-                        phone: phone,
-                        password: password,
-                        name: username,
-                    }
-                    setActivityIndicator(false);
-                    navigation.navigate('OTP', param);
+                    Action.authentication.phoneCheck({ phone: phone.replace('+', '') })
+                        .then((res) => {
+                            const responseData = res.data;
+                            if (responseData.success) {
+                                const param = {
+                                    phone: phone,
+                                    password: password,
+                                    name: username,
+                                }
+                                setActivityIndicator(false);
+                                navigation.navigate('OTP', param);
+                            } else {
+                                Alert.alert(responseData.message);
+                                setActivityIndicator(false);
+                            }
+                        }).catch(err => {
+                            setActivityIndicator(false);
+                        });
+
                 } else {
                     Alert.alert('Phone number valid failed');
                     setActivityIndicator(false);
@@ -283,6 +294,12 @@ const SignUpRoute = (props: SceneProps) => {
                     {confirmPasswordError}
                 </Text>
             </View>
+            {activityIndicator && (
+                <ActivityIndicator
+                    size="large"
+                    style={{ position: 'absolute', alignSelf: 'center', bottom: 300 }}
+                />
+            )}
             <View style={{ marginBottom: 80 }}>
                 <PrimaryButton buttonText='Register' handler={navigateToOTP} />
                 <View style={{ marginTop: 30 }}>
