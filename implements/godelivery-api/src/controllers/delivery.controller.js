@@ -166,6 +166,47 @@ exports.deleteClient = async (req, res) => {
   }
 };
 
+exports.updateFcmToken = async (req, res) => {
+  try {
+    const { deliverymanID, fcmToken } = req.body;
+    const deliveryman = await Delivery_man.findOne({
+      where: {
+        id: deliverymanID,
+      },
+    });
+
+    if (deliveryman) {
+      // If the client is found, update it from the database
+      await Delivery_man.update(
+        { fcmToken: fcmToken },
+        {
+          where: { id: deliverymanID },
+        }
+      );
+      res.status(200).send({
+        success: true,
+        code: 200,
+        message: "Update success",
+        data: {
+          deliveryman,
+        },
+      });
+    } else {
+      res.status(200).send({
+        success: false,
+        code: 200,
+        message: "Deliveryman not found",
+      });
+    }
+  } catch (error) {
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
+  }
+};
+
 exports.updateState = async (req, res) => {
   try {
     const { deliverymanID } = req.body;
@@ -236,6 +277,50 @@ exports.deliverymanList = async (req, res) => {
       message: "Deliverymanlist success",
       data: deliverymans,
     });
+  } catch (error) {
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
+  }
+};
+
+exports.updateLocation = async (req, res) => {
+  try {
+    const { deliverymanID, locationLatitude, locationLongitude } = req.body;
+    console.log('latitude ==> ', locationLatitude);
+    console.log('longitude ==> ', locationLongitude);
+
+    const deliveryman = await Delivery_man.findOne({
+      where: {
+        id: deliverymanID,
+      },
+    });
+
+    if (deliveryman) {
+      // If the client is found, delete it from the database
+      const updatedStatus = deliveryman.status === 1 ? 0 : 1;
+
+      // Update the status column in the database
+      await Delivery_man.update(
+        { locationLatitude: locationLatitude, locationLongitude: locationLongitude },
+        {
+          where: { id: deliverymanID },
+        }
+      );
+      res.status(200).send({
+        success: true,
+        code: 200,
+        message: "location update success",
+      });
+    } else {
+      res.status(200).send({
+        success: false,
+        code: 400,
+        message: "Deliveryman not found",
+      });
+    }
   } catch (error) {
     res.status(200).send({
       success: false,

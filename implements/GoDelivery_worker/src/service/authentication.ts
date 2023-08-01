@@ -1,4 +1,4 @@
-import { LoginParam, SignupParam, PhoneCheckParam } from '../type';
+import { LoginParam, UpdateFcmTokenParam } from '../type';
 import APIService from './APIService';
 
 const login = async (param: LoginParam) => {
@@ -6,6 +6,12 @@ const login = async (param: LoginParam) => {
     return response;
 }
 
+const updateFcmToken = async (param: UpdateFcmTokenParam) => {
+    const response = await APIService.post('/deliveryman/updateFcmToken', param);
+    return response;
+}
+
 export default {
     login,
+    updateFcmToken
 }

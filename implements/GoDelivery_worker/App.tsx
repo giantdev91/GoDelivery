@@ -19,13 +19,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from './src/screens/authentication/Splash';
 import SignInScreen from './src/screens/authentication/SignIn';
+import DrawerNavigator from './src/navigators/DrawerNavigator';
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import store from './src/redux/store';
 import { enableLatestRenderer } from 'react-native-maps';
 import messaging from '@react-native-firebase/messaging';
-import TabNavigator from './src/navigators/TabNavigator';
 
 const Stack = createNativeStackNavigator();
 PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
@@ -62,7 +62,7 @@ function App(): JSX.Element {
           }}>
             <Stack.Screen name="Splash" component={SplashScreen} />
             <Stack.Screen name="SignIn" component={SignInScreen} />
-            <Stack.Screen name="Main" component={TabNavigator} />
+            <Stack.Screen name="Main" component={DrawerNavigator} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>

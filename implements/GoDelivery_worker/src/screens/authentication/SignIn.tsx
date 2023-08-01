@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import Action from '../../service';
 import allActions from '../../redux/actions';
 import messaging from '@react-native-firebase/messaging';
+import { requestLocationPermission } from '../../common/RequestPermission';
 
 interface SignInScreenProps {
     route: any,
@@ -70,18 +71,29 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
 
             if (argPhone) {
                 const token = await messaging().getToken();
-                console.log('fcmtoken ====> ', token);
                 Action.authentication.login({ phone: phone.replace('+', ''), password: password })
                     .then(response => {
                         const responseData = response.data;
                         if (responseData.success) {
-                            dispatch(allActions.UserAction.setUser(responseData.data.client));
+                            dispatch(allActions.UserAction.setUser(responseData.data.delivery_man));
                             dispatch(allActions.UserAction.setToken(responseData.data.token))
                             storeData(responseData.data.client);
-                            navigation.reset({
-                                index: 0,
-                                routes: [{ name: 'Main', params: { initialIndex: 0 } }],
-                            });
+                            Action.authentication.updateFcmToken({ deliverymanID: responseData.data.delivery_man.id, fcmToken: token })
+                                .then((res) => {
+                                    const response = res.data;
+                                    const result = requestLocationPermission();
+                                    result.then(res => {
+                                        if (res) {
+                                            navigation.reset({
+                                                index: 0,
+                                                routes: [{ name: 'Main', params: { initialIndex: 0 } }],
+                                            });
+                                        }
+                                    });
+                                }).catch((err) => {
+                                    console.log('error: ', err);
+                                })
+
                         }
                         else if (responseData.status == "error") {
                             Alert.alert(responseData.message);

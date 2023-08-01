@@ -16,10 +16,11 @@ router.route("/totalcount").get(asyncHandler(deliveryController.totalcount));
 
 router.route("/orderlist").post(asyncHandler(deliveryController.orderList));
 router.route("/delete").post(asyncHandler(deliveryController.deleteClient));
-
+router.route("/updateFcmToken").post(asyncHandler(deliveryController.updateFcmToken));
 router.route("/updatestate").post(asyncHandler(deliveryController.updateState));
 router
   .route("/deliverymanlist")
   .post(asyncHandler(deliveryController.deliverymanList));
+router.route("/updateLocation").post(asyncHandler(deliveryController.updateLocation));
 
 module.exports = router;

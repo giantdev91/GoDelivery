@@ -24,6 +24,14 @@ const Delivery_man = sequelize.define("delivery_man", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  locationLatitude: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  locationLongitude: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  }
 });
 
 module.exports = Delivery_man;

@@ -32,14 +32,6 @@ const DrawerMenu = ({ navigation }: DrawerMenuProps): JSX.Element => {
                     <Icons name="person-outline" size={25} color={GoDeliveryColors.white} />
                     <Text style={styles.menuText}>Profile</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.menuButton} onPress={() => { navigation.navigate('Locations') }}>
-                    <Icons name="location-outline" size={25} color={GoDeliveryColors.white} />
-                    <Text style={styles.menuText}>Locations</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.menuButton} onPress={() => { navigation.navigate('Tracks') }}>
-                    <Icons name="locate-outline" size={25} color={GoDeliveryColors.white} />
-                    <Text style={styles.menuText}>Tracks</Text>
-                </TouchableOpacity>
             </View>
             <View style={styles.bottomButtonArea}>
                 <TouchableOpacity style={styles.menuButton} onPress={logout}>

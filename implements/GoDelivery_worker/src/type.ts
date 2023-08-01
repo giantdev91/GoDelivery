@@ -3,6 +3,11 @@ export type LoginParam = {
     password: string
 }
 
+export type UpdateFcmTokenParam = {
+    deliverymanID: string,
+    fcmToken: string,
+}
+
 export type SignupParam = {
     phone: string,
     password: string,

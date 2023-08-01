@@ -16,6 +16,7 @@ const HomeScreen = ({ navigation }: ScreenProps): JSX.Element => {
     }
     return (
         <View style={[GlobalStyles.container]}>
+            <MenuButton navigation={navigation} />
             <View style={styles.headerSection}>
                 <Image source={require('../../../assets/images/delivery-man.png')} />
                 <Text style={styles.headerTitle}>Welcome to our service</Text>
