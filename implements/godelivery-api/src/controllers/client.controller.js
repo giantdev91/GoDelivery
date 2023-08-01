@@ -175,6 +175,12 @@ exports.searchClient = async (req, res) => {
     // Find orders that match the provided criteria
     const clients = await Client.findAll({
       where: whereCondition,
+      include: [
+        {
+          model: Order,
+          as: "orders",
+        },
+      ],
     });
     res.status(200).send({
       success: true,
