@@ -16,7 +16,7 @@ const Delivery_man = sequelize.define("delivery_man", {
     allowNull: false,
   },
   status: {
-    type: DataTypes.BOOLEAN,
+    type: DataTypes.INTEGER,
     // allowNull: false,
     defaultValue: 0,
   },

@@ -5,16 +5,12 @@
  * @format
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { PropsWithChildren } from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
+  PermissionsAndroid,
   useColorScheme,
-  View,
+  Alert,
 } from 'react-native';
 
 import {
@@ -35,12 +31,20 @@ import DrawerNavigator from './src/navigators/DrawerNavigator';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import store from './src/redux/store';
-import {enableLatestRenderer} from 'react-native-maps';
+import { enableLatestRenderer } from 'react-native-maps';
+import messaging from '@react-native-firebase/messaging';
+
+PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+
+// Register background handler
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log('Message handled in the background!', remoteMessage);
+});
 
 const Stack = createNativeStackNavigator();
 
 function App(): JSX.Element {
-  
+
   enableLatestRenderer();
 
   const isDarkMode = useColorScheme() === 'dark';
@@ -48,6 +52,14 @@ function App(): JSX.Element {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert(remoteMessage?.notification?.title ?? "", remoteMessage?.notification?.body);
+    });
+
+    return unsubscribe;
+  }, []);
 
   return (
     <Provider store={store}>

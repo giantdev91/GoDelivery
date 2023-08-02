@@ -79,7 +79,7 @@ const Step1Scene = (props: TabSceneProps) => {
     return (
         <View style={GlobalStyles.container}>
             <View style={{ height: 70 }}>
-                <Text style={GlobalStyles.subTitleText}>Pick Sender’s Location</Text>
+                <Text style={GlobalStyles.subTitleText}>Pick Receiver’s Location</Text>
                 <TouchableOpacity style={{ position: 'absolute', right: 30, bottom: 25 }}>
                     <Icons name="heart-outline" size={30} color={GoDeliveryColors.primary} />
                 </TouchableOpacity>

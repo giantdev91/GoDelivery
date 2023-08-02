@@ -9,6 +9,7 @@ const notificationRoute = require("./routes/notification");
 const syslogRoute = require("./routes/sys_log");
 
 const { httpLogStream } = require("./utils/logger");
+const admin = require('firebase-admin');
 
 const app = express();
 
@@ -44,6 +45,11 @@ app.use((err, req, res, next) => {
     message: err.message,
   });
   next();
+});
+var serviceAccount = require("../serviceAccountKey.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
 });
 
 module.exports = app;

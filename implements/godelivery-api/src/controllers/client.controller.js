@@ -361,3 +361,44 @@ exports.phoneCheck = async (req, res) => {
     });
   }
 };
+
+exports.updateFcmToken = async (req, res) => {
+  try {
+    const { clientID, fcmToken } = req.body;
+    const client = await Client.findOne({
+      where: {
+        id: clientID,
+      },
+    });
+
+    if (client) {
+      // If the client is found, update it from the database
+      await Client.update(
+        { fcmToken: fcmToken },
+        {
+          where: { id: clientID },
+        }
+      );
+      res.status(200).send({
+        success: true,
+        code: 200,
+        message: "Update success",
+        data: {
+          client,
+        },
+      });
+    } else {
+      res.status(200).send({
+        success: false,
+        code: 200,
+        message: "Client not found",
+      });
+    }
+  } catch (error) {
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
+  }
+};

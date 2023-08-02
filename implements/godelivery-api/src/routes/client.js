@@ -31,4 +31,6 @@ router.route("/updateclient").post(asyncHandler(clientController.updateClient));
 
 router.route("/phonecheck").post(asyncHandler(clientController.phoneCheck));
 
+router.route("/updateFcmToken").post(asyncHandler(clientController.updateFcmToken));
+
 module.exports = router;

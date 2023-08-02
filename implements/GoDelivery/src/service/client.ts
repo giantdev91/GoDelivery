@@ -1,4 +1,4 @@
-import { GetByIdParam } from '../type';
+import { GetByIdParam, UpdateFcmTokenParam } from '../type';
 import APIService from './APIService';
 
 const getById = async (param: GetByIdParam) => {
@@ -6,6 +6,12 @@ const getById = async (param: GetByIdParam) => {
     return response;
 }
 
+const updateFcmToken = async (param: UpdateFcmTokenParam) => {
+    const response = await APIService.post('/client/updateFcmToken', param);
+    return response;
+}
+
 export default {
     getById,
+    updateFcmToken
 }

@@ -13,6 +13,8 @@ import Action from '../../service';
 import allActions from '../../redux/actions';
 import messaging from '@react-native-firebase/messaging';
 import { requestLocationPermission } from '../../common/RequestPermission';
+import { startBackgroundServiceScheduler } from '../../common/SchedulerService';
+
 
 interface SignInScreenProps {
     route: any,
@@ -70,19 +72,25 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
             const argPhone = validatePhoneNumber();
 
             if (argPhone) {
+                //get the fcmToken when client login
                 const token = await messaging().getToken();
+
                 Action.authentication.login({ phone: phone.replace('+', ''), password: password })
                     .then(response => {
                         const responseData = response.data;
+                        console.log('responseData ==> ', responseData);
                         if (responseData.success) {
                             dispatch(allActions.UserAction.setUser(responseData.data.delivery_man));
                             dispatch(allActions.UserAction.setToken(responseData.data.token))
                             storeData(responseData.data.client);
-                            Action.authentication.updateFcmToken({ deliverymanID: responseData.data.delivery_man.id, fcmToken: token })
+                            Action.deliveryman.updateFcmToken({ deliverymanID: responseData.data.delivery_man.id, fcmToken: token })
                                 .then((res) => {
                                     const response = res.data;
+                                    console.log('response ===> ', response);
                                     const result = requestLocationPermission();
                                     result.then(res => {
+                                        startBackgroundServiceScheduler();
+                                        console.log('res ===> ', res);
                                         if (res) {
                                             navigation.reset({
                                                 index: 0,
@@ -100,14 +108,14 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
                         }
                         setActivityIndicator(false);
                     }).catch(error => {
-                        console.log('error ===> ', error);
+                        console.log('error: ', error);
                         setActivityIndicator(false);
                     })
             } else {
                 setActivityIndicator(false);
             }
         } catch (error) {
-            console.log('error ===> ', error);
+            console.log('error: ', error);
             setActivityIndicator(false);
         }
     };
