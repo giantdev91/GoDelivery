@@ -420,3 +420,37 @@ exports.orderList = async (req, res) => {
     // Close the database connection when done
   }
 };
+
+exports.inProgressList = async (req, res) => {
+  try {
+    const { sender, receiver } = req.body;
+
+    // Build the where condition based on the provided criteria
+    const whereCondition = {
+      sender: sender,
+      receiver: receiver,
+      status: {
+        [Op.lt]: 3
+      }
+    };
+    // Find orders that match the provided criteria
+    const orders = await Order.findAll({
+      where: whereCondition,
+    });
+    res.status(200).send({
+      status: true,
+      code: 200,
+      message: "orderlist success",
+      data: orders,
+    });
+    console.log("Orders matching the criteria:", orders);
+  } catch (error) {
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
+  } finally {
+    // Close the database connection when done
+  }
+};
