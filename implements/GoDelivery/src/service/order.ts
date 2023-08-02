@@ -1,4 +1,4 @@
-import { } from '../type';
+import { InProgressParam } from '../type';
 import APIService from './APIService';
 
 const createOrder = async (param) => {
@@ -6,6 +6,12 @@ const createOrder = async (param) => {
     return response;
 }
 
+const inprogressOrders = async (param: InProgressParam) => {
+    const response = await APIService.post('/order/inprogress', param);
+    return response;
+}
+
 export default {
     createOrder,
+    inprogressOrders
 }

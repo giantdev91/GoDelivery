@@ -427,15 +427,30 @@ exports.inProgressList = async (req, res) => {
 
     // Build the where condition based on the provided criteria
     const whereCondition = {
-      sender: sender,
-      receiver: receiver,
-      status: {
-        [Op.lt]: 3
-      }
+      [Op.and]: [
+        {
+          status: {
+            [Op.lt]: 3
+          }
+        },
+        {
+          [Op.or]: [
+            { sender: sender },
+            { receiver: receiver }
+          ]
+        }
+      ]
     };
     // Find orders that match the provided criteria
     const orders = await Order.findAll({
       where: whereCondition,
+      include: [
+        {
+          model: Delivery_man,
+          as: 'delivery_man',
+          attributes: ['id', 'name', 'phone'], // Specify the attributes you want to retrieve from the delivery man
+        },
+      ],
     });
     res.status(200).send({
       status: true,
@@ -445,6 +460,7 @@ exports.inProgressList = async (req, res) => {
     });
     console.log("Orders matching the criteria:", orders);
   } catch (error) {
+    console.log('error ====================> ', error);
     res.status(200).send({
       success: false,
       code: 500,

@@ -22,6 +22,11 @@ export type UpdateFcmTokenParam = {
     fcmToken: string,
 }
 
+export type InProgressParam = {
+    sender: number,
+    receiver: string,
+}
+
 export type GeoCoordinates = {
     latitude: number,
     longitude: number,
