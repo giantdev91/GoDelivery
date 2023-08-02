@@ -75,8 +75,8 @@ exports.signup = async (req, res) => {
 exports.signin = async (req, res) => {
   try {
     const { phone, password } = req.body;
-    console.log('phone ===> ', phone);
-    console.log('password ===> ', password);
+    console.log("phone ===> ", phone);
+    console.log("password ===> ", password);
     // Search for a record with the provided phone number
     const client = await Client.findOne({
       where: { phone: phone },
@@ -190,7 +190,6 @@ exports.searchClient = async (req, res) => {
       message: "Clientlist success",
       data: clients,
     });
-    console.log("Orders matching the criteria:", orders);
   } catch (error) {
     res.status(200).send({
       success: false,
