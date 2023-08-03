@@ -12,6 +12,7 @@ import PrimaryButton from '../../components/PrimaryButton';
 import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import messaging from '@react-native-firebase/messaging';
 import { useSelector, useDispatch } from 'react-redux';
 import Action from '../../service';
 import allActions from '../../redux/actions';
@@ -76,7 +77,9 @@ const SignInRoute = (props: SceneProps) => {
             }
             setActivityIndicator(true);
             const argPhone = validatePhoneNumber();
-
+            //get the fcmToken when client login
+            const token = await messaging().getToken();
+            console.log('token ===> ', token);
             if (argPhone) {
                 Action.authentication.login({ phone: phone.replace('+', ''), password: password })
                     .then(response => {
@@ -85,10 +88,18 @@ const SignInRoute = (props: SceneProps) => {
                             dispatch(allActions.UserAction.setUser(responseData.data.client));
                             dispatch(allActions.UserAction.setToken(responseData.data.token))
                             storeData(responseData.data.client);
-                            navigation.reset({
-                                index: 0,
-                                routes: [{ name: 'Main', params: { initialIndex: 0 } }],
-                            });
+
+                            Action.client.updateFcmToken({ clientID: responseData.data.client.id, fcmToken: token })
+                                .then((res) => {
+                                    console.log('response: ', res.data);
+                                    navigation.reset({
+                                        index: 0,
+                                        routes: [{ name: 'Main', params: { initialIndex: 0 } }],
+                                    });
+                                }).catch((err) => {
+                                    console.log("error: ", err);
+                                })
+
                         }
                         else if (responseData.status == "error") {
                             Alert.alert(responseData.message);

@@ -22,6 +22,12 @@ export type GetByIdParam = {
     id: string,
 }
 
+export type UpdateLocationParam = {
+    deliverymanID: string,
+    locationLatitude: string,
+    locationLongitude: string,
+}
+
 export type GeoCoordinates = {
     latitude: number,
     longitude: number,

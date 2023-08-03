@@ -1,10 +1,10 @@
 import authentication from './authentication';
-import client from './client';
+import deliveryman from './deliveryman';
 import order from './order';
 
 const AllAction = {
     authentication,
-    client,
+    deliveryman,
     order
 }
 

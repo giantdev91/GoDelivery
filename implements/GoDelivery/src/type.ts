@@ -17,6 +17,11 @@ export type GetByIdParam = {
     id: string,
 }
 
+export type UpdateFcmTokenParam = {
+    clientID: string,
+    fcmToken: string,
+}
+
 export type GeoCoordinates = {
     latitude: number,
     longitude: number,

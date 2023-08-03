@@ -2,6 +2,9 @@ const Order = require("../models/order");
 const Delivery_man = require("../models/delivery_man");
 const { Sequelize, sequelize } = require("../database/connection");
 const { Op } = require("sequelize");
+const Client = require("../models/client");
+const notificationController = require("../common/notification");
+const filterFunction = require("../common/filterWithGeoLocation");
 
 exports.create = async (req, res) => {
   try {
@@ -39,7 +42,33 @@ exports.create = async (req, res) => {
       description: description,
       orderNo: new Date().valueOf().toString()
     });
+    const client = await Client.findOne({ where: { id: order.sender } });
+    const clientFcmToken = client.fcmToken;
+    //get all delivery man list with idle status
+    const deliveryMans = await Delivery_man.findAll({
+      where: { status: 0 }
+    });
 
+    console.log('client info ===> ', client);
+    console.log('deliveryMans ===> ', deliveryMans);
+    if (deliveryMans.length == 0) {
+      //if there is no delivery man, send notification to the sender 'We are sorry, but there is no delivery man for now. Please try again a little later.'
+      notificationController.sendNotification([clientFcmToken], 'GoDelivery', 'We are sorry, but there is no delivery man for now. Please try again a little later.');
+    } else {
+      //filter by specific radius
+      const filteredDeliveryMans = filterFunction.filterPeopleByRadius(deliveryMans, { specialLat: order.fromX, specialLon: order.fromY });
+      console.log('filteredDeliveryMans list ===> ', filteredDeliveryMans);
+      var fcmTokens = [];
+      if (filteredDeliveryMans.length == 0) {
+        //if the filtered list is zero, broadcast notification to the all delivery mans
+        fcmTokens = deliveryMans.map((person) => person.fcmToken);
+      } else {
+        fcmTokens = filteredDeliveryMans.map((person) => person.fcmToken);
+      }
+      console.log('fcmTokens ==> ', fcmTokens);
+      //broadcast new order created notification to the all available delivery mans
+      notificationController.sendNotification(fcmTokens, 'GoDelivery', 'New order created! Please accept it');
+    }
     res.status(200).send({
       success: true,
       code: 200,
