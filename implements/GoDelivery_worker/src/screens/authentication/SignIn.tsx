@@ -82,15 +82,13 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
                         if (responseData.success) {
                             dispatch(allActions.UserAction.setUser(responseData.data.delivery_man));
                             dispatch(allActions.UserAction.setToken(responseData.data.token))
-                            storeData(responseData.data.client);
+                            storeData(responseData.data.delivery_man);
                             Action.deliveryman.updateFcmToken({ deliverymanID: responseData.data.delivery_man.id, fcmToken: token })
                                 .then((res) => {
                                     const response = res.data;
-                                    console.log('response ===> ', response);
                                     const result = requestLocationPermission();
                                     result.then(res => {
-                                        startBackgroundServiceScheduler();
-                                        console.log('res ===> ', res);
+                                        // startBackgroundServiceScheduler();
                                         if (res) {
                                             navigation.reset({
                                                 index: 0,

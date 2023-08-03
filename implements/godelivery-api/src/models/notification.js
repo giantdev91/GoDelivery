@@ -12,16 +12,20 @@ const Notification = sequelize.define("notification", {
     allowNull: true,
   },
   type: {
-    type: DataTypes.STRING,
-    allowNull: true,
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
   orderID: {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-  clientID: {
+  receiver: {
     type: DataTypes.INTEGER,
-    allowNull: true,
+    allowNull: false,
+  },
+  receiverType: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
 });
 

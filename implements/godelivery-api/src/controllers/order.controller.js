@@ -5,6 +5,16 @@ const { Op } = require("sequelize");
 const Client = require("../models/client");
 const notificationController = require("../common/notification");
 const filterFunction = require("../common/filterWithGeoLocation");
+const {
+  NOTIFICATION_TYPE_ORDER_CREATED,
+  NOTIFICATION_TYPE_ORDER_ASSIGNED,
+  NOTIFICATION_TYPE_ORDER_CANCEL,
+  NOTIFICATION_TYPE_ORDER_CANCEL_BY_DELIVERYMAN,
+  NOTIFICATION_TYPE_ORDER_PROCESSING,
+  NOTIFICATION_TYPE_ORDER_COMPLETED,
+  NOTIFICATION_TYPE_ORDER_FEEDBACK,
+  NOTIFICATION_TYPE_ORDER_CANNOT_CREATE,
+} = require('../common/constant');
 
 exports.create = async (req, res) => {
   try {
@@ -25,24 +35,7 @@ exports.create = async (req, res) => {
       description,
     } = req.body;
 
-    const order = await Order.create({
-      sender: sender,
-      receiver: receiver,
-      from: from,
-      to: to,
-      fromLocationReferBuilding: fromLocationReferBuilding,
-      toLocationReferBuilding: toLocationReferBuilding,
-      fromX: fromX,
-      fromY: fromY,
-      toX: toX,
-      toY: toY,
-      expectationTime: expectationTime,
-      goodsVolumn: goodsVolumn,
-      goodsWeight: goodsWeight,
-      description: description,
-      orderNo: new Date().valueOf().toString()
-    });
-    const client = await Client.findOne({ where: { id: order.sender } });
+    const client = await Client.findOne({ where: { id: sender } });
     const clientFcmToken = client.fcmToken;
     //get all delivery man list with idle status
     const deliveryMans = await Delivery_man.findAll({
@@ -50,19 +43,40 @@ exports.create = async (req, res) => {
     });
     if (deliveryMans.length == 0) {
       //if there is no delivery man, send notification to the sender 'We are sorry, but there is no delivery man for now. Please try again a little later.'
-      notificationController.sendNotification([clientFcmToken], 'GoDelivery', 'We are sorry, but there is no delivery man for now. Please try again a little later.');
+      notificationController.sendNotification([clientFcmToken], 'GoDelivery', 'We are sorry, but there is no delivery man for now. Please try again a little later.', null, [sender], NOTIFICATION_TYPE_ORDER_CANNOT_CREATE);
     } else {
+      // create order
+      const order = await Order.create({
+        sender: sender,
+        receiver: receiver,
+        from: from,
+        to: to,
+        fromLocationReferBuilding: fromLocationReferBuilding,
+        toLocationReferBuilding: toLocationReferBuilding,
+        fromX: fromX,
+        fromY: fromY,
+        toX: toX,
+        toY: toY,
+        expectationTime: expectationTime,
+        goodsVolumn: goodsVolumn,
+        goodsWeight: goodsWeight,
+        description: description,
+        orderNo: new Date().valueOf().toString()
+      });
       //filter by specific radius
       const filteredDeliveryMans = filterFunction.filterPeopleByRadius(deliveryMans, { specialLat: order.fromX, specialLon: order.fromY });
       var fcmTokens = [];
+      var deliverymanIds = [];
       if (filteredDeliveryMans.length == 0) {
         //if the filtered list is zero, broadcast notification to the all delivery mans
         fcmTokens = deliveryMans.map((person) => person.fcmToken);
+        deliverymanIds = deliveryMans.map((person) => person.id);
       } else {
         fcmTokens = filteredDeliveryMans.map((person) => person.fcmToken);
+        deliverymanIds = filteredDeliveryMans.map((person) => person.id);
       }
       //broadcast new order created notification to the all available delivery mans
-      notificationController.sendNotification(fcmTokens, 'GoDelivery', 'New order created! Please accept it');
+      notificationController.sendNotification(fcmTokens, 'GoDelivery', 'New order created! Please accept it', order.id, deliverymanIds, NOTIFICATION_TYPE_ORDER_CREATED);
     }
     res.status(200).send({
       success: true,
@@ -109,7 +123,7 @@ exports.send = async (req, res) => {
       //if the receiver is registered to our system, send notifiction.
       if (receiver) {
         //send notification to receiver
-        notificationController.sendNotification([receiver.fcmToken], 'GoDelivery', `User ${client.phone} is sending goods to you. Our system supporter will deliver it soon.`);
+        notificationController.sendNotification([receiver.fcmToken], 'GoDelivery', `User ${client.phone} is sending goods to you. Our system supporter will deliver it soon.`, order.id, [receiver.id], NOTIFICATION_TYPE_ORDER_PROCESSING);
       }
       res.status(200).send({
         status: true,
@@ -174,10 +188,10 @@ exports.cancel = async (req, res) => {
 
       if (by == 0) {
         // send notification to delivery man
-        notificationController.sendNotification([order.delivery_man.fcmToken], 'GoDelivery', `The order is canceled by the client. Please await until the next order.`);
+        notificationController.sendNotification([order.delivery_man.fcmToken], 'GoDelivery', `The order is canceled by the client. Please await until the next order.`, order.id, [deliverymanID], NOTIFICATION_TYPE_ORDER_CANCEL);
       } else {
         // send notification to sender
-        notificationController.sendNotification([order.client.fcmToken], 'GoDelivery', `The order is canceled by the client. Please await until the next order.`);
+        notificationController.sendNotification([order.client.fcmToken], 'GoDelivery', `The order is canceled by the client. Please await until the next order.`, order.id, [order.sender], NOTIFICATION_TYPE_ORDER_CANCEL_BY_DELIVERYMAN);
       }
 
 
@@ -236,7 +250,7 @@ exports.receive = async (req, res) => {
         }
       })
       //send notification to sender
-      notificationController.sendNotification([sender.fcmToken], 'GoDelivery', `Your order is successfully completed. Our system expects your good feedback.`);
+      notificationController.sendNotification([sender.fcmToken], 'GoDelivery', `Your order is successfully completed. Our system expects your good feedback.`, order.id, [sender.id], NOTIFICATION_TYPE_ORDER_COMPLETED);
 
       res.status(200).send({
         status: true,
@@ -266,6 +280,18 @@ exports.rate = async (req, res) => {
       where: {
         id: orderID,
       },
+      include: [
+        {
+          model: Delivery_man,
+          as: 'delivery_man',
+          attributes: ['id', 'name', 'phone', 'fcmToken'], // Specify the attributes you want to retrieve from the delivery man
+        },
+        {
+          model: Client,
+          as: "client",
+          attributes: ['id', 'name', 'phone', 'fcmToken']
+        },
+      ],
     });
     if (order) {
       await Order.update(
@@ -276,6 +302,9 @@ exports.rate = async (req, res) => {
           },
         }
       );
+
+      //send notification to deliveryman
+      notificationController.sendNotification([order.delivery_man.fcmToken], 'GoDelivery', `Customer ${order.client.name} left feedback for you. You can check it on your screen.`, order.id, [order.delivery_man], NOTIFICATION_TYPE_ORDER_FEEDBACK);
 
       res.status(200).send({
         status: true,

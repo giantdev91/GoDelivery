@@ -27,9 +27,10 @@ const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
 
     const checkUserLoginStatus = async () => {
         const userDataStr = await AsyncStorage.getItem('USER_DATA');
+        console.log('user Data ==>', userDataStr);
         if (userDataStr) {
             const userData = JSON.parse(userDataStr);
-            Action.client.getById({ id: userData.id })
+            Action.deliveryman.getById(userData.id)
                 .then(response => {
                     const responseData = response.data;
                     dispatch(allActions.UserAction.setUser(responseData.data));

@@ -12,7 +12,13 @@ const updateFcmToken = async (param: UpdateFcmTokenParam) => {
     return response;
 }
 
+const getById = async (id: string) => {
+    const response = await APIService.get(`/deliveryman/${id}`);
+    return response;
+}
+
 export default {
     updateLocation,
-    updateFcmToken
+    updateFcmToken,
+    getById
 }
