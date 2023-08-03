@@ -48,16 +48,12 @@ exports.create = async (req, res) => {
     const deliveryMans = await Delivery_man.findAll({
       where: { status: 0 }
     });
-
-    console.log('client info ===> ', client);
-    console.log('deliveryMans ===> ', deliveryMans);
     if (deliveryMans.length == 0) {
       //if there is no delivery man, send notification to the sender 'We are sorry, but there is no delivery man for now. Please try again a little later.'
       notificationController.sendNotification([clientFcmToken], 'GoDelivery', 'We are sorry, but there is no delivery man for now. Please try again a little later.');
     } else {
       //filter by specific radius
       const filteredDeliveryMans = filterFunction.filterPeopleByRadius(deliveryMans, { specialLat: order.fromX, specialLon: order.fromY });
-      console.log('filteredDeliveryMans list ===> ', filteredDeliveryMans);
       var fcmTokens = [];
       if (filteredDeliveryMans.length == 0) {
         //if the filtered list is zero, broadcast notification to the all delivery mans
@@ -65,7 +61,6 @@ exports.create = async (req, res) => {
       } else {
         fcmTokens = filteredDeliveryMans.map((person) => person.fcmToken);
       }
-      console.log('fcmTokens ==> ', fcmTokens);
       //broadcast new order created notification to the all available delivery mans
       notificationController.sendNotification(fcmTokens, 'GoDelivery', 'New order created! Please accept it');
     }
@@ -76,7 +71,6 @@ exports.create = async (req, res) => {
       data: order,
     });
   } catch (error) {
-    console.log('error ===> ', error);
     res.status(200).send({
       success: false,
       code: 500,
@@ -88,20 +82,35 @@ exports.create = async (req, res) => {
 exports.send = async (req, res) => {
   try {
     const { orderID } = req.body;
-    const order = Order.findOne({
+    const order = await Order.findOne({
       where: {
         id: orderID,
       },
     });
     if (order) {
+      //update order status to processing
       await Order.update(
-        { status: 3 }, //processing
+        { status: 2 }, //processing
         {
           where: {
-            id: orderID,
+            id: order.id,
           },
         }
       );
+
+      //get client info
+      const client = await Client.findOne({
+        where: { id: order.sender },
+      });
+      // get receiver info
+      const receiver = await Client.findOne({
+        where: { phone: order.receiver },
+      })
+      //if the receiver is registered to our system, send notifiction.
+      if (receiver) {
+        //send notification to receiver
+        notificationController.sendNotification([receiver.fcmToken], 'GoDelivery', `User ${client.phone} is sending goods to you. Our system supporter will deliver it soon.`);
+      }
       res.status(200).send({
         status: true,
         code: 200,
@@ -126,30 +135,52 @@ exports.send = async (req, res) => {
 exports.cancel = async (req, res) => {
   try {
     const { orderID, cancelReason, by, deliverymanID } = req.body;
-    const order = Order.findOne({
+    const order = await Order.findOne({
       where: {
         id: orderID,
       },
+      include: [
+        {
+          model: Delivery_man,
+          as: 'delivery_man',
+          attributes: ['id', 'name', 'phone', 'fcmToken'], // Specify the attributes you want to retrieve from the delivery man
+        },
+        {
+          model: Client,
+          as: "client",
+          attributes: ['id', 'name', 'phone', 'fcmToken']
+        },
+      ],
     });
     if (order) {
+      // change order status to canceled.
       await Order.update(
-        { cancelReason: cancelReason, canceledBy: by, status: 5 },
+        { cancelReason: cancelReason, canceledBy: by, status: 4 },
         {
           where: {
             id: orderID,
           },
         }
       );
-      if (by == 1) {
-        await Delivery_man.update(
-          { status: 0 },
-          {
-            where: {
-              id: deliverymanID,
-            },
-          }
-        );
+      // change delivery man status to idle
+      await Delivery_man.update(
+        { status: 0 },
+        {
+          where: {
+            id: deliverymanID,
+          },
+        }
+      );
+
+      if (by == 0) {
+        // send notification to delivery man
+        notificationController.sendNotification([order.delivery_man.fcmToken], 'GoDelivery', `The order is canceled by the client. Please await until the next order.`);
+      } else {
+        // send notification to sender
+        notificationController.sendNotification([order.client.fcmToken], 'GoDelivery', `The order is canceled by the client. Please await until the next order.`);
       }
+
+
       res.status(200).send({
         status: true,
         code: 200,
@@ -173,29 +204,40 @@ exports.cancel = async (req, res) => {
 
 exports.receive = async (req, res) => {
   try {
-    const { orderID, deliverymanID } = req.body;
-    const order = Order.findOne({
+    const { orderID } = req.body;
+    const order = await Order.findOne({
       where: {
         id: orderID,
       },
     });
     if (order) {
+      //update order status to complete
       await Order.update(
-        { status: 4 },
+        { status: 3 },
         {
           where: {
             id: orderID,
           },
         }
       );
+      //update delivery man status to idle
       await Delivery_man.update(
         { status: 0 },
         {
           where: {
-            id: deliverymanID,
+            id: order.deliverymanID,
           },
         }
       );
+      //get sender detail
+      const sender = await Client.findOne({
+        where: {
+          id: order.sender
+        }
+      })
+      //send notification to sender
+      notificationController.sendNotification([sender.fcmToken], 'GoDelivery', `Your order is successfully completed. Our system expects your good feedback.`);
+
       res.status(200).send({
         status: true,
         code: 200,
@@ -219,7 +261,7 @@ exports.receive = async (req, res) => {
 
 exports.rate = async (req, res) => {
   try {
-    const { orderID, rate } = req.body;
+    const { orderID, rate, feedbackTitle, feedbackContent } = req.body;
     const order = Order.findOne({
       where: {
         id: orderID,
@@ -227,7 +269,7 @@ exports.rate = async (req, res) => {
     });
     if (order) {
       await Order.update(
-        { rate: rate },
+        { rate: rate, feedbackTitle: feedbackTitle, feedbackContent: feedbackContent },
         {
           where: {
             id: orderID,
@@ -273,7 +315,6 @@ exports.acceptRequest = async (req, res) => {
           },
         }
       );
-      console.log("order", order);
       res.status(200).send({
         status: true,
         code: 200,
@@ -402,6 +443,12 @@ exports.orderList = async (req, res) => {
     // Find orders that match the provided criteria
     const orders = await Order.findAll({
       where: whereCondition,
+      include: [
+        {
+          model: Client,
+          as: "client",
+        },
+      ],
     });
     res.status(200).send({
       status: true,
@@ -409,7 +456,54 @@ exports.orderList = async (req, res) => {
       message: "orderlist success",
       data: orders,
     });
-    console.log("Orders matching the criteria:", orders);
+  } catch (error) {
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
+  } finally {
+    // Close the database connection when done
+  }
+};
+
+exports.inProgressList = async (req, res) => {
+  try {
+    const { sender, receiver } = req.body;
+
+    // Build the where condition based on the provided criteria
+    const whereCondition = {
+      [Op.and]: [
+        {
+          status: {
+            [Op.lt]: 3
+          }
+        },
+        {
+          [Op.or]: [
+            { sender: sender },
+            { receiver: receiver }
+          ]
+        }
+      ]
+    };
+    // Find orders that match the provided criteria
+    const orders = await Order.findAll({
+      where: whereCondition,
+      include: [
+        {
+          model: Delivery_man,
+          as: 'delivery_man',
+          attributes: ['id', 'name', 'phone'], // Specify the attributes you want to retrieve from the delivery man
+        },
+      ],
+    });
+    res.status(200).send({
+      status: true,
+      code: 200,
+      message: "orderlist success",
+      data: orders,
+    });
   } catch (error) {
     res.status(200).send({
       success: false,

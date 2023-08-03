@@ -23,6 +23,8 @@ router.route("/totalearning").post(asyncHandler(orderController.totalEarning));
 
 router.route("/dailycount").post(asyncHandler(orderController.dailyCount));
 
-router.route("/orderlist").post(asyncHandler(orderController.orderList));
+router.route("/list").post(asyncHandler(orderController.orderList));
+
+router.route("/inprogress").post(asyncHandler(orderController.inProgressList));
 
 module.exports = router;

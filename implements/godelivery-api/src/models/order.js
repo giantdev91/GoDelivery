@@ -10,7 +10,7 @@ const Order = sequelize.define("order", {
     allowNull: true,
   },
   receiver: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: true,
   },
   from: {
@@ -87,6 +87,14 @@ const Order = sequelize.define("order", {
   },
   rate: {
     type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  feedbackTitle: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  feedbackContent: {
+    type: DataTypes.STRING,
     allowNull: true,
   },
   price: {
