@@ -89,6 +89,14 @@ const Order = sequelize.define("order", {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },
+  feedbackTitle: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  feedbackContent: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   price: {
     type: DataTypes.DOUBLE,
     allowNull: true,

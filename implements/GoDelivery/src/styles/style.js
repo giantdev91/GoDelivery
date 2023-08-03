@@ -38,7 +38,7 @@ const GlobalStyles = StyleSheet.create({
     },
     primaryLabel: {
         color: GoDeliveryColors.white,
-        fontSize: 17,
+        fontSize: 14,
         fontWeight: "400",
     },
     primaryEmphasizeLabel: {

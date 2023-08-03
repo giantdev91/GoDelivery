@@ -27,6 +27,24 @@ export type InProgressParam = {
     receiver: string,
 }
 
+export type OrderUpdateParam = {
+    orderID: number,
+}
+
+export type LeaveFeedbackParam = {
+    orderID: string,
+    rate: number,
+    feedbackTitle: string,
+    feedbackContent: string,
+}
+
+export type CancelOrderParam = {
+    orderID: string,
+    cancelReason: string,
+    by: number,
+    deliverymanID: string
+}
+
 export type GeoCoordinates = {
     latitude: number,
     longitude: number,

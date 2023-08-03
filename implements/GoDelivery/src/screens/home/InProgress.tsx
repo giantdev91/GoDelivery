@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, Image, ScrollView, Platform, Alert, Linking } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { StyleSheet, TouchableOpacity, View, Text, Image, ScrollView, Platform, Alert, Linking, ActivityIndicator } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import GlobalStyles from '../../styles/style';
 import MenuButton from '../../components/MenuButton';
@@ -15,11 +16,12 @@ interface ScreenProps {
 interface ControlButtonProps {
     handler: any,
     children: any,
+    color?: string,
 }
 
 const ControlButton = (props: ControlButtonProps) => (
     <TouchableOpacity
-        style={[GlobalStyles.primaryButton, GlobalStyles.shadowProp, styles.orderControlButton]}
+        style={[GlobalStyles.primaryButton, GlobalStyles.shadowProp, styles.orderControlButton, props.color && { backgroundColor: props.color }]}
         onPress={props.handler}
     >
         <Text style={[GlobalStyles.primaryLabel]}>{props.children}</Text>
@@ -37,20 +39,58 @@ const CallButton = (props: ControlButtonProps) => (
 
 const InProgressScreen = ({ navigation }: ScreenProps): JSX.Element => {
     const [orders, setOrders] = useState([]);
+    const [activityIndicator, setActivityIndicator] = useState(false);
 
     const client = store.getState().CurrentUser.user;
     const id = client.id;
     const phone = client.phone;
 
-    const handleSend = () => {
+    const handleSend = (orderID: number) => {
+        setActivityIndicator(true);
+        Action.order.sendGoods({ orderID: orderID })
+            .then((res) => {
+                const response = res.data;
+                loadInProgressOrders();
+                setActivityIndicator(false);
+            }).catch((err) => {
+                console.log("error: ", err);
+                setActivityIndicator(false);
+            })
+    }
+
+    const handleCancel = (index: number) => {
+        setActivityIndicator(true);
+        const param = {
+            orderID: orders[index].id,
+            cancelReason: '',
+            by: 0,
+            deliverymanID: orders[index].deliverymanID
+        }
+        Action.order.cancelOrder(param)
+            .then((res) => {
+                const response = res.data;
+                loadInProgressOrders();
+                setActivityIndicator(false);
+            }).catch((err) => {
+                console.log("error: ", err);
+            })
 
     }
 
-    const handleReceive = () => {
-
+    const handleReceive = (orderID: number) => {
+        setActivityIndicator(true);
+        Action.order.receiveGoods({ orderID: orderID })
+            .then((res) => {
+                const response = res.data;
+                loadInProgressOrders();
+                setActivityIndicator(false);
+            }).catch((err) => {
+                console.log("error: ", err);
+                setActivityIndicator(false);
+            })
     }
 
-    const handleCall = (phoneNumber) => {
+    const handleCall = (phoneNumber: string) => {
         // Use the `tel:` scheme to initiate a phone call
         Linking.openURL(`tel:${phoneNumber}`);
     }
@@ -125,9 +165,12 @@ const InProgressScreen = ({ navigation }: ScreenProps): JSX.Element => {
         }
     }
 
-    useEffect(() => {
-        loadInProgressOrders();
-    }, []);
+    // Use useFocusEffect to fetch orders whenever the screen gains focus
+    useFocusEffect(
+        useCallback(() => {
+            loadInProgressOrders();
+        }, [])
+    );
 
     return (
         <View style={[GlobalStyles.container]}>
@@ -156,10 +199,16 @@ const InProgressScreen = ({ navigation }: ScreenProps): JSX.Element => {
                                 <View style={{ width: 120, flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'space-between', height: '100%' }}>
                                     <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
                                         {
-                                            (order["status"] == 1) && (<ControlButton handler={handleSend}>SEND</ControlButton>)
+                                            (order["status"] == 1) && (
+                                                <View style={{ flexDirection: 'row', }}>
+                                                    <ControlButton handler={() => { handleSend(order["id"]) }}>SEND</ControlButton>
+                                                    <View style={{ marginLeft: 10 }}></View>
+                                                    <ControlButton handler={() => { handleCancel(index) }} color='gray'>CANCEL</ControlButton>
+                                                </View>
+                                            )
                                         }
                                         {
-                                            (order["status"] == 2) && (order["receiver"] == phone) && (<ControlButton handler={handleReceive}>RECEIVE</ControlButton>)
+                                            (order["status"] == 2) && (order["receiver"] == phone) && (<ControlButton handler={() => { handleReceive(order["id"]) }}>RECEIVE</ControlButton>)
                                         }
                                     </View>
                                     <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
@@ -171,8 +220,22 @@ const InProgressScreen = ({ navigation }: ScreenProps): JSX.Element => {
                         </TouchableOpacity>
                     ))
                 }
-
+                {
+                    orders.length == 0 && (
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: 40, marginTop: 60, paddingVertical: 20 }}>
+                            <Icons name="cart-outline" size={120} color={'#c7c7c7'} />
+                            <Text style={{ textAlign: 'center', fontSize: 20, color: GoDeliveryColors.secondary, marginTop: 50 }}>No history yet</Text>
+                            <Text style={{ textAlign: 'center', fontSize: 18, marginTop: 15, marginBottom: 100 }}>Hit the orange button down below to Create an order</Text>
+                            <PrimaryButton buttonText='Start Ordering' handler={() => { navigation.navigate('Main') }} />
+                        </View>
+                    )
+                }
             </ScrollView >
+            {
+                activityIndicator && (
+                    <ActivityIndicator style={{ position: 'absolute', justifyContent: 'center', alignSelf: 'center', bottom: 200 }} size="large" />
+                )
+            }
         </View >
     )
 }
@@ -221,7 +284,7 @@ const styles = StyleSheet.create({
         }),
     },
     orderControlButton: {
-        width: 100,
+        width: 80,
         height: 30,
     },
     callButton: {
