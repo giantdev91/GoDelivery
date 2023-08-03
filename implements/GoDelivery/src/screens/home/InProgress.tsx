@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, Image, ScrollView, Platform } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, Image, ScrollView, Platform, Alert, Linking } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import GlobalStyles from '../../styles/style';
 import MenuButton from '../../components/MenuButton';
@@ -50,27 +50,46 @@ const InProgressScreen = ({ navigation }: ScreenProps): JSX.Element => {
 
     }
 
-    const handleCall = () => {
-
+    const handleCall = (phoneNumber) => {
+        // Use the `tel:` scheme to initiate a phone call
+        Linking.openURL(`tel:${phoneNumber}`);
     }
 
-    const handleGoToDetail = () => {
-        navigation.navigate('InProgressDetail');
+    const handleGoToDetail = (index: number) => {
+        const orderDetail = orders[index];
+        if (orderDetail["status"] == 0) {
+            Alert.alert("This order didn't assign yet.", "There is no tracking info.");
+        } else {
+            const senderLocation = {
+                latitude: parseFloat(orderDetail["fromX"]),
+                longitude: parseFloat(orderDetail["fromY"]),
+            };
+
+            const receiverLocation = {
+                latitude: parseFloat(orderDetail["toX"]),
+                longitude: parseFloat(orderDetail["toY"]),
+            }
+            const param = {
+                senderLocation: senderLocation,
+                receiverLocation: receiverLocation,
+                deliverymanID: orderDetail["deliverymanID"],
+                orderStatus: orderDetail["status"],
+            };
+            navigation.navigate('InProgressDetail', param);
+        }
     }
 
     const loadInProgressOrders = () => {
-
         Action.order.inprogressOrders({ sender: id, receiver: phone })
             .then((res) => {
                 const response = res.data;
-                console.log('response ===> ', response);
                 setOrders(response.data);
             }).catch((err) => {
                 console.log("error: ", err);
             })
     }
 
-    const calculateSpentTime = (timestamp) => {
+    const calculateSpentTime = (timestamp: string) => {
         const targetDateTime = new Date(timestamp);
         const currentDateTime = new Date();
         // Calculate the time difference in milliseconds
@@ -81,8 +100,7 @@ const InProgressScreen = ({ navigation }: ScreenProps): JSX.Element => {
         return `${hours} h ${minutes} mins`;
     }
 
-    const renderCreatedAtTime = (timestamp) => {
-        console.log('timestamp ==> ', timestamp);
+    const renderCreatedAtTime = (timestamp: string) => {
         const originalDate = new Date(timestamp);
         const formattedDate = originalDate.toLocaleString("en-US", {
             year: "numeric",
@@ -97,7 +115,6 @@ const InProgressScreen = ({ navigation }: ScreenProps): JSX.Element => {
     }
 
     const renderOrderStatus = (status: number) => {
-        console.log('status ==> ', status);
         switch (status) {
             case 0:
                 return " created";
@@ -120,35 +137,35 @@ const InProgressScreen = ({ navigation }: ScreenProps): JSX.Element => {
             </View>
             <ScrollView style={styles.scrollArea}>
                 {
-                    orders.map((order) => (
-                        <TouchableOpacity onPress={handleGoToDetail} key={order.id}>
+                    orders.map((order, index) => (
+                        <TouchableOpacity onPress={() => { handleGoToDetail(index); }} key={order["id"]}>
                             <View style={styles.dataCard}>
                                 <View style={{ justifyContent: 'space-between', alignItems: 'flex-start', height: '100%' }}>
-                                    <Text style={GlobalStyles.textBold}>Order {order.orderNo}</Text>
-                                    <Text style={GlobalStyles.text}>spent time {calculateSpentTime(order.createdAt)}</Text>
-                                    <Text style={GlobalStyles.text}>delivery man {order?.delivery_man?.phone}</Text>
+                                    <Text style={GlobalStyles.textBold}>Order {order["orderNo"]}</Text>
+                                    <Text style={GlobalStyles.text}>spent time {calculateSpentTime(order["createdAt"])}</Text>
+                                    <Text style={GlobalStyles.text}>delivery man {order["delivery_man"]?.phone}</Text>
                                     <Text style={GlobalStyles.text}>status
                                         <Text style={[
                                             GlobalStyles.textDisable,
-                                            order.status == 0 ? GlobalStyles.diabledColor :
-                                                order.status == 1 ? GlobalStyles.assignedColor : GlobalStyles.processingColor
+                                            order["status"] == 0 ? GlobalStyles.diabledColor :
+                                                order["status"] == 1 ? GlobalStyles.assignedColor : GlobalStyles.processingColor
                                         ]}>{
-                                                renderOrderStatus(order.status)
+                                                renderOrderStatus(order["status"])
                                             }</Text></Text>
                                 </View>
                                 <View style={{ width: 120, flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'space-between', height: '100%' }}>
                                     <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
                                         {
-                                            (order.status == 1) && (<ControlButton handler={handleSend}>SEND</ControlButton>)
+                                            (order["status"] == 1) && (<ControlButton handler={handleSend}>SEND</ControlButton>)
                                         }
                                         {
-                                            (order.status == 2) && (order.receiver == phone) && (<ControlButton handler={handleReceive}>RECEIVE</ControlButton>)
+                                            (order["status"] == 2) && (order["receiver"] == phone) && (<ControlButton handler={handleReceive}>RECEIVE</ControlButton>)
                                         }
                                     </View>
                                     <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-                                        <CallButton handler={handleCall} ><Icons name='call-outline' size={20} color={GoDeliveryColors.white} /></CallButton>
+                                        {(order["status"] > 0) && (<CallButton handler={() => { handleCall(order["delivery_man"]?.phone) }} ><Icons name='call-outline' size={20} color={GoDeliveryColors.white} /></CallButton>)}
                                     </View>
-                                    <Text style={GlobalStyles.textDisable}>{renderCreatedAtTime(order.createdAt)}</Text>
+                                    <Text style={GlobalStyles.textDisable}>{renderCreatedAtTime(order["createdAt"])}</Text>
                                 </View>
                             </View>
                         </TouchableOpacity>

@@ -329,3 +329,25 @@ exports.updateLocation = async (req, res) => {
     });
   }
 };
+
+exports.getDeliveryManById = async (req, res) => {
+  try {
+    const deliverymanID = req.params.id;
+    console.log("deliverymanID:", deliverymanID);
+    const deliveryman = await Delivery_man.findOne({
+      where: { id: deliverymanID },
+    });
+    res.status(200).send({
+      success: true,
+      code: 200,
+      message: "Get deliveryman Detail Success",
+      data: deliveryman,
+    });
+  } catch (error) {
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
+  }
+};

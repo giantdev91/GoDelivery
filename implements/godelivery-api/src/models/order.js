@@ -10,7 +10,7 @@ const Order = sequelize.define("order", {
     allowNull: true,
   },
   receiver: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: true,
   },
   from: {
