@@ -11,7 +11,7 @@ interface DrawerMenuProps {
 
 const DrawerMenu = ({ navigation }: DrawerMenuProps): JSX.Element => {
     const logout = async () => {
-        await AsyncStorage.removeItem('USER_DATA');
+        await AsyncStorage.removeItem('CLIENT_DATA');
         navigation.reset({
             index: 0,
             routes: [{ name: 'Splash', params: { initialIndex: 0 } }],

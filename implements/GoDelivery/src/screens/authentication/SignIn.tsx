@@ -64,7 +64,7 @@ const SignInRoute = (props: SceneProps) => {
 
     const storeData = async (userData: any) => {
         try {
-            await AsyncStorage.setItem('USER_DATA', JSON.stringify(userData));
+            await AsyncStorage.setItem('CLIENT_DATA', JSON.stringify(userData));
         } catch {
             console.log('error occured!');
         }

@@ -133,6 +133,7 @@ const ConfirmTab = (props: TabSceneProps) => {
             Action.order.createOrder(param)
                 .then((res) => {
                     const response = res.data;
+                    console.log('res ===> ', response);
                     setActivityIndicator(false);
                     if (response.success) {
                         // props.navigation.reset({

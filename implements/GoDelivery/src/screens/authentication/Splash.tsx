@@ -26,7 +26,7 @@ const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
     }
 
     const checkUserLoginStatus = async () => {
-        const userDataStr = await AsyncStorage.getItem('USER_DATA');
+        const userDataStr = await AsyncStorage.getItem('CLIENT_DATA');
         if (userDataStr) {
             const userData = JSON.parse(userDataStr);
             Action.client.getById({ id: userData.id })
@@ -52,7 +52,7 @@ const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
 
     const storeData = async (userData: any) => {
         try {
-            await AsyncStorage.setItem('USER_DATA', JSON.stringify(userData));
+            await AsyncStorage.setItem('CLIENT_DATA', JSON.stringify(userData));
         } catch {
             console.log('error occured!');
         }
