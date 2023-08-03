@@ -270,6 +270,12 @@ exports.deliverymanList = async (req, res) => {
     // Find orders that match the provided criteria
     const deliverymans = await Delivery_man.findAll({
       where: whereCondition,
+      include: [
+        {
+          model: Order,
+          as: "orders",
+        },
+      ],
     });
     res.status(200).send({
       success: true,
@@ -289,8 +295,8 @@ exports.deliverymanList = async (req, res) => {
 exports.updateLocation = async (req, res) => {
   try {
     const { deliverymanID, locationLatitude, locationLongitude } = req.body;
-    console.log('latitude ==> ', locationLatitude);
-    console.log('longitude ==> ', locationLongitude);
+    console.log("latitude ==> ", locationLatitude);
+    console.log("longitude ==> ", locationLongitude);
 
     const deliveryman = await Delivery_man.findOne({
       where: {
@@ -304,7 +310,10 @@ exports.updateLocation = async (req, res) => {
 
       // Update the status column in the database
       await Delivery_man.update(
-        { locationLatitude: locationLatitude, locationLongitude: locationLongitude },
+        {
+          locationLatitude: locationLatitude,
+          locationLongitude: locationLongitude,
+        },
         {
           where: { id: deliverymanID },
         }
