@@ -88,7 +88,7 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
                                     const response = res.data;
                                     const result = requestLocationPermission();
                                     result.then(res => {
-                                        // startBackgroundServiceScheduler();
+                                        startBackgroundServiceScheduler();
                                         if (res) {
                                             navigation.reset({
                                                 index: 0,

@@ -217,22 +217,45 @@ exports.updateState = async (req, res) => {
       },
     });
 
-    if (deliveryman) {
-      // If the client is found, delete it from the database
-      const updatedStatus = deliveryman.status === 1 ? 0 : 1;
+    const orders = await Order.findOne({
+      where: {
+        [Op.and]: [
+          { deliverymanID: deliverymanID },
+          {
+            [Op.or]: [
+              { status: 1 },
+              { status: 2 },
+            ]
+          }
+        ]
+      },
+    });
 
-      // Update the status column in the database
-      await Delivery_man.update(
-        { status: updatedStatus },
-        {
-          where: { id: deliverymanID },
-        }
-      );
-      res.status(200).send({
-        success: true,
-        code: 200,
-        message: "Status update success",
-      });
+    if (deliveryman) {
+      if (orders) {
+        res.status(200).send({
+          success: false,
+          code: 200,
+          message: "There is an order assigned to you. Please complete your work.",
+        });
+      } else {
+        // If the client is found, delete it from the database
+        const updatedStatus = deliveryman.status === 1 ? 0 : 1;
+
+        // Update the status column in the database
+        await Delivery_man.update(
+          { status: updatedStatus },
+          {
+            where: { id: deliverymanID },
+          }
+        );
+        res.status(200).send({
+          success: true,
+          code: 200,
+          message: "Status update success",
+        });
+      }
+
     } else {
       res.status(200).send({
         success: false,

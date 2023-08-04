@@ -28,6 +28,15 @@ export type UpdateLocationParam = {
     locationLongitude: string,
 }
 
+export type CreatedOrderListParam = {
+    deliverymanID: string
+}
+
+export type AcceptRequestParam = {
+    orderID: number,
+    deliverymanID: number,
+}
+
 export type GeoCoordinates = {
     latitude: number,
     longitude: number,
@@ -48,4 +57,9 @@ export type TabSceneProps = {
     fromLocation?: LocationInfoType,
     toLocation?: LocationInfoType,
     navigation?: any,
+}
+
+export type ControlButtonProps = {
+    handler: any,
+    children: any,
 }

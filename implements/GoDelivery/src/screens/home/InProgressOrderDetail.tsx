@@ -3,11 +3,10 @@ import { StyleSheet, TouchableOpacity, View, Text, Image, Dimensions, Linking } 
 import Icons from 'react-native-vector-icons/Ionicons';
 import GlobalStyles from '../../styles/style';
 import HeaderBar from '../../components/HeaderBar';
-import CustomizedInput from '../../components/CustomizedInput';
-import PrimaryButton from '../../components/PrimaryButton';
 import GoDeliveryColors from '../../styles/colors';
 import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
+import Action from '../../service';
 
 interface ScreenProps {
     navigation: any;
@@ -31,6 +30,12 @@ interface DeliveryManDetailDialogProps {
     phone: string,
 }
 
+const MAP_WIDTH = Dimensions.get('screen').width - 40;
+const MAP_HEIGHT = 350;
+const ASPECT_RATIO = MAP_WIDTH / MAP_HEIGHT;
+const LATITUDE_DELTA = 0.01; //Very high zoom level
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+
 const DistanceComponent = (props: DistanceComponentProps) => (
     <View style={[styles.distanceComponent, GlobalStyles.shadowProp]}>
         <Icons name='locate-outline' size={24} color={GoDeliveryColors.disabled} />
@@ -47,15 +52,6 @@ const ControlButton = (props: ControlButtonProps) => (
         <Text style={[GlobalStyles.primaryLabel]}>{props.children}</Text>
     </TouchableOpacity>
 )
-
-const MAP_WIDTH = Dimensions.get('screen').width - 40;
-const MAP_HEIGHT = 350;
-const ASPECT_RATIO = MAP_WIDTH / MAP_HEIGHT;
-const LATITUDE_DELTA = 0.01; //Very high zoom level
-const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-import Action from '../../service';
-
-
 
 const DeliveryManDetailDialog = (props: DeliveryManDetailDialogProps) => {
     const handleCall = () => {
@@ -171,6 +167,9 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
                     apikey={"AIzaSyCNl5jl7Zk09SMHDPHQI4j-6mfu3Jg0bdg"} // insert your API Key here
                     strokeWidth={4}
                     strokeColor={GoDeliveryColors.primary}
+                    onReady={result => {
+                        setEstimationTime(result.duration.toString());
+                    }}
                 />)}
                 {orderStatus == 2 && (<MapViewDirections
                     origin={deliverymanPosition}

@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import GlobalStyles from '../../styles/style';
-import { StyleSheet, TouchableOpacity, View, Text, ScrollView, Platform } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, ScrollView, Platform, Alert, Dimensions, Image } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import GoDeliveryColors from '../../styles/colors';
 import MenuButton from '../../components/MenuButton';
 import { Switch } from 'react-native-switch';
+import { useFocusEffect } from '@react-navigation/native';
+import Action from '../../service';
+import store from '../../redux/store';
+
+import { GeoCoordinates } from "../../type";
+import OrderDetail from './InProgressOrderDetail';
 
 interface ScreenProps {
     navigation: any;
@@ -12,10 +18,66 @@ interface ScreenProps {
 
 const HomeScreen = ({ navigation }: ScreenProps): JSX.Element => {
     const [deliverymanStatus, setDeliverymanStatus] = useState(false);
+    const [orders, setOrders] = useState([]);
 
-    const handleNewOrder = () => {
-        navigation.navigate('NewOrderCreate');
+    const deliverymanID = store.getState().CurrentUser.user.id;
+
+    const fetchCreatedOrderList = () => {
+        Action.order.createdOrderList({ deliverymanID: deliverymanID })
+            .then((res) => {
+                const response = res.data;
+                setOrders(response.data);
+            }).catch((err) => {
+                console.log("error: ", err);
+            })
     }
+
+    const handleAccept = (orderID: number) => {
+        Action.order.acceptOrder({ orderID: orderID, deliverymanID: deliverymanID })
+            .then((res) => {
+                const response = res.data;
+                Alert.alert("GoDelivery", response.message);
+                fetchCreatedOrderList();
+            }).catch((err) => {
+                console.log("error: ", err);
+            });
+    }
+
+    const handleSwitch = (val: boolean) => {
+        Action.deliveryman.updateDeliverymanStatus({ deliverymanID: deliverymanID })
+            .then((res) => {
+                const response = res.data;
+                if (response.success) {
+                    fetchCreatedOrderList();
+                } else {
+                    Alert.alert("GoDelivery", response.message);
+                    setDeliverymanStatus(true);
+                }
+            }).catch((err) => {
+                console.log("error: ", err);
+            })
+        setDeliverymanStatus(val);
+    }
+
+    const checkDeliverymanStatus = () => {
+        Action.deliveryman.getById(deliverymanID)
+            .then((res) => {
+                const response = res.data;
+                setDeliverymanStatus(response.data.status == 1);
+                // setDeliverymanPosition({ latitude: parseFloat(response.data.locationLatitude), longitude: parseFloat(response.data.locationLongitude) })
+            }).catch((err) => {
+                console.log("error: ", err);
+            })
+    }
+
+    // Use useFocusEffect to fetch orders whenever the screen gains focus
+    useFocusEffect(
+        useCallback(() => {
+            fetchCreatedOrderList();
+            checkDeliverymanStatus();
+        }, [])
+    );
+
     return (
         <View style={[GlobalStyles.container]}>
             <MenuButton navigation={navigation} />
@@ -26,7 +88,7 @@ const HomeScreen = ({ navigation }: ScreenProps): JSX.Element => {
                     <Text style={styles.headerTitle}>Status</Text>
                     <Switch
                         value={deliverymanStatus}
-                        onValueChange={(val) => setDeliverymanStatus(val)}
+                        onValueChange={(val) => { handleSwitch(val); }}
                         activeText={'work'}
                         inActiveText={'free'}
                         circleSize={30}
@@ -49,60 +111,33 @@ const HomeScreen = ({ navigation }: ScreenProps): JSX.Element => {
                 </View>
             </View>
             <ScrollView style={{ padding: 10, marginBottom: 20 }}>
-                <TouchableOpacity >
-                    <View style={styles.dataCard}>
-                        <Text style={[GlobalStyles.textDisable]}>Order No 123456789</Text>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
-                            <Text style={[GlobalStyles.textBold, { fontSize: 18, fontWeight: 'bold' }]}>15039287830</Text>
-                            <Text style={[GlobalStyles.textBold]}>Jean Martin</Text>
-                        </View>
-                        <Text style={GlobalStyles.textDisable} numberOfLines={2} ellipsizeMode="tail" >
-                            6, Biskupia, Ostrów Tumski, Osiedle Stare Miasto, Wrocław, województwo dolnośląskie, 50-148, Polska
-                        </Text>
-                        <Text style={GlobalStyles.textDisable} numberOfLines={2} ellipsizeMode="tail" >
-                            80, Podwale, Trójkąt, Przedmieście Oławskie, Osiedle Przedmieście Oławskie, Wrocław, województwo dolnośląskie, 50-449, Polska
-                        </Text>
-                        <TouchableOpacity style={styles.acceptBtn}>
-                            <Text style={[GlobalStyles.primaryLabel, { fontSize: 14, fontWeight: 'bold' }]}>ACCEPT</Text>
+                {
+                    !deliverymanStatus && orders.map((order, index) => (
+                        <TouchableOpacity key={index} onPress={() => { handleAccept(order["id"]) }}>
+                            <View style={styles.dataCard}>
+                                <Text style={[GlobalStyles.textDisable]}>Order No {order["orderNo"]}</Text>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
+                                    <Text style={[GlobalStyles.textBold, { fontSize: 18, fontWeight: 'bold' }]}>{order["client"]["phone"]}</Text>
+                                    <TouchableOpacity></TouchableOpacity>
+                                    <Text style={[GlobalStyles.textBold]}>{order["client"]["name"]}</Text>
+                                </View>
+                                <Text style={GlobalStyles.textDisable} numberOfLines={2} ellipsizeMode="tail" >
+                                    {order["from"]}
+                                </Text>
+                                <Text style={GlobalStyles.textDisable} numberOfLines={2} ellipsizeMode="tail" >
+                                    {order["to"]}
+                                </Text>
+                                <TouchableOpacity style={styles.acceptBtn} onPress={() => { handleAccept(order["id"]) }}>
+                                    <Text style={[GlobalStyles.primaryLabel, { fontSize: 14, fontWeight: 'bold' }]}>ACCEPT</Text>
+                                </TouchableOpacity>
+                            </View>
                         </TouchableOpacity>
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity >
-                    <View style={styles.dataCard}>
-                        <Text style={[GlobalStyles.textDisable]}>Order No 123456789</Text>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
-                            <Text style={[GlobalStyles.textBold, { fontSize: 18, fontWeight: 'bold' }]}>15039287830</Text>
-                            <Text style={[GlobalStyles.textBold]}>Jean Martin</Text>
-                        </View>
-                        <Text style={GlobalStyles.textDisable} numberOfLines={2} ellipsizeMode="tail" >
-                            6, Biskupia, Ostrów Tumski, Osiedle Stare Miasto, Wrocław, województwo dolnośląskie, 50-148, Polska
-                        </Text>
-                        <Text style={GlobalStyles.textDisable} numberOfLines={2} ellipsizeMode="tail" >
-                            80, Podwale, Trójkąt, Przedmieście Oławskie, Osiedle Przedmieście Oławskie, Wrocław, województwo dolnośląskie, 50-449, Polska
-                        </Text>
-                        <TouchableOpacity style={styles.acceptBtn}>
-                            <Text style={[GlobalStyles.primaryLabel, { fontSize: 14, fontWeight: 'bold' }]}>ACCEPT</Text>
-                        </TouchableOpacity>
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity >
-                    <View style={styles.dataCard}>
-                        <Text style={[GlobalStyles.textDisable]}>Order No 123456789</Text>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
-                            <Text style={[GlobalStyles.textBold, { fontSize: 18, fontWeight: 'bold' }]}>15039287830</Text>
-                            <Text style={[GlobalStyles.textBold]}>Jean Martin</Text>
-                        </View>
-                        <Text style={GlobalStyles.textDisable} numberOfLines={2} ellipsizeMode="tail" >
-                            6, Biskupia, Ostrów Tumski, Osiedle Stare Miasto, Wrocław, województwo dolnośląskie, 50-148, Polska
-                        </Text>
-                        <Text style={GlobalStyles.textDisable} numberOfLines={2} ellipsizeMode="tail" >
-                            80, Podwale, Trójkąt, Przedmieście Oławskie, Osiedle Przedmieście Oławskie, Wrocław, województwo dolnośląskie, 50-449, Polska
-                        </Text>
-                        <TouchableOpacity style={styles.acceptBtn}>
-                            <Text style={[GlobalStyles.primaryLabel, { fontSize: 14, fontWeight: 'bold' }]}>ACCEPT</Text>
-                        </TouchableOpacity>
-                    </View>
-                </TouchableOpacity>
+                    ))
+                }
+                {
+                    deliverymanStatus && (<OrderDetail />)
+                }
+
             </ScrollView>
         </View >
     )
@@ -152,6 +187,23 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 30,
     },
+    orderInfoArea: {
+        flex: 1,
+        width: '100%',
+        height: 650,
+        padding: 15,
+    },
+    orderDetailSection: {
+
+    },
+    cancelBtnBack: {
+        backgroundColor: GoDeliveryColors.primary,
+        width: 100,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 30,
+        height: 35
+    }
 });
 
 export default HomeScreen;

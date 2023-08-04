@@ -1,4 +1,5 @@
 const Order = require("../models/order");
+const Notification = require("../models/notification");
 const Delivery_man = require("../models/delivery_man");
 const { Sequelize, sequelize } = require("../database/connection");
 const { Op } = require("sequelize");
@@ -332,26 +333,67 @@ exports.rate = async (req, res) => {
 exports.acceptRequest = async (req, res) => {
   try {
     const { orderID, deliverymanID } = req.body;
-    const order = Order.findOne({
+    const order = await Order.findOne({
       where: {
         id: orderID,
       },
-    });
-    if (order) {
-      const updateorder = await Order.update(
-        { status: 2, deliverymanID: deliverymanID },
+      include: [
         {
-          where: {
-            id: orderID,
-          },
+          model: Client,
+          as: "client",
+          attributes: ['id', 'name', 'phone', 'fcmToken']
+        },
+      ],
+    });
+    const deliveryman = await Delivery_man.findOne({
+      where: {
+        id: deliverymanID,
+      },
+    });
+    console.log("order ===> ", order);
+    if (order) {
+      if (order.status != 0) {
+        res.status(200).send({
+          status: false,
+          code: 200,
+          message: "This order is already assigned to the other delivery man.",
+          data: order,
+        });
+      } else {
+        if (deliveryman.status != 0) {
+          res.status(200).send({
+            status: false,
+            code: 200,
+            message: "You can't accept this order now because you are already assigned to the other order.",
+            data: order,
+          });
+        } else {
+          const updateorder = await Order.update(
+            { status: 1, deliverymanID: deliverymanID },
+            {
+              where: {
+                id: orderID,
+              },
+            }
+          );
+          await Delivery_man.update(
+            { status: 1 },
+            {
+              where: {
+                id: deliverymanID,
+              },
+            }
+          )
+          //if there is no delivery man, send notification to the sender 'We are sorry, but there is no delivery man for now. Please try again a little later.'
+          notificationController.sendNotification([order.client.fcmToken], 'GoDelivery', 'Your order is accepted. Our system supporter will help you soon.', order.id, [order.client.id], NOTIFICATION_TYPE_ORDER_ASSIGNED);
+          res.status(200).send({
+            status: true,
+            code: 200,
+            message: "Your request is accepted. Please complete this order.",
+            data: order,
+          });
         }
-      );
-      res.status(200).send({
-        status: true,
-        code: 200,
-        message: "Accept request success",
-        data: order,
-      });
+      }
     } else {
       res.status(400).send({
         status: false,
@@ -536,6 +578,97 @@ exports.inProgressList = async (req, res) => {
       data: orders,
     });
   } catch (error) {
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
+  } finally {
+    // Close the database connection when done
+  }
+};
+
+exports.createdOrderList = async (req, res) => {
+  try {
+    const { deliverymanID } = req.body;
+
+    const orders = await Order.findAll({
+      where: {
+        status: 0,
+      },
+      include: [
+        {
+          model: Client,
+          as: "client",
+        },
+        {
+          model: Notification,
+          as: 'notifications',
+          where: {
+            receiver: deliverymanID,
+            type: NOTIFICATION_TYPE_ORDER_CREATED,
+          },
+          required: false, // LEFT JOIN
+        },
+      ],
+    });
+
+    res.status(200).send({
+      status: true,
+      code: 200,
+      message: "orderlist success",
+      data: orders,
+    });
+  } catch (error) {
+    console.log("error: ", error);
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
+  } finally {
+    // Close the database connection when done
+  }
+};
+
+exports.processingDetailByDeliveryman = async (req, res) => {
+  try {
+    const { deliverymanID } = req.body;
+
+    const orders = await Order.findOne({
+      where: {
+        [Op.and]: [
+          { deliverymanID: deliverymanID },
+          {
+            [Op.or]: [
+              { status: 1 },
+              { status: 2 },
+            ]
+          }
+        ]
+      },
+      include: [
+        {
+          model: Delivery_man,
+          as: 'delivery_man',
+          attributes: ['id', 'name', 'phone', 'fcmToken'], // Specify the attributes you want to retrieve from the delivery man
+        },
+        {
+          model: Client,
+          as: "client",
+          attributes: ['id', 'name', 'phone', 'fcmToken']
+        },
+      ],
+    });
+
+    res.status(200).send({
+      status: true,
+      code: 200,
+      message: "orderlist success",
+      data: orders,
+    });
+  } catch (error) {
+    console.log("error: ", error);
     res.status(200).send({
       success: false,
       code: 500,

@@ -27,4 +27,8 @@ router.route("/list").post(asyncHandler(orderController.orderList));
 
 router.route("/inprogress").post(asyncHandler(orderController.inProgressList));
 
+router.route("/createdOrderList").post(asyncHandler(orderController.createdOrderList));
+
+router.route("/processingDetailByDeliveryman").post(asyncHandler(orderController.processingDetailByDeliveryman));
+
 module.exports = router;

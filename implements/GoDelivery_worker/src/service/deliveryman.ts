@@ -17,8 +17,14 @@ const getById = async (id: string) => {
     return response;
 }
 
+const updateDeliverymanStatus = async (param: any) => {
+    const response = await APIService.post('/deliveryman/updatestate', param);
+    return response;
+}
+
 export default {
     updateLocation,
     updateFcmToken,
-    getById
+    getById,
+    updateDeliverymanStatus,
 }

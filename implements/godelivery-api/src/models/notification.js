@@ -1,6 +1,7 @@
 //client.js
 const { DataTypes } = require("sequelize");
 const sequelize = require("../database/connection");
+const Order = require("./order");
 
 const Notification = sequelize.define("notification", {
   content: {
@@ -28,5 +29,14 @@ const Notification = sequelize.define("notification", {
     allowNull: false,
   },
 });
+
+Notification.belongsTo(Order, {
+  foreignKey: "orderID",
+  as: "orders"
+});
+Order.hasMany(Notification, {
+  foreignKey: "orderID",
+  as: "notifications"
+})
 
 module.exports = Notification;
