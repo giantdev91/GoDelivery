@@ -38,6 +38,7 @@ const HomeScreen = ({ navigation }: ScreenProps): JSX.Element => {
                 const response = res.data;
                 Alert.alert("GoDelivery", response.message);
                 fetchCreatedOrderList();
+                checkDeliverymanStatus();
             }).catch((err) => {
                 console.log("error: ", err);
             });
@@ -68,6 +69,11 @@ const HomeScreen = ({ navigation }: ScreenProps): JSX.Element => {
             }).catch((err) => {
                 console.log("error: ", err);
             })
+    }
+
+    const cancelHandler = () => {
+        checkDeliverymanStatus();
+        fetchCreatedOrderList();
     }
 
     // Use useFocusEffect to fetch orders whenever the screen gains focus
@@ -135,7 +141,7 @@ const HomeScreen = ({ navigation }: ScreenProps): JSX.Element => {
                     ))
                 }
                 {
-                    deliverymanStatus && (<OrderDetail />)
+                    deliverymanStatus && (<OrderDetail cancelHandler={cancelHandler} />)
                 }
 
             </ScrollView>

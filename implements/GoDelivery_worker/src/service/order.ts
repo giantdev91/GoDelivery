@@ -1,4 +1,4 @@
-import { CreatedOrderListParam, AcceptRequestParam } from '../type';
+import { CreatedOrderListParam, AcceptRequestParam, CancelOrderParam } from '../type';
 import APIService from './APIService';
 
 const createOrder = async (param) => {
@@ -21,9 +21,15 @@ const fetchMyOrder = async (param: any) => {
     return response;
 }
 
+const cancelOrder = async (param: CancelOrderParam) => {
+    const response = await APIService.post('/order/cancel', param);
+    return response;
+}
+
 export default {
     createOrder,
     createdOrderList,
     acceptOrder,
-    fetchMyOrder
+    fetchMyOrder,
+    cancelOrder
 }

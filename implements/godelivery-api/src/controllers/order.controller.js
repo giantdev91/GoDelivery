@@ -194,7 +194,7 @@ exports.cancel = async (req, res) => {
         notificationController.sendNotification([order.delivery_man.fcmToken], 'GoDelivery', `The order is canceled by the client. Please await until the next order.`, order.id, [deliverymanID], NOTIFICATION_TYPE_ORDER_CANCEL);
       } else {
         // send notification to sender
-        notificationController.sendNotification([order.client.fcmToken], 'GoDelivery', `The order is canceled by the client. Please await until the next order.`, order.id, [order.sender], NOTIFICATION_TYPE_ORDER_CANCEL_BY_DELIVERYMAN);
+        notificationController.sendNotification([order.client.fcmToken], 'GoDelivery', `The order is canceled by the deliveryman.`, order.id, [order.sender], NOTIFICATION_TYPE_ORDER_CANCEL_BY_DELIVERYMAN);
       }
 
 
