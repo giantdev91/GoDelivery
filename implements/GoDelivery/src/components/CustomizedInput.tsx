@@ -8,6 +8,7 @@ interface CustomizedInputProps {
     placeHolder: string,
     keyboardType?: string,
     handler: (val: string) => void,
+    val?: string,
 }
 
 const CustomizedInput = (props: CustomizedInputProps): JSX.Element => {
@@ -16,6 +17,7 @@ const CustomizedInput = (props: CustomizedInputProps): JSX.Element => {
         setValue(val);
         props.handler(val);
     }
+
     return (
         <View style={styles.background}>
             <View style={styles.inputBack}>
@@ -23,6 +25,7 @@ const CustomizedInput = (props: CustomizedInputProps): JSX.Element => {
                     size={25}
                     color={GoDeliveryColors.place} />
                 <TextInput style={styles.inputText}
+                    value={props.val ? props.val : ''}
                     placeholder={props.placeHolder}
                     keyboardType={props.keyboardType == 'number' ? 'numeric' : 'default'}
                     onChangeText={(value) => handleValue(value)}

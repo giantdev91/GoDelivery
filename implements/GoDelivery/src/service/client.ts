@@ -11,7 +11,13 @@ const updateFcmToken = async (param: UpdateFcmTokenParam) => {
     return response;
 }
 
+const updateProfile = async (param: any) => {
+    const response = await APIService.post('/client/updateclient', param);
+    return response;
+}
+
 export default {
     getById,
-    updateFcmToken
+    updateFcmToken,
+    updateProfile
 }

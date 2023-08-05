@@ -27,14 +27,12 @@ const renderCreatedAtTime = (timestamp: string) => {
 
 const NotificationsScreen = ({ navigation }: ScreenProps): JSX.Element => {
     const [notifications, setNotifications] = useState([]);
-
-    const deliverymanID = store.getState().CurrentUser.user.id;
+    const clientID = store.getState().CurrentUser.user.id;
 
     const fetchNotifications = () => {
-        Action.notification.list({ deliverymanID: deliverymanID })
+        Action.notification.list({ clientID: clientID })
             .then((res) => {
                 const response = res.data;
-                console.log('response ===> ', response);
                 setNotifications(response.data);
             }).catch((err) => console.log("error: ", err));
     }

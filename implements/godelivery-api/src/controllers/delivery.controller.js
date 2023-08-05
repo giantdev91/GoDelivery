@@ -388,7 +388,6 @@ exports.getDeliveryManById = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     const { deliverymanID, name, phone, password, avatar } = req.body;
-    console.log('deliverymanID', deliverymanID);
 
     const deliveryman = await Delivery_man.findOne({
       where: {

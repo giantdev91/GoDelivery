@@ -287,13 +287,23 @@ exports.deleteClient = async (req, res) => {
 exports.updateClient = async (req, res) => {
   try {
     const { clientId, phone, name, password, avatar } = req.body;
-    const hashedPassword = hashPassword(password);
-    const updatedData = {
-      phone: phone,
-      name: name,
-      password: hashedPassword,
-      avatar: avatar,
-    };
+
+    const updateData = {};
+    if (name !== undefined) {
+      updateData.name = name;
+    }
+    if (phone !== undefined) {
+      updateData.phone = phone;
+    }
+    if (password !== undefined) {
+      updateData.password = hashPassword(password.trim());;
+    }
+    if (avatar !== undefined) {
+      updateData.avatar = avatar;
+    }
+
+    console.log('updated Data ====> ', updateData);
+
     const client = await Client.findOne({
       where: {
         id: clientId,
@@ -302,16 +312,14 @@ exports.updateClient = async (req, res) => {
 
     if (client) {
       // If the client is found, delete it from the database
-      const result = await client.update(updatedData);
+      const result = await client.update(updateData);
 
       console.log("Client updated successfully.");
       res.status(200).send({
         success: true,
         code: 200,
         message: "Update success",
-        data: {
-          result,
-        },
+        data: result,
       });
     } else {
       console.log("Client not found.");
@@ -322,6 +330,7 @@ exports.updateClient = async (req, res) => {
       });
     }
   } catch (error) {
+    console.log("error: ", error);
     res.status(200).send({
       success: false,
       code: 500,

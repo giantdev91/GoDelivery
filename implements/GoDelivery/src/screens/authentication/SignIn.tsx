@@ -77,6 +77,7 @@ const SignInRoute = (props: SceneProps) => {
             }
             setActivityIndicator(true);
             const argPhone = validatePhoneNumber();
+            console.log("this is called!!!!!!!!!!!!!!!!!!");
             //get the fcmToken when client login
             const token = await messaging().getToken();
             console.log('token ===> ', token);
@@ -84,6 +85,7 @@ const SignInRoute = (props: SceneProps) => {
                 Action.authentication.login({ phone: phone.replace('+', ''), password: password })
                     .then(response => {
                         const responseData = response.data;
+                        console.log('response ===> ', responseData);
                         if (responseData.success) {
                             dispatch(allActions.UserAction.setUser(responseData.data.client));
                             dispatch(allActions.UserAction.setToken(responseData.data.token))
@@ -101,7 +103,7 @@ const SignInRoute = (props: SceneProps) => {
                                 })
 
                         }
-                        else if (responseData.status == "error") {
+                        else {
                             Alert.alert(responseData.message);
                         }
                         setActivityIndicator(false);

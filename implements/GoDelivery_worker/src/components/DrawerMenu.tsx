@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, View, Image, Text } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import GoDeliveryColors from '../styles/colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import store from '../redux/store';
-import { useFocusEffect } from '@react-navigation/native';
+import { useDrawerStatus } from '@react-navigation/drawer';
 
 interface DrawerMenuProps {
     navigation: any;
@@ -13,7 +13,8 @@ interface DrawerMenuProps {
 
 const DrawerMenu = ({ navigation }: DrawerMenuProps): JSX.Element => {
 
-    const [userData, setUserData] = useState(store.getState().CurrentUser.user)
+    const [userData, setUserData] = useState(store.getState().CurrentUser.user);
+    const isDrawerOpen = useDrawerStatus() === 'open';
 
     const logout = async () => {
         await AsyncStorage.removeItem('USER_DATA');
@@ -23,11 +24,11 @@ const DrawerMenu = ({ navigation }: DrawerMenuProps): JSX.Element => {
         });
     }
 
-    useFocusEffect(
-        useCallback(() => {
-            setUserData(store.getState().CurrentUser.user)
-        }, [])
-    );
+    useEffect(() => {
+        if (isDrawerOpen) {
+            setUserData(store.getState().CurrentUser.user);
+        }
+    }, [isDrawerOpen]);
 
     return (
         <SafeAreaView style={styles.drawerMenuContainer}>
