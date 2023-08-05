@@ -100,8 +100,7 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
                                     console.log('error: ', err);
                                 })
 
-                        }
-                        else if (responseData.status == "error") {
+                        } else {
                             Alert.alert(responseData.message);
                         }
                         setActivityIndicator(false);

@@ -1,6 +1,7 @@
 const Notification = require("../models/notification");
 const { Sequelize, sequelize } = require("../database/connection");
 const { Op } = require("sequelize");
+const Order = require("../models/order");
 
 async function createNotification(content, level, type, orderID, clientID) {
   try {
@@ -13,7 +14,7 @@ async function createNotification(content, level, type, orderID, clientID) {
     });
     console.log("asdfasdf", notification);
     return notification;
-  } catch (error) {}
+  } catch (error) { }
 }
 
 exports.create = async (req, res) => {
@@ -78,32 +79,40 @@ exports.delete = async (req, res) => {
 };
 exports.list = async (req, res) => {
   try {
-    const { clientID } = req.body;
+    const { clientID, deliverymanID } = req.body;
+
+    // Build the where condition based on the provided criteria
+    const whereCondition = {};
     if (clientID !== undefined) {
-      const notifications = await Notification.findAll({
-        where: {
-          clientID: clientID,
-        },
-        order: [["createdAt", "DESC"]],
-      });
-      res.status(200).send({
-        success: true,
-        code: 200,
-        message: "Notification list found",
-        data: notifications,
-      });
-    } else {
-      const notifications = await Notification.findAll({
-        order: [["createdAt", "DESC"]],
-      });
-      res.status(200).send({
-        success: false,
-        code: 400,
-        message: "Notification list found",
-        data: notifications,
-      });
+      whereCondition.receiver = clientID;
+      whereCondition.receiverType = 0;
     }
+
+    if (deliverymanID !== undefined) {
+      whereCondition.receiver = deliverymanID;
+      whereCondition.receiverType = 1;
+    }
+
+    //Find notificatinos that match the provided criteria
+    const notifications = await Notification.findAll({
+      where: whereCondition,
+      order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: Order,
+          as: "orders",
+        },
+      ],
+    })
+
+    res.status(200).send({
+      success: true,
+      code: 200,
+      message: "Notification list found",
+      data: notifications,
+    });
   } catch (error) {
+    console.log('error ===> ', error);
     res.status(200).send({
       success: false,
       code: 500,

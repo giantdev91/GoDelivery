@@ -31,7 +31,11 @@ const Delivery_man = sequelize.define("delivery_man", {
   locationLongitude: {
     type: DataTypes.STRING,
     allowNull: true,
-  }
+  },
+  avatar: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
 
 module.exports = Delivery_man;

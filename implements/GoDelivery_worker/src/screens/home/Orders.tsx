@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { StyleSheet, useWindowDimensions, TouchableOpacity, View, Text, Platform } from 'react-native';
 import GlobalStyles from '../../styles/style';
 import MenuButton from '../../components/MenuButton';
 import GoDeliveryColors from '../../styles/colors';
-import { Layout } from 'react-native-reanimated';
 import { NavigationState, SceneMap, SceneRendererProps, TabView, TabBar } from 'react-native-tab-view';
-import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
+import { useFocusEffect } from '@react-navigation/native';
+import Action from '../../service';
+import store from '../../redux/store';
 
 interface ScreenProps {
     navigation: any;
@@ -18,199 +19,137 @@ interface SceneProps {
     jumpTo: (key: string) => void;
 }
 
+const calculateSpentTime = (firstTimeStamp: string, lastTimeStamp: string) => {
+    const firstTime = new Date(firstTimeStamp);
+    const lastTime = new Date(lastTimeStamp);
+    // Calculate the time difference in milliseconds
+    const timeDifferenceMs = lastTime - firstTime;
+    // Calculate hours and minutes from the time difference
+    const hours = Math.floor(timeDifferenceMs / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDifferenceMs % (1000 * 60 * 60)) / (1000 * 60));
+    return `${hours} h ${minutes} mins`;
+}
 
-const SentRoute = (props: SceneProps) => {
+const renderCreatedAtTime = (timestamp: string) => {
+    const originalDate = new Date(timestamp);
+    const formattedDate = originalDate.toLocaleString("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        timeZone: "UTC",
+    });
+    return formattedDate;
+}
+
+const CompleteRoute = (props: SceneProps) => {
+    const [orders, setOrders] = useState([]);
+
+    const fetchCompletedOrders = () => {
+        Action.order.completeOrders({ status: 3, deliverymanID: store.getState().CurrentUser.user.id })
+            .then((res) => {
+                const response = res.data;
+                console.log('response ===> ', response);
+                setOrders(response.data);
+            }).catch((err) => {
+                console.log("error: ", err);
+            })
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchCompletedOrders();
+        }, [])
+    );
 
     return (
         <View style={[GlobalStyles.container]}>
             <ScrollView style={styles.scrollArea}>
-                <View style={styles.dataCard}>
-                    <View style={{ alignItems: 'flex-start', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textBold}>Order 1234</Text>
-                        <Text style={GlobalStyles.text}>Receiver 15039287830</Text>
-                        <Text style={GlobalStyles.text}>delivery time 15min</Text>
-                    </View>
-                    <View style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 13:10:00</Text>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
-                            <Icons name="star" size={20} color={'gold'} />
-                            <Text style={GlobalStyles.text}> 4.7</Text>
+                {
+                    orders.map((order, index) => (
+                        <View style={styles.dataCard} key={index}>
+                            <View style={{ alignItems: 'flex-start', justifyContent: 'center' }}>
+                                <Text style={GlobalStyles.textBold}>Order {order["orderNo"]}</Text>
+                                <Text style={GlobalStyles.text}>sender {order["client"].phone}</Text>
+                                <Text style={GlobalStyles.text}>delivery time {calculateSpentTime(order["createdAt"], order["updatedAt"])}</Text>
+                            </View>
+                            <View style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
+                                <Text style={GlobalStyles.textDisable}>{renderCreatedAtTime(order["createdAt"])}</Text>
+                                {
+                                    order["rate"] && (<View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
+                                        <Icons name="star" size={20} color={'gold'} />
+                                        <Text style={GlobalStyles.text}> {order["rate"]}</Text>
+                                    </View>)
+                                }
+                                {/* <Text style={GlobalStyles.textBold}>shipping 5$</Text> */}
+                            </View>
                         </View>
-                        <Text style={GlobalStyles.textBold}>shipping 5$</Text>
-                    </View>
-                </View>
-                <View style={styles.dataCard}>
-                    <View style={{ alignItems: 'flex-start', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textBold}>Order 1234</Text>
-                        <Text style={GlobalStyles.text}>Receiver 15039287830</Text>
-                        <Text style={GlobalStyles.text}>delivery time 15min</Text>
-                    </View>
-                    <View style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 13:10:00</Text>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
-                            <Icons name="star" size={20} color={'gold'} />
-                            <Text style={GlobalStyles.text}> 4.7</Text>
+                    ))
+                }
+                {
+                    orders.length == 0 && (
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: 40, marginTop: 60, paddingVertical: 20 }}>
+                            <Icons name="document-text-outline" size={120} color={'#c7c7c7'} />
+                            <Text style={{ textAlign: 'center', fontSize: 20, color: GoDeliveryColors.secondary, marginTop: 50 }}>No history yet</Text>
+                            {/* <Text style={{ textAlign: 'center', fontSize: 18, marginTop: 15, marginBottom: 100 }}>Hit the orange button down below to Create an order</Text> */}
+                            {/* <PrimaryButton buttonText='Start Ordering' handler={() => { props.navigation.navigate('Main') }} /> */}
                         </View>
-                        <Text style={GlobalStyles.textBold}>shipping 5$</Text>
-                    </View>
-                </View>
-                <View style={styles.dataCard}>
-                    <View style={{ alignItems: 'flex-start', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textBold}>Order 1234</Text>
-                        <Text style={GlobalStyles.text}>Receiver 15039287830</Text>
-                        <Text style={GlobalStyles.text}>delivery time 15min</Text>
-                    </View>
-                    <View style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 13:10:00</Text>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
-                            <Icons name="star" size={20} color={'gold'} />
-                            <Text style={GlobalStyles.text}> 4.7</Text>
-                        </View>
-                        <Text style={GlobalStyles.textBold}>shipping 5$</Text>
-                    </View>
-                </View>
-                <View style={styles.dataCard}>
-                    <View style={{ alignItems: 'flex-start', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textBold}>Order 1234</Text>
-                        <Text style={GlobalStyles.text}>Receiver 15039287830</Text>
-                        <Text style={GlobalStyles.text}>delivery time 15min</Text>
-                    </View>
-                    <View style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 13:10:00</Text>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
-                            <Icons name="star" size={20} color={'gold'} />
-                            <Text style={GlobalStyles.text}> 4.7</Text>
-                        </View>
-                        <Text style={GlobalStyles.textBold}>shipping 5$</Text>
-                    </View>
-                </View>
-                <View style={styles.dataCard}>
-                    <View style={{ alignItems: 'flex-start', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textBold}>Order 1234</Text>
-                        <Text style={GlobalStyles.text}>Receiver 15039287830</Text>
-                        <Text style={GlobalStyles.text}>delivery time 15min</Text>
-                    </View>
-                    <View style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 13:10:00</Text>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
-                            <Icons name="star" size={20} color={'gold'} />
-                            <Text style={GlobalStyles.text}> 4.7</Text>
-                        </View>
-                        <Text style={GlobalStyles.textBold}>shipping 5$</Text>
-                    </View>
-                </View>
-                <View style={styles.dataCard}>
-                    <View style={{ alignItems: 'flex-start', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textBold}>Order 1234</Text>
-                        <Text style={GlobalStyles.text}>Receiver 15039287830</Text>
-                        <Text style={GlobalStyles.text}>delivery time 15min</Text>
-                    </View>
-                    <View style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 13:10:00</Text>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
-                            <Icons name="star" size={20} color={'gold'} />
-                            <Text style={GlobalStyles.text}> 4.7</Text>
-                        </View>
-                        <Text style={GlobalStyles.textBold}>shipping 5$</Text>
-                    </View>
-                </View>
-                <View style={styles.dataCard}>
-                    <View style={{ alignItems: 'flex-start', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textBold}>Order 1234</Text>
-                        <Text style={GlobalStyles.text}>Receiver 15039287830</Text>
-                        <Text style={GlobalStyles.text}>delivery time 15min</Text>
-                    </View>
-                    <View style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 13:10:00</Text>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
-                            <Icons name="star" size={20} color={'gold'} />
-                            <Text style={GlobalStyles.text}> 4.7</Text>
-                        </View>
-                        <Text style={GlobalStyles.textBold}>shipping 5$</Text>
-                    </View>
-                </View>
+                    )
+                }
             </ScrollView>
         </View>
     )
 }
 
-const ReceivedRoute = (props: SceneProps) => {
+const CanceledRoute = (props: SceneProps) => {
+    const [orders, setOrders] = useState([]);
+
+    const fetchCanceledOrders = () => {
+        Action.order.completeOrders({ status: 4, deliverymanID: store.getState().CurrentUser.user.id })
+            .then((res) => {
+                const response = res.data;
+                console.log('response ===> ', response);
+                setOrders(response.data);
+            }).catch((err) => {
+                console.log("error: ", err);
+            })
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchCanceledOrders();
+        }, [])
+    );
 
     return (
         <View style={[GlobalStyles.container]}>
             <ScrollView style={styles.scrollArea}>
-                <View style={styles.dataCard}>
-                    <View style={{ alignItems: 'flex-start', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textBold}>Order 1234</Text>
-                        <Text style={GlobalStyles.text}>Sender 15039287830</Text>
-                        <Text style={GlobalStyles.text}>delivery time 15min</Text>
-                    </View>
-                    <View style={{ alignItems: 'flex-end', justifyContent: 'space-evenly', height: '100%' }}>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 13:10:00</Text>
+                {
+                    orders.map((order, index) => (
+                        <View style={styles.dataCard} key={index}>
+                            <View style={{ alignItems: 'flex-start', justifyContent: 'center' }}>
+                                <Text style={GlobalStyles.textBold}>Order {order["orderNo"]}</Text>
+                                <Text style={GlobalStyles.text}>Sender {order["client"].phone}</Text>
+                                <Text style={GlobalStyles.text}>delivery time {calculateSpentTime(order["createdAt"], order["updatedAt"])}</Text>
+                            </View>
+                            <View style={{ alignItems: 'flex-end', justifyContent: 'space-evenly', height: '100%' }}>
+                                <Text style={GlobalStyles.textDisable}>{renderCreatedAtTime(order["createdAt"])}</Text>
 
-                        <Text style={GlobalStyles.textBold}>shipping 5$</Text>
-                    </View>
-                </View>
-                <View style={styles.dataCard}>
-                    <View style={{ alignItems: 'flex-start', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textBold}>Order 1234</Text>
-                        <Text style={GlobalStyles.text}>Sender 15039287830</Text>
-                        <Text style={GlobalStyles.text}>delivery time 15min</Text>
-                    </View>
-                    <View style={{ alignItems: 'flex-end', justifyContent: 'space-evenly', height: '100%' }}>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 13:10:00</Text>
-
-                        <Text style={GlobalStyles.textBold}>shipping 5$</Text>
-                    </View>
-                </View>
-                <View style={styles.dataCard}>
-                    <View style={{ alignItems: 'flex-start', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textBold}>Order 1234</Text>
-                        <Text style={GlobalStyles.text}>Sender 15039287830</Text>
-                        <Text style={GlobalStyles.text}>delivery time 15min</Text>
-                    </View>
-                    <View style={{ alignItems: 'flex-end', justifyContent: 'space-evenly', height: '100%' }}>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 13:10:00</Text>
-
-                        <Text style={GlobalStyles.textBold}>shipping 5$</Text>
-                    </View>
-                </View>
-                <View style={styles.dataCard}>
-                    <View style={{ alignItems: 'flex-start', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textBold}>Order 1234</Text>
-                        <Text style={GlobalStyles.text}>Sender 15039287830</Text>
-                        <Text style={GlobalStyles.text}>delivery time 15min</Text>
-                    </View>
-                    <View style={{ alignItems: 'flex-end', justifyContent: 'space-evenly', height: '100%' }}>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 13:10:00</Text>
-
-                        <Text style={GlobalStyles.textBold}>shipping 5$</Text>
-                    </View>
-                </View>
-                <View style={styles.dataCard}>
-                    <View style={{ alignItems: 'flex-start', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textBold}>Order 1234</Text>
-                        <Text style={GlobalStyles.text}>Sender 15039287830</Text>
-                        <Text style={GlobalStyles.text}>delivery time 15min</Text>
-                    </View>
-                    <View style={{ alignItems: 'flex-end', justifyContent: 'space-evenly', height: '100%' }}>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 13:10:00</Text>
-
-                        <Text style={GlobalStyles.textBold}>shipping 5$</Text>
-                    </View>
-                </View>
-                <View style={styles.dataCard}>
-                    <View style={{ alignItems: 'flex-start', justifyContent: 'center' }}>
-                        <Text style={GlobalStyles.textBold}>Order 1234</Text>
-                        <Text style={GlobalStyles.text}>Sender 15039287830</Text>
-                        <Text style={GlobalStyles.text}>delivery time 15min</Text>
-                    </View>
-                    <View style={{ alignItems: 'flex-end', justifyContent: 'space-evenly', height: '100%' }}>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 13:10:00</Text>
-
-                        <Text style={GlobalStyles.textBold}>shipping 5$</Text>
-                    </View>
-                </View>
+                                {/* <Text style={GlobalStyles.textBold}>shipping 5$</Text> */}
+                            </View>
+                        </View>
+                    ))
+                }
+                {
+                    orders.length == 0 && (
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: 40, marginTop: 60, paddingVertical: 20 }}>
+                            <Icons name="document-text-outline" size={120} color={'#c7c7c7'} />
+                            <Text style={{ textAlign: 'center', fontSize: 20, color: GoDeliveryColors.secondary, marginTop: 50 }}>No history yet</Text>
+                        </View>
+                    )
+                }
             </ScrollView>
         </View>
     )
@@ -220,13 +159,13 @@ const OrdersScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
     const layout = useWindowDimensions();
     const [index, setIndex] = React.useState(0);
     const [routes] = React.useState([
-        { key: 'sent', title: 'SENT' },
-        { key: 'received', title: 'RECEIVED' },
+        { key: 'complete', title: 'COMPLETE' },
+        { key: 'canceled', title: 'CANCELED' },
     ]);
 
     const renderScene = SceneMap({
-        sent: SentRoute,
-        received: ReceivedRoute,
+        complete: CompleteRoute,
+        canceled: CanceledRoute,
     });
 
     const renderTabBar = (props: SceneRendererProps & { navigationState: NavigationState<any> }) => (
@@ -245,7 +184,7 @@ const OrdersScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
         <View style={[GlobalStyles.container]}>
             <MenuButton navigation={navigation} />
             <View style={styles.headerSection}>
-                <Text style={styles.headerTitle}>Order History</Text>
+                <Text style={styles.headerTitle}>Work History</Text>
             </View>
             <TabView
                 navigationState={{ index, routes }}

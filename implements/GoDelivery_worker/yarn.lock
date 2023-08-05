@@ -1765,10 +1765,20 @@
     opencollective-postinstall "^2.0.1"
     superstruct "^0.6.2"
 
+"@react-native-firebase/firestore@^18.3.0":
+  version "18.3.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-18.3.0.tgz#b13e053d6029c0a079714d06c9565fdf3d6d83c9"
+  integrity sha512-lf++MjazL+5JH0wvlFb2WFqEtUvULaNy4ahlLYOoNwlCjDyvR3L9mYov6cbBVoSu1AJrQcv9u2aHZApEJKaFZg==
+
 "@react-native-firebase/messaging@^18.3.0":
   version "18.3.0"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-18.3.0.tgz#062e4844d1a5e409e035efc13ecd68f403165568"
   integrity sha512-MolNWboyN+ZwfHgFTQ4NspIzpFxbtlROxrsiGjwpfzBcKL6cjpfS6uxwupidycuzVL+gaIq1xbCLQaNhv/bToA==
+
+"@react-native-firebase/storage@^18.3.0":
+  version "18.3.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/storage/-/storage-18.3.0.tgz#d30624d45779ef57985dad8755e5ba67b257a13a"
+  integrity sha512-4tMxu1364yH+hPSObEs18cMPGg7h0y7QynVfArvuK8lRNkpafeVAgYa8x0xp80LXUjMWXiN4OmmGpyy/CYH2lg==
 
 "@react-native/assets-registry@^0.72.0":
   version "0.72.0"
@@ -5932,6 +5942,11 @@ react-native-google-places-autocomplete@^2.5.1:
     lodash.debounce "^4.0.8"
     prop-types "^15.7.2"
     qs "~6.9.1"
+
+react-native-image-picker@^5.6.0:
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-5.6.0.tgz#e7b6637dc5296cddb486106b711eb4eedabd083d"
+  integrity sha512-QHHb0qw3VXDedllrfS6SjxNG1SubnjUjIR2OH1HVbjv/IRVa3v4fI1MHbQaSNXlGopT9kL9jcnh7tbcX1z74Vg==
 
 react-native-linear-gradient@^2.7.3:
   version "2.7.3"

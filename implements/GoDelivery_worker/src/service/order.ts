@@ -26,10 +26,16 @@ const cancelOrder = async (param: CancelOrderParam) => {
     return response;
 }
 
+const completeOrders = async (param) => {
+    const response = await APIService.post('/order/list', param);
+    return response;
+}
+
 export default {
     createOrder,
     createdOrderList,
     acceptOrder,
     fetchMyOrder,
-    cancelOrder
+    cancelOrder,
+    completeOrders
 }

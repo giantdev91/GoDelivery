@@ -22,9 +22,15 @@ const updateDeliverymanStatus = async (param: any) => {
     return response;
 }
 
+const updateProfile = async (param: any) => {
+    const response = await APIService.post('/deliveryman/updateProfile', param);
+    return response;
+}
+
 export default {
     updateLocation,
     updateFcmToken,
     getById,
     updateDeliverymanStatus,
+    updateProfile
 }

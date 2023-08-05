@@ -4,8 +4,7 @@ import TabNavigator from './TabNavigator';
 import GoDeliveryColors from '../styles/colors';
 import DrawerMenu from '../components/DrawerMenu';
 import ProfileScreen from '../screens/settings/Profile'
-import LocationsScreen from '../screens/settings/Locations'
-import TracksScreen from '../screens/settings/Tracks'
+
 
 const Drawer = createDrawerNavigator();
 

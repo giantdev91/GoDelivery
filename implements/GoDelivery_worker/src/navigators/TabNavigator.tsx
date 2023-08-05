@@ -1,11 +1,10 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet, Text } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
-
-import InprogressOrderNavigator from './InprogressOrderNavigation';
+import Orders from '../screens/home/Orders';
+import HomeScreen from '../screens/home/Home';
 import NotificationsScreen from '../screens/home/Notifications'
 import GoDeliveryColors from '../styles/colors';
-import NewOrderNavigator from './NewOrderNavigation';
 
 const Tab = createBottomTabNavigator();
 
@@ -19,7 +18,7 @@ function TabNavigator(): JSX.Element {
         }}>
             <Tab.Screen
                 name="Main"
-                component={NewOrderNavigator}
+                component={HomeScreen}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         <Icons
@@ -42,7 +41,7 @@ function TabNavigator(): JSX.Element {
             />
             <Tab.Screen
                 name="Orders"
-                component={InprogressOrderNavigator}
+                component={Orders}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         <Icons
@@ -59,7 +58,7 @@ function TabNavigator(): JSX.Element {
                                 marginBottom: 5,
                                 fontSize: 14,
                                 fontWeight: "400"
-                            }}>In Progress</Text>
+                            }}>Orders</Text>
                     )
                 }}
             />

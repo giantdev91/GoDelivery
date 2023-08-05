@@ -231,7 +231,7 @@ const OrderDetail = (props: OrderDetailProps): JSX.Element => {
                             <View style={{ height: 280, backgroundColor: GoDeliveryColors.white, borderRadius: 30, alignItems: 'center' }}>
                                 <View style={styles.modalBack}>
                                     <Text style={{ fontSize: 18, fontWeight: 'bold', color: GoDeliveryColors.primary, }}>Do you really want to cancel this order? Please leave the reason in the below box.</Text>
-                                    <TextInput style={[styles.descriptionBack, { borderColor: cancelReason ? GoDeliveryColors.disabled : GoDeliveryColors.primary }]} multiline={true} placeholder='please leave your feeback here.' value={cancelReason} onChangeText={(val) => { setCancelReason(val) }} />
+                                    <TextInput style={[styles.descriptionBack]} multiline={true} placeholder='please leave your feeback here.' value={cancelReason} onChangeText={(val) => { setCancelReason(val) }} />
                                     <TouchableOpacity style={styles.rateUsBtn} onPress={handleCancelSubmit}>
                                         <Text style={{ fontSize: 20, color: GoDeliveryColors.white }}>Submit</Text>
                                     </TouchableOpacity>

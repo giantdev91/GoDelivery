@@ -23,5 +23,6 @@ router
   .post(asyncHandler(deliveryController.deliverymanList));
 router.route("/updateLocation").post(asyncHandler(deliveryController.updateLocation));
 router.route("/:id").get(asyncHandler(deliveryController.getDeliveryManById));
+router.route("/updateProfile").post(asyncHandler(deliveryController.updateProfile));
 
 module.exports = router;

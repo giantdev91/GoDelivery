@@ -62,19 +62,20 @@ exports.signin = async (req, res) => {
         });
         return;
       }
-      res.status(401).send({
+      res.status(200).send({
         success: false,
         code: 401,
         message: "Incorrect password",
       });
     } else {
-      res.status(404).send({
+      res.status(200).send({
         success: false,
         code: 400,
         message: `User with phone ${phone} was not found`,
       });
     }
   } catch (error) {
+    console.log("error: ", error);
     res.status(200).send({
       success: false,
       code: 500,
@@ -376,6 +377,71 @@ exports.getDeliveryManById = async (req, res) => {
       data: deliveryman,
     });
   } catch (error) {
+    res.status(200).send({
+      success: false,
+      code: 500,
+      message: "Internal server error",
+    });
+  }
+};
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const { deliverymanID, name, phone, password, avatar } = req.body;
+    console.log('deliverymanID', deliverymanID);
+
+    const deliveryman = await Delivery_man.findOne({
+      where: {
+        id: deliverymanID,
+      },
+    });
+
+    const updateData = {};
+    if (name !== undefined) {
+      updateData.name = name;
+    }
+    if (phone !== undefined) {
+      updateData.phone = phone;
+    }
+    if (password !== undefined) {
+      updateData.password = hashPassword(password.trim());;
+    }
+    if (avatar !== undefined) {
+      updateData.avatar = avatar;
+    }
+
+    console.log('updated Data ====> ', updateData);
+
+    if (deliveryman) {
+      // Update the status column in the database
+      await Delivery_man.update(
+        updateData,
+        {
+          where: { id: deliverymanID },
+        }
+      );
+
+      const userData = await Delivery_man.findOne({
+        where: {
+          id: deliverymanID,
+        },
+      });
+
+      res.status(200).send({
+        success: true,
+        code: 200,
+        message: "user data updated successfully",
+        data: userData
+      });
+    } else {
+      res.status(200).send({
+        success: false,
+        code: 400,
+        message: "Deliveryman not found",
+      });
+    }
+  } catch (error) {
+    console.log("error: ", error);
     res.status(200).send({
       success: false,
       code: 500,

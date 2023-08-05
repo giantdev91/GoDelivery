@@ -1,14 +1,50 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text, Platform, ScrollView } from 'react-native';
 import GlobalStyles from '../../styles/style';
 import MenuButton from '../../components/MenuButton';
 import GoDeliveryColors from '../../styles/colors';
+import { useFocusEffect } from '@react-navigation/native';
+import Action from '../../service';
+import store from '../../redux/store';
 
 interface ScreenProps {
     navigation: any;
 }
 
+const renderCreatedAtTime = (timestamp: string) => {
+    const originalDate = new Date(timestamp);
+    const formattedDate = originalDate.toLocaleString("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        timeZone: "UTC",
+    });
+    return formattedDate;
+}
+
 const NotificationsScreen = ({ navigation }: ScreenProps): JSX.Element => {
+    const [notifications, setNotifications] = useState([]);
+
+    const deliverymanID = store.getState().CurrentUser.user.id;
+
+    const fetchNotifications = () => {
+        Action.notification.list({ deliverymanID: deliverymanID })
+            .then((res) => {
+                const response = res.data;
+                console.log('response ===> ', response);
+                setNotifications(response.data);
+            }).catch((err) => console.log("error: ", err));
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchNotifications();
+        }, [])
+    );
+
     return (
         <View style={[GlobalStyles.container]}>
             <MenuButton navigation={navigation} />
@@ -16,55 +52,19 @@ const NotificationsScreen = ({ navigation }: ScreenProps): JSX.Element => {
                 <Text style={styles.headerTitle}>Notifications</Text>
             </View>
             <ScrollView style={styles.scrollArea}>
-                <View style={styles.dataCard}>
-                    <Text style={GlobalStyles.text}>Your order is accepted. Our system supporter will help you soon.</Text>
-                    <View style={styles.notificationDetailArea}>
-                        <Text style={GlobalStyles.textBold}>Order 12345678</Text>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 10:00:00</Text>
-                    </View>
-                </View>
-                <View style={styles.dataCard}>
-                    <Text style={GlobalStyles.text}>The order is canceled by the delivery man. If you have some questions, please contact us.</Text>
-                    <View style={styles.notificationDetailArea}>
-                        <Text style={GlobalStyles.textBold}>Order 12345678</Text>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 10:00:00</Text>
-                    </View>
-                </View>
-                <View style={styles.dataCard}>
-                    <Text style={GlobalStyles.text}>Client xxxx is sending goods to you. Our system supporter will deliver it soon.</Text>
-                    <View style={styles.notificationDetailArea}>
-                        <Text style={GlobalStyles.textBold}>Order 12345678</Text>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 10:00:00</Text>
-                    </View>
-                </View>
-                <View style={styles.dataCard}>
-                    <Text style={GlobalStyles.text}>Your order is successfully completed. Our system expects your good feedback.</Text>
-                    <View style={styles.notificationDetailArea}>
-                        <Text style={GlobalStyles.textBold}>Order 12345678</Text>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 10:00:00</Text>
-                    </View>
-                </View>
-                <View style={styles.dataCard}>
-                    <Text style={GlobalStyles.text}>Your order is accepted. Our system supporter will help you soon.</Text>
-                    <View style={styles.notificationDetailArea}>
-                        <Text style={GlobalStyles.textBold}>Order 12345678</Text>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 10:00:00</Text>
-                    </View>
-                </View>
-                <View style={styles.dataCard}>
-                    <Text style={GlobalStyles.text}>Your order is accepted. Our system supporter will help you soon.</Text>
-                    <View style={styles.notificationDetailArea}>
-                        <Text style={GlobalStyles.textBold}>Order 12345678</Text>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 10:00:00</Text>
-                    </View>
-                </View>
-                <View style={styles.dataCard}>
-                    <Text style={GlobalStyles.text}>Your order is accepted. Our system supporter will help you soon.</Text>
-                    <View style={styles.notificationDetailArea}>
-                        <Text style={GlobalStyles.textBold}>Order 12345678</Text>
-                        <Text style={GlobalStyles.textDisable}>2023-07-20 10:00:00</Text>
-                    </View>
-                </View>
+                {
+                    notifications.map((notif, index) => (
+                        <View style={styles.dataCard} key={index}>
+                            <View style={{ width: '100%', height: 35, }}>
+                                <Text style={GlobalStyles.text} numberOfLines={2}>{notif["content"]}</Text>
+                            </View>
+                            <View style={styles.notificationDetailArea}>
+                                <Text style={GlobalStyles.textBold}>Order {notif["orders"].orderNo}</Text>
+                                <Text style={GlobalStyles.textDisable}>{renderCreatedAtTime(notif["createdAt"])}</Text>
+                            </View>
+                        </View>
+                    ))
+                }
             </ScrollView>
         </View>
     )

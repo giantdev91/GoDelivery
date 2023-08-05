@@ -494,7 +494,7 @@ exports.dailyCount = async (req, res) => {
 
 exports.orderList = async (req, res) => {
   try {
-    const { sender, receiver, status, startDate, endDate } = req.body;
+    const { sender, receiver, deliverymanID, status, startDate, endDate } = req.body;
 
     // Build the where condition based on the provided criteria
     const whereCondition = {};
@@ -503,6 +503,9 @@ exports.orderList = async (req, res) => {
     }
     if (receiver !== undefined) {
       whereCondition.receiver = receiver;
+    }
+    if (deliverymanID !== undefined) {
+      whereCondition.deliverymanID = deliverymanID;
     }
     if (status !== undefined) {
       whereCondition.status = status;

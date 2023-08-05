@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { StyleSheet, TouchableOpacity, View, Image, Text } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import GoDeliveryColors from '../styles/colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import store from '../redux/store';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface DrawerMenuProps {
     navigation: any;
 }
 
 const DrawerMenu = ({ navigation }: DrawerMenuProps): JSX.Element => {
+
+    const [userData, setUserData] = useState(store.getState().CurrentUser.user)
+
     const logout = async () => {
         await AsyncStorage.removeItem('USER_DATA');
         navigation.reset({
@@ -17,11 +22,27 @@ const DrawerMenu = ({ navigation }: DrawerMenuProps): JSX.Element => {
             routes: [{ name: 'Splash', params: { initialIndex: 0 } }],
         });
     }
+
+    useFocusEffect(
+        useCallback(() => {
+            setUserData(store.getState().CurrentUser.user)
+        }, [])
+    );
+
     return (
         <SafeAreaView style={styles.drawerMenuContainer}>
             <View style={styles.imageSection}>
-                <Image style={styles.userAvatar} source={require('../../assets/images/user_default_avatar.png')} />
-                <Text style={styles.usernameLabel}>Jean Martin</Text>
+                {
+                    !userData["avatar"] && (
+                        <Image style={styles.userAvatar} source={require('../../assets/images/delivery-man.png')} />
+                    )
+                }
+                {
+                    userData["avatar"] && (
+                        <Image style={styles.userAvatar} source={{ uri: userData["avatar"] }} />
+                    )
+                }
+                <Text style={styles.usernameLabel}>{userData["name"]}</Text>
             </View>
             <View style={styles.menuArea}>
                 <TouchableOpacity style={styles.menuButton} onPress={() => { navigation.navigate('Home') }}>
