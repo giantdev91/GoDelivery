@@ -27,6 +27,8 @@ import {
   Row,
   Col,
   Button,
+  Input,
+  Label
 } from "reactstrap";
 
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
@@ -35,6 +37,10 @@ import Header from "components/Headers/Header.js";
 
 const Deliveryman = () => {
   const [modal, setModal] = useState(false);
+  const [newData, setNewData] = useState({
+    phone: '123456',
+    name: '',
+  })
 
   const toggle = () => setModal(!modal);
 
@@ -42,7 +48,7 @@ const Deliveryman = () => {
   const [row, setRow] = useState(undefined);
   useEffect(() => {
     axios
-      .post(`http://localhost:4000/deliveryman/deliverymanlist`)
+      .post(`http://localhost:3000/deliveryman/deliverymanlist`)
       .then((res) => {
         console.log("response:", res);
         if (res.status === 200) {
@@ -55,23 +61,23 @@ const Deliveryman = () => {
   useEffect(() => {
     const rows = deliverymanData
       ? deliverymanData.map((client) => ({
-          phone: client.phone,
-          name: client.name,
-          startedAt: new Date(client.createdAt).toLocaleString(),
-          status: client.status === 0 ? "Idle" : "Processing",
-          completeOrder: client.orders.filter((order) => order.status === 4)
-            .length,
-          rate:
-            client.orders.length > 0
-              ? (
-                  client.orders.reduce(
-                    (total, order) => total + order.rate,
-                    0
-                  ) / client.orders.length
-                ).toFixed(2)
-              : 0,
-          // Add more fields based on your data
-        }))
+        phone: client.phone,
+        name: client.name,
+        startedAt: new Date(client.createdAt).toLocaleString(),
+        status: client.status === 0 ? "Idle" : "Processing",
+        completeOrder: client.orders.filter((order) => order.status === 4)
+          .length,
+        rate:
+          client.orders.length > 0
+            ? (
+              client.orders.reduce(
+                (total, order) => total + order.rate,
+                0
+              ) / client.orders.length
+            ).toFixed(2)
+            : 0,
+        // Add more fields based on your data
+      }))
       : [];
     setRow(rows);
   }, [deliverymanData]);
@@ -111,19 +117,18 @@ const Deliveryman = () => {
       <Container fluid>
         {/* Table */}
         <Modal isOpen={modal} toggle={toggle}>
-          <ModalHeader toggle={toggle}>Modal title</ModalHeader>
+          <ModalHeader toggle={toggle}>
+            <h2>Delivery man Register</h2>
+          </ModalHeader>
           <ModalBody>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
+            <Label>Phone Number</Label>
+            <Input placeholder="Phone" value={newData.phone} />
+            <Label className="mt-2">User Name</Label>
+            <Input placeholder="user name" />
           </ModalBody>
           <ModalFooter>
             <Button color="primary" onClick={toggle}>
-              Do Something
+              Register
             </Button>{" "}
             <Button color="secondary" onClick={toggle}>
               Cancel
