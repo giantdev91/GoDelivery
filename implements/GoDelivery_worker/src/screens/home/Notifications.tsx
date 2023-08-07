@@ -4,6 +4,7 @@ import GlobalStyles from '../../styles/style';
 import MenuButton from '../../components/MenuButton';
 import GoDeliveryColors from '../../styles/colors';
 import { useFocusEffect } from '@react-navigation/native';
+import Icons from 'react-native-vector-icons/Ionicons';
 import Action from '../../service';
 import store from '../../redux/store';
 
@@ -64,6 +65,16 @@ const NotificationsScreen = ({ navigation }: ScreenProps): JSX.Element => {
                             </View>
                         </View>
                     ))
+                }
+                {
+                    notifications.length == 0 && (
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: 40, marginTop: 60, paddingVertical: 20 }}>
+                            <Icons name="document-text-outline" size={120} color={'#c7c7c7'} />
+                            <Text style={{ textAlign: 'center', fontSize: 20, color: GoDeliveryColors.secondary, marginTop: 50 }}>No history yet</Text>
+                            {/* <Text style={{ textAlign: 'center', fontSize: 18, marginTop: 15, marginBottom: 100 }}>Hit the orange button down below to Create an order</Text> */}
+                            {/* <PrimaryButton buttonText='Start Ordering' handler={() => { props.navigation.navigate('Main') }} /> */}
+                        </View>
+                    )
                 }
             </ScrollView>
         </View>

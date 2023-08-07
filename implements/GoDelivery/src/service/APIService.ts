@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { API_URL } from "@env";
+// import { API_URL } from "@env";
 import store from '../redux/store';
-
+const API_URL = 'http://34.170.120.223:4000';
 console.log("API_URL ===> ", API_URL);
 
 const config = {
