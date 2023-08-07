@@ -37,18 +37,17 @@ import Header from "components/Headers/Header.js";
 
 const Deliveryman = () => {
   const [modal, setModal] = useState(false);
-  const [newData, setNewData] = useState({
-    phone: '123456',
-    name: '',
-  })
+  const [newPhone, setNewPhone] = useState('');
+  const [newUsername, setNewUsername] = useState('');
 
   const toggle = () => setModal(!modal);
 
   const [deliverymanData, setDeliverymanData] = useState(undefined);
   const [row, setRow] = useState(undefined);
-  useEffect(() => {
+
+  const fetchDeliverymanList = () => {
     axios
-      .post(`http://localhost:3000/deliveryman/deliverymanlist`)
+      .post(`http://34.170.120.223:4000/deliveryman/deliverymanlist`)
       .then((res) => {
         console.log("response:", res);
         if (res.status === 200) {
@@ -56,7 +55,21 @@ const Deliveryman = () => {
           setDeliverymanData(res.data.data);
         }
       });
+  }
+  useEffect(() => {
+    fetchDeliverymanList();
   }, []);
+
+  const registerNewUser = () => {
+    axios.post(`http://34.170.120.223:4000/deliveryman/signup`, { phone: newPhone, name: newUsername, password: '123456' })
+      .then((res) => {
+        const response = res.data;
+        if (response.success) {
+          setModal(false);
+          fetchDeliverymanList();
+        }
+      }).catch((err) => { console.log("error: ", err); })
+  }
 
   useEffect(() => {
     const rows = deliverymanData
@@ -122,12 +135,16 @@ const Deliveryman = () => {
           </ModalHeader>
           <ModalBody>
             <Label>Phone Number</Label>
-            <Input placeholder="Phone" value={newData.phone} />
+            <Input placeholder="Phone" value={newPhone} onChange={(e) => {
+              setNewPhone(e.target.value);
+            }} />
             <Label className="mt-2">User Name</Label>
-            <Input placeholder="user name" />
+            <Input placeholder="user name" value={newUsername} onChange={(e) => {
+              setNewUsername(e.target.value);
+            }} />
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={toggle}>
+            <Button color="primary" onClick={registerNewUser}>
               Register
             </Button>{" "}
             <Button color="secondary" onClick={toggle}>

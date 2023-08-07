@@ -58,8 +58,8 @@ const DrawerMenu = ({ navigation }: DrawerMenuProps): JSX.Element => {
                     <Text style={styles.menuText}>Locations</Text>
                 </TouchableOpacity> */}
                 <TouchableOpacity style={styles.menuButton} onPress={() => { navigation.navigate('Tracks') }}>
-                    <Icons name="locate-outline" size={25} color={GoDeliveryColors.white} />
-                    <Text style={styles.menuText}>Tracks</Text>
+                    <Icons name="map" size={25} color={GoDeliveryColors.white} />
+                    <Text style={styles.menuText}>Estimate</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.bottomButtonArea}>

@@ -2,6 +2,8 @@ import axios from 'axios';
 import { API_URL } from "@env";
 import store from '../redux/store';
 
+console.log("API_URL ===> ", API_URL);
+
 const config = {
     baseURL: API_URL,
     headers: {

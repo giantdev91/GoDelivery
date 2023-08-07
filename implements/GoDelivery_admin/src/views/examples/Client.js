@@ -22,7 +22,7 @@ const Client = () => {
   const [clientData, setClientData] = useState(undefined);
   const [row, setRow] = useState(undefined);
   useEffect(() => {
-    axios.post(`http://localhost:3000/client/searchclient`).then((res) => {
+    axios.post(`http://34.170.120.223:4000/client/searchclient`).then((res) => {
       if (res.status === 200) {
         setClientData(res.data.data);
       }

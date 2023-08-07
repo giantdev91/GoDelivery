@@ -294,7 +294,7 @@ const SignUpRoute = (props: SceneProps) => {
                 <Text style={styles.textFieldErrorMsgArea}>
                     {phoneError}
                 </Text>
-                <CustomizedInput icon='person-outline' placeHolder='User Name' handler={(val) => { setUsername(val) }} />
+                <CustomizedInput icon='person-outline' placeHolder='User Name' val={username} handler={(val) => { setUsername(val) }} />
                 <Text style={styles.textFieldErrorMsgArea}>
                     {usernameError}
                 </Text>

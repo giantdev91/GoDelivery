@@ -34,7 +34,7 @@ import Header from "components/Headers/Header.js";
 const Order = () => {
   const [orderData, setOrderData] = useState(undefined);
   useEffect(() => {
-    axios.post(`http://localhost:3000/order/list`).then((res) => {
+    axios.post(`http://34.170.120.223:4000/order/list`).then((res) => {
       setOrderData(res.data.data);
     });
   }, []);
@@ -69,24 +69,24 @@ const Order = () => {
                 </thead>
                 {orderData !== undefined
                   ? orderData.map((object) => {
-                      const date = new Date(object.createdAt);
-                      const dateString = date.toLocaleString();
-                      const date1 = new Date(object.expectationTime);
-                      const dateString1 = date.toLocaleString();
-                      return object.status === 0 ? (
-                        <tbody>
-                          <tr>
-                            <td>{object.sender}</td>
-                            <td>{object.receiver}</td>
-                            <td>{object.from}</td>
-                            <td>{object.to}</td>
-                            <td>{object.description}</td>
-                            <td>{dateString1}</td>
-                            <td>{dateString}</td>
-                          </tr>
-                        </tbody>
-                      ) : null;
-                    })
+                    const date = new Date(object.createdAt);
+                    const dateString = date.toLocaleString();
+                    const date1 = new Date(object.expectationTime);
+                    const dateString1 = date.toLocaleString();
+                    return object.status === 0 ? (
+                      <tbody>
+                        <tr>
+                          <td>{object.sender}</td>
+                          <td>{object.receiver}</td>
+                          <td>{object.from}</td>
+                          <td>{object.to}</td>
+                          <td>{object.description}</td>
+                          <td>{dateString1}</td>
+                          <td>{dateString}</td>
+                        </tr>
+                      </tbody>
+                    ) : null;
+                  })
                   : null}
               </Table>
             </Card>
@@ -118,27 +118,27 @@ const Order = () => {
                 </thead>
                 {orderData !== undefined
                   ? orderData.map((object) => {
-                      const date = new Date(object.createdAt);
-                      const dateString = date.toLocaleString();
-                      const date1 = new Date(object.expectationTime);
-                      const dateString1 = date1.toLocaleString();
-                      if (object.status === 2 || object.status === 3)
-                        return (
-                          <tbody>
-                            <tr>
-                              <td>{object.sender}</td>
-                              <td>{object.receiver}</td>
-                              <td>{object.from}</td>
-                              <td>{object.to}</td>
-                              <td>{object.description}</td>
-                              <td>{dateString1}</td>
-                              <td>{object.deliverymanID}</td>
-                              <td>{object.spentTime}</td>
-                            </tr>
-                          </tbody>
-                        );
-                      else return null;
-                    })
+                    const date = new Date(object.createdAt);
+                    const dateString = date.toLocaleString();
+                    const date1 = new Date(object.expectationTime);
+                    const dateString1 = date1.toLocaleString();
+                    if (object.status === 2 || object.status === 3)
+                      return (
+                        <tbody>
+                          <tr>
+                            <td>{object.sender}</td>
+                            <td>{object.receiver}</td>
+                            <td>{object.from}</td>
+                            <td>{object.to}</td>
+                            <td>{object.description}</td>
+                            <td>{dateString1}</td>
+                            <td>{object.deliverymanID}</td>
+                            <td>{object.spentTime}</td>
+                          </tr>
+                        </tbody>
+                      );
+                    else return null;
+                  })
                   : null}
               </Table>
             </Card>
@@ -169,27 +169,27 @@ const Order = () => {
                 </thead>
                 {orderData !== undefined
                   ? orderData.map((object) => {
-                      const date = new Date(object.createdAt);
-                      const dateString = date.toLocaleString();
-                      const date1 = new Date(object.expectationTime);
-                      const dateString1 = date1.toLocaleString();
-                      if (object.status === 4)
-                        return (
-                          <tbody>
-                            <tr>
-                              <td>{object.sender}</td>
-                              <td>{object.receiver}</td>
-                              <td>{object.from}</td>
-                              <td>{object.to}</td>
+                    const date = new Date(object.createdAt);
+                    const dateString = date.toLocaleString();
+                    const date1 = new Date(object.expectationTime);
+                    const dateString1 = date1.toLocaleString();
+                    if (object.status === 4)
+                      return (
+                        <tbody>
+                          <tr>
+                            <td>{object.sender}</td>
+                            <td>{object.receiver}</td>
+                            <td>{object.from}</td>
+                            <td>{object.to}</td>
 
-                              <td>{object.description}</td>
-                              <td>{dateString1}</td>
-                              <td>{object.spentTime}</td>
-                            </tr>
-                          </tbody>
-                        );
-                      else return null;
-                    })
+                            <td>{object.description}</td>
+                            <td>{dateString1}</td>
+                            <td>{object.spentTime}</td>
+                          </tr>
+                        </tbody>
+                      );
+                    else return null;
+                  })
                   : null}
               </Table>
             </Card>
@@ -220,27 +220,27 @@ const Order = () => {
                 </thead>
                 {orderData !== undefined
                   ? orderData.map((object) => {
-                      const date = new Date(object.createdAt);
-                      const dateString = date.toLocaleString();
-                      const date1 = new Date(object.expectationTime);
-                      const dateString1 = date1.toLocaleString();
-                      if (object.status === 5)
-                        return (
-                          <tbody>
-                            <tr>
-                              <td>{object.sender}</td>
-                              <td>{object.receiver}</td>
-                              <td>{object.from}</td>
-                              <td>{object.to}</td>
+                    const date = new Date(object.createdAt);
+                    const dateString = date.toLocaleString();
+                    const date1 = new Date(object.expectationTime);
+                    const dateString1 = date1.toLocaleString();
+                    if (object.status === 5)
+                      return (
+                        <tbody>
+                          <tr>
+                            <td>{object.sender}</td>
+                            <td>{object.receiver}</td>
+                            <td>{object.from}</td>
+                            <td>{object.to}</td>
 
-                              <td>{object.description}</td>
-                              <td>{dateString1}</td>
-                              <td>{dateString}</td>
-                            </tr>
-                          </tbody>
-                        );
-                      else return null;
-                    })
+                            <td>{object.description}</td>
+                            <td>{dateString1}</td>
+                            <td>{dateString}</td>
+                          </tr>
+                        </tbody>
+                      );
+                    else return null;
+                  })
                   : null}
               </Table>
             </Card>
@@ -271,26 +271,26 @@ const Order = () => {
                 </thead>
                 {orderData !== undefined
                   ? orderData.map((object) => {
-                      const date = new Date(object.createdAt);
-                      const dateString = date.toLocaleString();
-                      const date1 = new Date(object.expectationTime);
-                      const dateString1 = date1.toLocaleString();
-                      if (object.status === 1)
-                        return (
-                          <tbody>
-                            <tr>
-                              <td>{object.sender}</td>
-                              <td>{object.receiver}</td>
-                              <td>{object.from}</td>
-                              <td>{object.to}</td>
-                              <td>{object.description}</td>
-                              <td>{dateString1}</td>
-                              <td>{dateString}</td>
-                            </tr>
-                          </tbody>
-                        );
-                      else return null;
-                    })
+                    const date = new Date(object.createdAt);
+                    const dateString = date.toLocaleString();
+                    const date1 = new Date(object.expectationTime);
+                    const dateString1 = date1.toLocaleString();
+                    if (object.status === 1)
+                      return (
+                        <tbody>
+                          <tr>
+                            <td>{object.sender}</td>
+                            <td>{object.receiver}</td>
+                            <td>{object.from}</td>
+                            <td>{object.to}</td>
+                            <td>{object.description}</td>
+                            <td>{dateString1}</td>
+                            <td>{dateString}</td>
+                          </tr>
+                        </tbody>
+                      );
+                    else return null;
+                  })
                   : null}
               </Table>
             </Card>
