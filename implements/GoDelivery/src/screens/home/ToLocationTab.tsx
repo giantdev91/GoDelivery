@@ -18,7 +18,7 @@ const ASPECT_RATIO = MAP_WIDTH / MAP_HEIGHT;
 const LATITUDE_DELTA = 0.005; //Very high zoom level
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-const Step1Scene = (props: TabSceneProps) => {
+const Step2Scene = (props: TabSceneProps) => {
     const ref = useRef();
     const [position, setPosition] = useState({
         latitude: 10,
@@ -43,26 +43,21 @@ const Step1Scene = (props: TabSceneProps) => {
     }
 
     const getLocation = () => {
-        const result = requestLocationPermission();
-        result.then(res => {
-            if (res) {
-                Geolocation.getCurrentPosition(
-                    position => {
-                        const crd = position.coords;
-                        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${crd.latitude}&lon=${crd.longitude}&format=json`)
-                            .then(response => response.json())
-                            .then(data => {
-                                syncLocationData(crd, data.display_name);
-                            })
-                            .catch(error => console.error('Error:', error));
-                    },
-                    error => {
-                        console.log(error.code, error.message);
-                    },
-                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
-                )
-            }
-        })
+        Geolocation.getCurrentPosition(
+            position => {
+                const crd = position.coords;
+                fetch(`https://nominatim.openstreetmap.org/reverse?lat=${crd.latitude}&lon=${crd.longitude}&format=json`)
+                    .then(response => response.json())
+                    .then(data => {
+                        syncLocationData(crd, data.display_name);
+                    })
+                    .catch(error => console.error('Error:', error));
+            },
+            error => {
+                console.log(error.code, error.message);
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
+        )
     }
 
     const handleNextButton = () => {
@@ -184,4 +179,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default Step1Scene;
+export default Step2Scene;

@@ -74,7 +74,7 @@ const Order = sequelize.define("order", {
     allowNull: true,
   },
   orderNo: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: true,
   },
   description: {

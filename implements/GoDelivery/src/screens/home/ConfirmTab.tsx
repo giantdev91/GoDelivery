@@ -172,7 +172,7 @@ const ConfirmTab = (props: TabSceneProps) => {
                     </View>
                     <View>
                         <View style={[{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
-                            <CustomizedInput icon='person-outline' placeHolder="Receiver's phone number" keyboardType='number' handler={setReceiverPhone} />
+                            <CustomizedInput icon='person-outline' placeHolder="Receiver's phone number" keyboardType='number' val={receiverPhone} handler={setReceiverPhone} />
                         </View>
                         <Text style={styles.textFieldErrorMsgArea}>
                             {receiverPhoneError}
@@ -200,7 +200,7 @@ const ConfirmTab = (props: TabSceneProps) => {
                     </View>
                     <View>
                         <View style={[{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
-                            <CustomizedInput icon='speedometer-outline' placeHolder='volume' keyboardType='number' handler={setVolume} />
+                            <CustomizedInput icon='speedometer-outline' placeHolder='volume' keyboardType='number' val={volume} handler={setVolume} />
                         </View>
                         <Text style={styles.textFieldErrorMsgArea}>
                             {volumeError}
@@ -208,7 +208,7 @@ const ConfirmTab = (props: TabSceneProps) => {
                     </View>
                     <View>
                         <View style={[{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
-                            <CustomizedInput icon='speedometer-outline' placeHolder='weight' keyboardType='number' handler={setWeight} />
+                            <CustomizedInput icon='speedometer-outline' placeHolder='weight' keyboardType='number' val={weight} handler={setWeight} />
                         </View>
                         <Text style={styles.textFieldErrorMsgArea}>
                             {weightError}
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     inputText: {
-        marginLeft: 10, flex: 1, paddingHorizontal: 10
+        marginLeft: 10, flex: 1, paddingHorizontal: 10, color: GoDeliveryColors.secondary
     },
     checkIconArea: {
         width: 35,
