@@ -35,9 +35,8 @@ const NotificationsScreen = ({ navigation }: ScreenProps): JSX.Element => {
         Action.notification.list({ deliverymanID: deliverymanID })
             .then((res) => {
                 const response = res.data;
-                console.log('response ===> ', response);
                 setNotifications(response.data);
-            }).catch((err) => console.log("error: ", err));
+            }).catch((err) => console.error("error: ", err));
     }
 
     useFocusEffect(

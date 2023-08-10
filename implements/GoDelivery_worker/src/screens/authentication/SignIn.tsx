@@ -14,6 +14,8 @@ import allActions from '../../redux/actions';
 import messaging from '@react-native-firebase/messaging';
 import { requestLocationPermission } from '../../common/RequestPermission';
 import { startBackgroundServiceScheduler } from '../../common/SchedulerService';
+import Geolocation from 'react-native-geolocation-service';
+import store from '../../redux/store';
 
 
 interface SignInScreenProps {
@@ -49,7 +51,7 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
             return String('+91' + argPhone);
         } else {
             setPhoneError('Please insert valid phone number.');
-            console.log('Please insert valid phone number.');
+            console.error('Please insert valid phone number.');
             return '';
         }
         return argPhone;
@@ -59,8 +61,28 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
         try {
             await AsyncStorage.setItem('USER_DATA', JSON.stringify(userData));
         } catch {
-            console.log('error occured!');
+            console.error('error occured!');
         }
+    }
+
+    const updateCurrentLocation = () => {
+        Geolocation.getCurrentPosition(
+            position => {
+                const crd = position.coords;
+                const locationLatitude = crd.latitude.toString();
+                const locationLongitude = crd.longitude.toString();
+                const deliverymanID = store.getState().CurrentUser.user.id;
+
+                Action.deliveryman.updateLocation({
+                    deliverymanID: deliverymanID,
+                    locationLatitude: locationLatitude,
+                    locationLongitude: locationLongitude,
+                }).then((res) => {
+                    const response = res.data;
+                }).catch((err) => {
+                    console.error('error: ', err);
+                })
+            });
     }
 
     const signInUser = async () => {
@@ -78,7 +100,6 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
                 Action.authentication.login({ phone: phone.replace('+', ''), password: password })
                     .then(response => {
                         const responseData = response.data;
-                        console.log('responseData ==> ', responseData);
                         if (responseData.success) {
                             dispatch(allActions.UserAction.setUser(responseData.data.delivery_man));
                             dispatch(allActions.UserAction.setToken(responseData.data.token))
@@ -88,6 +109,8 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
                                     const response = res.data;
                                     const result = requestLocationPermission();
                                     result.then(res => {
+
+                                        updateCurrentLocation();
                                         startBackgroundServiceScheduler();
                                         if (res) {
                                             navigation.reset({
@@ -97,7 +120,7 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
                                         }
                                     });
                                 }).catch((err) => {
-                                    console.log('error: ', err);
+                                    console.error('error: ', err);
                                 })
 
                         } else {
@@ -105,14 +128,14 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
                         }
                         setActivityIndicator(false);
                     }).catch(error => {
-                        console.log('error: ', error);
+                        console.error('error: ', error);
                         setActivityIndicator(false);
                     })
             } else {
                 setActivityIndicator(false);
             }
         } catch (error) {
-            console.log('error: ', error);
+            console.error('error: ', error);
             setActivityIndicator(false);
         }
     };

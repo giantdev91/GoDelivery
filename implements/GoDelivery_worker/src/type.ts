@@ -44,6 +44,10 @@ export type CancelOrderParam = {
     deliverymanID: string
 }
 
+export type OrderUpdateParam = {
+    orderID: number,
+}
+
 export type GeoCoordinates = {
     latitude: number,
     longitude: number,

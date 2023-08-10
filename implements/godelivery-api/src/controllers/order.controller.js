@@ -87,7 +87,6 @@ exports.create = async (req, res) => {
       data: order,
     });
   } catch (error) {
-    console.log('error: ', error);
     res.status(200).send({
       success: false,
       code: 500,
@@ -279,7 +278,7 @@ exports.receive = async (req, res) => {
 exports.rate = async (req, res) => {
   try {
     const { orderID, rate, feedbackTitle, feedbackContent } = req.body;
-    const order = Order.findOne({
+    const order = await Order.findOne({
       where: {
         id: orderID,
       },
@@ -350,7 +349,6 @@ exports.acceptRequest = async (req, res) => {
         id: deliverymanID,
       },
     });
-    console.log("order ===> ", order);
     if (order) {
       if (order.status != 0) {
         res.status(200).send({
@@ -623,7 +621,6 @@ exports.createdOrderList = async (req, res) => {
       data: orders,
     });
   } catch (error) {
-    console.log("error: ", error);
     res.status(200).send({
       success: false,
       code: 500,
@@ -671,7 +668,6 @@ exports.processingDetailByDeliveryman = async (req, res) => {
       data: orders,
     });
   } catch (error) {
-    console.log("error: ", error);
     res.status(200).send({
       success: false,
       code: 500,

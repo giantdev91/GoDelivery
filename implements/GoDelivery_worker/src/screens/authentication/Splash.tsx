@@ -54,7 +54,7 @@ const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
         try {
             await AsyncStorage.setItem('USER_DATA', JSON.stringify(userData));
         } catch {
-            console.log('error occured!');
+            console.error('error occured!');
         }
     }
 

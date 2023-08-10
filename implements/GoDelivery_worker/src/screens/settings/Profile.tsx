@@ -46,7 +46,6 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
 
     const handleSubmit = () => {
         setActivityIndicator(true);
-        console.log('store.getState().CurrentUser.user.id ====> ', store.getState().CurrentUser.user.id);
         const param = {
             deliverymanID: store.getState().CurrentUser.user.id
         }
@@ -62,15 +61,12 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
         if (password) {
             param.password = password;
         }
-        console.log('param ===> ', param);
 
         Action.deliveryman.updateProfile(param)
             .then((res) => {
                 const response = res.data;
-                console.log('response: ', response);
                 if (response.success) {
                     Alert.alert("Save success!");
-                    console.log('response ====> ', response.data);
                     dispatch(allActions.UserAction.setUser(response.data));
                     storeData(response.data);
                 }

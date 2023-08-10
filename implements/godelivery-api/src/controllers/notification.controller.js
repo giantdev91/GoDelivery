@@ -12,7 +12,6 @@ async function createNotification(content, level, type, orderID, clientID) {
       orderID: orderID,
       clientID: clientID,
     });
-    console.log("asdfasdf", notification);
     return notification;
   } catch (error) { }
 }
@@ -112,7 +111,6 @@ exports.list = async (req, res) => {
       data: notifications,
     });
   } catch (error) {
-    console.log('error ===> ', error);
     res.status(200).send({
       success: false,
       code: 500,

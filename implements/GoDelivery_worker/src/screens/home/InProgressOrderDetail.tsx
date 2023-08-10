@@ -31,8 +31,8 @@ type OrderDetailProps = {
 
 const OrderDetail = (props: OrderDetailProps): JSX.Element => {
     const [deliverymanPosition, setDeliverymanPosition] = useState({
-        latitude: 10000,
-        longitude: 10000,
+        "latitude": 0,
+        "longitude": 0,
     });
     const [myOrder, setMyOrder] = useState({
         client: {
@@ -46,12 +46,12 @@ const OrderDetail = (props: OrderDetailProps): JSX.Element => {
     });
     const [orderStatus, setOrderStatus] = useState(1);
     const [senderLocation, setSenderLocation] = useState({
-        latitude: 10000,
-        longitude: 10000,
+        "latitude": 0,
+        "longitude": 0,
     });
     const [receiverLocation, setReceiverLocation] = useState({
-        latitude: 10000,
-        longitude: 10000,
+        "latitude": 0,
+        "longitude": 0,
     });
     const [estimationTime, setEstimationTime] = useState('');
     const [allPositionDataLoaded, setAllPositionDataLoaded] = useState(false);
@@ -79,10 +79,13 @@ const OrderDetail = (props: OrderDetailProps): JSX.Element => {
         Action.deliveryman.getById(deliverymanID)
             .then((res) => {
                 const response = res.data;
-                setDeliverymanPosition({ latitude: parseFloat(response.data.locationLatitude), longitude: parseFloat(response.data.locationLongitude) })
-                setAllPositionDataLoaded(true);
+                if (response.data.locationLatitude != null && response.data.locationLongitude != null) {
+                    const updatedDeliverymanPosition = { latitude: parseFloat(response.data.locationLatitude), longitude: parseFloat(response.data.locationLongitude) };
+                    setDeliverymanPosition(updatedDeliverymanPosition);
+                    setAllPositionDataLoaded(true);
+                }
             }).catch((err) => {
-                console.log("error: ", err);
+                console.error("error: ", err);
             })
     }
 
@@ -97,7 +100,7 @@ const OrderDetail = (props: OrderDetailProps): JSX.Element => {
                 setReceiverLocation({ latitude: parseFloat(orderInfo.toX), longitude: parseFloat(orderInfo.toY) });
                 checkDeliverymanStatus();
             }).catch((err) => {
-                console.log("error: ", err);
+                console.error("error: ", err);
             })
     }
 
@@ -119,13 +122,26 @@ const OrderDetail = (props: OrderDetailProps): JSX.Element => {
                         setActivityIndicator(false);
                     }
                 }).catch((err) => {
-                    console.log("error: ", err);
+                    console.error("error: ", err);
                     setActivityIndicator(false);
                 });
         } else {
             return;
         }
 
+    }
+
+    const handleComplete = () => {
+        setActivityIndicator(true);
+        Action.order.receiveGoods({ orderID: myOrder.id })
+            .then((res) => {
+                const response = res.data;
+                setActivityIndicator(false);
+                props.cancelHandler();
+            }).catch((err) => {
+                console.log("error: ", err);
+                setActivityIndicator(false);
+            })
     }
 
     useEffect(() => {
@@ -149,16 +165,26 @@ const OrderDetail = (props: OrderDetailProps): JSX.Element => {
                                     <Text style={[GlobalStyles.textBold, { fontSize: 16, fontWeight: 'bold' }]}>{myOrder["client"]["name"]}</Text>
                                 </View>
                                 <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                    <TouchableOpacity style={styles.cancelBtnBack} onPress={() => setModalVisible(true)} >
-                                        <Text style={[GlobalStyles.primaryLabel, { fontSize: 14, fontWeight: 'bold' }]}>Cancel</Text>
-                                    </TouchableOpacity>
+                                    {
+                                        orderStatus == 1 && (<TouchableOpacity style={styles.cancelBtnBack} onPress={() => setModalVisible(true)} >
+                                            <Text style={[GlobalStyles.primaryLabel, { fontSize: 14, fontWeight: 'bold' }]}>Cancel</Text>
+                                        </TouchableOpacity>)
+                                    }
                                     <CallButton handler={() => { Linking.openURL(`tel:${myOrder["client"]["phone"]}`); }}  ><Icons name='call-outline' size={20} color={GoDeliveryColors.white} /></CallButton>
                                 </View>
                             </View>
                             <Text style={[GlobalStyles.textDisable, { marginTop: 10 }]}>Receiver</Text>
                             <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Text style={[GlobalStyles.textBold, { fontSize: 16, fontWeight: 'bold' }]}>{myOrder["receiver"]}</Text>
-                                <CallButton handler={() => { Linking.openURL(`tel:${myOrder["receiver"]}`); }}  ><Icons name='call-outline' size={20} color={GoDeliveryColors.white} /></CallButton>
+                                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                    {
+                                        orderStatus == 2 && (<TouchableOpacity style={[styles.cancelBtnBack, { backgroundColor: GoDeliveryColors.primary }]} onPress={handleComplete} >
+                                            <Text style={[GlobalStyles.primaryLabel, { fontSize: 14, fontWeight: 'bold' }]}>Complete</Text>
+                                        </TouchableOpacity>)
+                                    }
+                                    <CallButton handler={() => { Linking.openURL(`tel:${myOrder["receiver"]}`); }}  ><Icons name='call-outline' size={20} color={GoDeliveryColors.white} /></CallButton>
+                                </View>
+
                             </View>
                             <Text style={GlobalStyles.textDisable}>From</Text>
                             <Text style={GlobalStyles.text}>{myOrder["from"]}</Text>
@@ -166,22 +192,21 @@ const OrderDetail = (props: OrderDetailProps): JSX.Element => {
                             <Text style={GlobalStyles.text}>{myOrder["to"]}</Text>
                             <Text style={GlobalStyles.textDisable}>Expectation time: {renderDateTimeFormat(myOrder["expectationTime"])}</Text>
                         </View>
-                        <View style={[{ flex: 1, marginTop: 10, borderWidth: 1, borderColor: GoDeliveryColors.primary, }, GlobalStyles.shadowProp]}>
+                        <View style={[{ flex: 1, borderWidth: 1, borderColor: GoDeliveryColors.primary }, GlobalStyles.shadowProp]}>
                             {allPositionDataLoaded && (
                                 <MapView
                                     style={{ flex: 1.5, borderColor: 'red', borderWidth: 1 }}
                                     provider={PROVIDER_GOOGLE}
-                                    loadingEnabled
                                     region={{
-                                        latitude: deliverymanPosition.latitude,
-                                        longitude: deliverymanPosition.longitude,
+                                        latitude: deliverymanPosition["latitude"],
+                                        longitude: deliverymanPosition["longitude"],
                                         latitudeDelta: LATITUDE_DELTA,
                                         longitudeDelta: LONGITUDE_DELTA,
                                     }}>
-                                    {senderLocation && <Marker
+                                    <Marker
                                         coordinate={senderLocation}
                                         title={'sender'}
-                                    />}
+                                    />
                                     <Marker
                                         coordinate={receiverLocation}
 
@@ -253,7 +278,7 @@ const styles = StyleSheet.create({
     orderInfoArea: {
         flex: 1,
         width: '100%',
-        height: 650,
+        height: 700,
         padding: 15,
     },
     orderDetailSection: {

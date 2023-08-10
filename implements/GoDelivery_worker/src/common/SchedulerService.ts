@@ -15,28 +15,30 @@ const backgroundOptions = {
     linkingURI: 'example://', // The URI to open when the user taps the notification (optional).
 };
 
+const updateCurrentLocation = () => {
+    Geolocation.getCurrentPosition(
+        position => {
+            const crd = position.coords;
+            const locationLatitude = crd.latitude.toString();
+            const locationLongitude = crd.longitude.toString();
+            const deliverymanID = store.getState().CurrentUser.user.id;
 
+            Action.deliveryman.updateLocation({
+                deliverymanID: deliverymanID,
+                locationLatitude: locationLatitude,
+                locationLongitude: locationLongitude,
+            }).then((res) => {
+                const response = res.data;
+            }).catch((err) => {
+                console.error('error: ', err);
+            })
+        });
+}
 
 
 const myBackgroundTask = async () => {
     setInterval(() => {
-        Geolocation.getCurrentPosition(
-            position => {
-                const crd = position.coords;
-                const locationLatitude = crd.latitude.toString();
-                const locationLongitude = crd.longitude.toString();
-                const deliverymanID = store.getState().CurrentUser.user.id;
-                Action.deliveryman.updateLocation({
-                    deliverymanID: deliverymanID,
-                    locationLatitude: locationLatitude,
-                    locationLongitude: locationLongitude,
-                }).then((res) => {
-                    const response = res.data;
-                    console.log('response ===> ', response);
-                }).catch((err) => {
-                    console.log('error: ', err);
-                })
-            });
+        updateCurrentLocation();
     }, 60000);
 };
 

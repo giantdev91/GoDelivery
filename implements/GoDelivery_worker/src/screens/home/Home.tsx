@@ -28,7 +28,7 @@ const HomeScreen = ({ navigation }: ScreenProps): JSX.Element => {
                 const response = res.data;
                 setOrders(response.data);
             }).catch((err) => {
-                console.log("error: ", err);
+                console.error("error: ", err);
             })
     }
 
@@ -40,7 +40,7 @@ const HomeScreen = ({ navigation }: ScreenProps): JSX.Element => {
                 fetchCreatedOrderList();
                 checkDeliverymanStatus();
             }).catch((err) => {
-                console.log("error: ", err);
+                console.error("error: ", err);
             });
     }
 
@@ -55,7 +55,7 @@ const HomeScreen = ({ navigation }: ScreenProps): JSX.Element => {
                     setDeliverymanStatus(true);
                 }
             }).catch((err) => {
-                console.log("error: ", err);
+                console.error("error: ", err);
             })
         setDeliverymanStatus(val);
     }
@@ -67,7 +67,7 @@ const HomeScreen = ({ navigation }: ScreenProps): JSX.Element => {
                 setDeliverymanStatus(response.data.status == 1);
                 // setDeliverymanPosition({ latitude: parseFloat(response.data.locationLatitude), longitude: parseFloat(response.data.locationLongitude) })
             }).catch((err) => {
-                console.log("error: ", err);
+                console.error("error: ", err);
             })
     }
 

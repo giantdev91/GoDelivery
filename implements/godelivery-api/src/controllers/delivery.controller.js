@@ -75,7 +75,6 @@ exports.signin = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log("error: ", error);
     res.status(200).send({
       success: false,
       code: 500,
@@ -113,7 +112,6 @@ exports.orderList = async (req, res) => {
         deliverymanID: deliverymanID,
       },
     });
-    // console.log("order", orders);
 
     res.status(200).send({
       success: true,
@@ -319,8 +317,6 @@ exports.deliverymanList = async (req, res) => {
 exports.updateLocation = async (req, res) => {
   try {
     const { deliverymanID, locationLatitude, locationLongitude } = req.body;
-    console.log("latitude ==> ", locationLatitude);
-    console.log("longitude ==> ", locationLongitude);
 
     const deliveryman = await Delivery_man.findOne({
       where: {
@@ -366,7 +362,6 @@ exports.updateLocation = async (req, res) => {
 exports.getDeliveryManById = async (req, res) => {
   try {
     const deliverymanID = req.params.id;
-    console.log("deliverymanID:", deliverymanID);
     const deliveryman = await Delivery_man.findOne({
       where: { id: deliverymanID },
     });
@@ -409,8 +404,6 @@ exports.updateProfile = async (req, res) => {
       updateData.avatar = avatar;
     }
 
-    console.log('updated Data ====> ', updateData);
-
     if (deliveryman) {
       // Update the status column in the database
       await Delivery_man.update(
@@ -440,7 +433,6 @@ exports.updateProfile = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log("error: ", error);
     res.status(200).send({
       success: false,
       code: 500,

@@ -11,7 +11,6 @@ const { Op } = require("sequelize");
 exports.getClientById = async (req, res) => {
   try {
     const clientId = req.query.id;
-    console.log("clientId:", clientId);
     const client = await Client.findOne({
       where: { id: clientId },
       include: [
@@ -43,7 +42,6 @@ exports.getClientById = async (req, res) => {
 exports.signup = async (req, res) => {
   try {
     const { name, phone, password, avatar } = req.body;
-    console.log("data", req.body);
     const hashedPassword = hashPassword(password.trim());
 
     // await Client.sync();
@@ -75,8 +73,6 @@ exports.signup = async (req, res) => {
 exports.signin = async (req, res) => {
   try {
     const { phone, password } = req.body;
-    console.log("phone ===> ", phone);
-    console.log("password ===> ", password);
     // Search for a record with the provided phone number
     const client = await Client.findOne({
       where: { phone: phone },
@@ -94,7 +90,6 @@ exports.signin = async (req, res) => {
 
     // Check if the phone number exists in the database
     if (client) {
-      console.log("Phone number exists in the database.");
       if (comparePassword(password.trim(), client.password)) {
         const token = generateToken(client.id);
         res.status(200).send({
@@ -138,7 +133,6 @@ exports.save_location = async (req, res) => {
       location: location,
       referBuilding: referBuilding,
     });
-    console.log("location", client_saved_location);
     res.status(200).send({
       success: true,
       code: 200,
@@ -202,13 +196,11 @@ exports.searchClient = async (req, res) => {
 exports.orderList = async (req, res) => {
   try {
     const { clientId } = req.body;
-    console.log("clientId: ", clientId);
     const orders = await Order.findAll({
       where: {
         sender: clientId,
       },
     });
-    // console.log("order", orders);
 
     res.status(200).send({
       status: "success",
@@ -302,8 +294,6 @@ exports.updateClient = async (req, res) => {
       updateData.avatar = avatar;
     }
 
-    console.log('updated Data ====> ', updateData);
-
     const client = await Client.findOne({
       where: {
         id: clientId,
@@ -314,7 +304,6 @@ exports.updateClient = async (req, res) => {
       // If the client is found, delete it from the database
       const result = await client.update(updateData);
 
-      console.log("Client updated successfully.");
       res.status(200).send({
         success: true,
         code: 200,
@@ -322,7 +311,6 @@ exports.updateClient = async (req, res) => {
         data: result,
       });
     } else {
-      console.log("Client not found.");
       res.status(200).send({
         success: false,
         code: 400,
@@ -330,7 +318,6 @@ exports.updateClient = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log("error: ", error);
     res.status(200).send({
       success: false,
       code: 500,
