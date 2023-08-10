@@ -56,7 +56,6 @@ const SignInRoute = (props: SceneProps) => {
             return String('+91' + argPhone);
         } else {
             setPhoneError('Please insert valid phone number.');
-            console.log('Please insert valid phone number.');
             return '';
         }
         return argPhone;
@@ -77,15 +76,12 @@ const SignInRoute = (props: SceneProps) => {
             }
             setActivityIndicator(true);
             const argPhone = validatePhoneNumber();
-            console.log("this is called!!!!!!!!!!!!!!!!!!");
             //get the fcmToken when client login
             const token = await messaging().getToken();
-            console.log('token ===> ', token);
             if (argPhone) {
                 Action.authentication.login({ phone: phone.replace('+', ''), password: password })
                     .then(response => {
                         const responseData = response.data;
-                        console.log('response ===> ', responseData);
                         if (responseData.success) {
                             dispatch(allActions.UserAction.setUser(responseData.data.client));
                             dispatch(allActions.UserAction.setToken(responseData.data.token))
@@ -93,7 +89,6 @@ const SignInRoute = (props: SceneProps) => {
 
                             Action.client.updateFcmToken({ clientID: responseData.data.client.id, fcmToken: token })
                                 .then((res) => {
-                                    console.log('response: ', res.data);
                                     navigation.reset({
                                         index: 0,
                                         routes: [{ name: 'Main', params: { initialIndex: 0 } }],

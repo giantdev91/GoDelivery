@@ -45,7 +45,6 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
 
     const handleSubmit = () => {
         setActivityIndicator(true);
-        console.log('store.getState().CurrentUser.user.id ====> ', store.getState().CurrentUser.user.id);
         const param = {
             clientId: store.getState().CurrentUser.user.id
         }
@@ -61,12 +60,10 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
         if (password) {
             param.password = password;
         }
-        console.log('param ===> ', param);
 
         Action.client.updateProfile(param)
             .then((res) => {
                 const response = res.data;
-                console.log('response: ', response);
                 if (response.success) {
                     Alert.alert("Save success!");
                     dispatch(allActions.UserAction.setUser(response.data));

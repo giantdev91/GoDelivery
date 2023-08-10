@@ -32,7 +32,6 @@ const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
             Action.client.getById({ id: userData.id })
                 .then(response => {
                     const responseData = response.data;
-                    console.log('responseData ===> ', responseData);
                     dispatch(allActions.UserAction.setUser(responseData.data));
                     storeData(responseData.data);
                     setActivityIndicator(false);

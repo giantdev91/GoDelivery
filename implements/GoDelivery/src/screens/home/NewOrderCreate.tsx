@@ -33,7 +33,6 @@ const NewOrderCreate = ({ navigation }: ScreenProps): JSX.Element => {
     ]);
 
     const handleNext = (position: LocationInfoType) => {
-        console.log('received position =========> ', position);
         switch (index) {
             case 0:
                 setIndex(1);

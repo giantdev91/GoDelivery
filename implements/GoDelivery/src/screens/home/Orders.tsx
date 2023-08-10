@@ -64,7 +64,6 @@ const SentRoute = (props: SceneProps) => {
         Action.order.completeOrders({ status: 3, sender: store.getState().CurrentUser.user.id })
             .then((res) => {
                 const response = res.data;
-                console.log('response ===> ', response);
                 setOrders(response.data);
             }).catch((err) => {
                 console.log("error: ", err);
@@ -77,7 +76,6 @@ const SentRoute = (props: SceneProps) => {
     };
 
     const ratingCompleted = (rating: number) => {
-        console.log('rating ==> ', rating);
         setRating(rating);
     }
 
@@ -92,7 +90,6 @@ const SentRoute = (props: SceneProps) => {
         Action.order.leaveFeedback(param)
             .then((res) => {
                 const response = res.data;
-                console.log('response ===> ', response);
                 setModalVisible(false);
                 fetchCompletedOrders();
                 setActivityIndicator(false);
@@ -178,7 +175,6 @@ const ReceivedRoute = (props: SceneProps) => {
         Action.order.completeOrders({ status: 3, receiver: store.getState().CurrentUser.user.phone })
             .then((res) => {
                 const response = res.data;
-                console.log('response ===> ', response.data[0].client);
                 setOrders(response.data);
             }).catch((err) => {
                 console.log("error: ", err);
