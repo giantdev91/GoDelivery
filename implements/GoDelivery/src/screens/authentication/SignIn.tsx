@@ -231,30 +231,29 @@ const SignUpRoute = (props: SceneProps) => {
         if (validateInputForm()) {
             const argPhone = validatePhoneNumber();
             if (argPhone) {
-                if (await TwillioService.sendSMSVerfication(argPhone)) {
-                    Action.authentication.phoneCheck({ phone: phone.replace('+', '') })
-                        .then((res) => {
-                            const responseData = res.data;
-                            if (responseData.success) {
-                                const param = {
-                                    phone: phone,
-                                    password: password,
-                                    name: username,
-                                }
+                Action.authentication.phoneCheck({ phone: phone.replace('+', '') })
+                    .then(async (res) => {
+                        const responseData = res.data;
+                        if (responseData.success) {
+                            const param = {
+                                phone: phone,
+                                password: password,
+                                name: username,
+                            }
+                            if (await TwillioService.sendSMSVerfication(argPhone)) {
                                 setActivityIndicator(false);
                                 navigation.navigate('OTP', param);
                             } else {
-                                Alert.alert(responseData.message);
+                                Alert.alert('Phone number valid failed');
                                 setActivityIndicator(false);
                             }
-                        }).catch(err => {
+                        } else {
+                            Alert.alert(responseData.message);
                             setActivityIndicator(false);
-                        });
-
-                } else {
-                    Alert.alert('Phone number valid failed');
-                    setActivityIndicator(false);
-                }
+                        }
+                    }).catch(err => {
+                        setActivityIndicator(false);
+                    });
             } else {
                 setActivityIndicator(false);
             }
