@@ -25,6 +25,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from './src/screens/authentication/Splash';
 import SignInScreen from './src/screens/authentication/SignIn';
+import SignUpScreen from './src/screens/authentication/SignUp';
 import OTPScreen from './src/screens/authentication/OTP';
 import TabNavigator from './src/navigators/TabNavigator';
 import DrawerNavigator from './src/navigators/DrawerNavigator';
@@ -71,6 +72,7 @@ function App(): JSX.Element {
             <Stack.Screen name="Splash" component={SplashScreen} />
             <Stack.Screen name="Main" component={DrawerNavigator} />
             <Stack.Screen name="SignIn" component={SignInScreen} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="OTP" component={OTPScreen} />
           </Stack.Navigator>
         </NavigationContainer>

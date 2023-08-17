@@ -47,7 +47,7 @@ const Deliveryman = () => {
 
   const fetchDeliverymanList = () => {
     axios
-      .post(`http://34.170.120.223:4000/deliveryman/deliverymanlist`)
+      .post(`http://34.28.220.154:4000/deliveryman/deliverymanlist`)
       .then((res) => {
         console.log("response:", res);
         if (res.status === 200) {
@@ -61,7 +61,7 @@ const Deliveryman = () => {
   }, []);
 
   const registerNewUser = () => {
-    axios.post(`http://34.170.120.223:4000/deliveryman/signup`, { phone: newPhone, name: newUsername, password: '123456' })
+    axios.post(`http://34.28.220.154:4000/deliveryman/signup`, { phone: newPhone, name: newUsername, password: '123456' })
       .then((res) => {
         const response = res.data;
         if (response.success) {

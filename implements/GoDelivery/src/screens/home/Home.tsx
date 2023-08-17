@@ -1,35 +1,76 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import GlobalStyles from '../../styles/style';
-import { StyleSheet, TouchableOpacity, View, Text, Image, Platform } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, Image, Platform, Alert, ScrollView } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import GoDeliveryColors from '../../styles/colors';
 import MenuButton from '../../components/MenuButton';
 import LinearGradient from 'react-native-linear-gradient';
+import store from '../../redux/store';
+import DeliveryType from '../../components/DeliveryType';
 
 interface ScreenProps {
     navigation: any;
 }
 
 const HomeScreen = ({ navigation }: ScreenProps): JSX.Element => {
+    const [userData, setUserData] = useState(store.getState().CurrentUser.user);
+
     const handleNewOrder = () => {
         navigation.navigate('NewOrderCreate');
     }
+
+    const handleComingSoon = () => {
+        Alert.alert("GoDelivery", "Coming Soon!");
+    }
+
+    // Use useFocusEffect to fetch orders whenever the screen gains focus
+    useFocusEffect(
+        useCallback(() => {
+            setUserData(store.getState().CurrentUser.user);
+        }, [])
+    );
+
+
     return (
-        <View style={[GlobalStyles.container]}>
-            <MenuButton navigation={navigation} />
-            <View style={styles.headerSection}>
-                <Image source={require('../../../assets/images/delivery-man.png')} />
-                <Text style={styles.headerTitle}>Welcome to our service</Text>
+        <ScrollView style={[GlobalStyles.container]}>
+            <View style={[styles.headerSection]}>
+                <MenuButton navigation={navigation} />
+                <View style={{ width: '100%', paddingHorizontal: 40 }}>
+                    <View style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+                        <Text style={styles.headerTitle}>Welcome,</Text>
+                        {
+                            !userData["avatar"] && (
+                                <Image style={styles.userAvatar} source={require('../../../assets/images/user_default_avatar.png')} />
+                            )
+                        }
+                        {
+                            userData["avatar"] && (
+                                <Image style={styles.userAvatar} source={{ uri: userData["avatar"] }} />
+                            )
+                        }
+                    </View>
+                    <Text style={styles.headerTitle}>{userData.name} !</Text>
+                </View>
             </View>
             <View style={styles.orderButtonSection}>
-                <TouchableOpacity onPress={handleNewOrder}>
-                    <LinearGradient colors={[GoDeliveryColors.primary, GoDeliveryColors.primary, GoDeliveryColors.primary, GoDeliveryColors.white]} style={styles.orderButtonBack}>
-                        <Image source={require('../../../assets/images/company_logo_white.png')} style={styles.pickupLogo} />
-                        <Text style={styles.pickupTitle}>Pick Up</Text>
-                    </LinearGradient>
-                </TouchableOpacity>
+                <DeliveryType
+                    title='Personal Delivery'
+                    content='A to B delivery of your personal Documents, Passport, Wallet and more'
+                    handler={handleNewOrder}
+                />
+                <DeliveryType
+                    title='Restaurant Delivery'
+                    content='Choose a food from your favorite restaurant'
+                    handler={handleComingSoon}
+                />
+                <DeliveryType
+                    title='Business Delivery'
+                    content='A to B delivery with Multi-Drop options'
+                    handler={handleComingSoon}
+                />
             </View>
-            <View style={{ marginTop: 10, }}>
+            <View style={{ marginTop: 10, marginBottom: 30 }}>
                 <Text style={styles.comment}>Need more help?</Text>
                 <TouchableOpacity
                     style={[GlobalStyles.primaryButton, GlobalStyles.shadowProp, styles.callButton]}
@@ -38,26 +79,35 @@ const HomeScreen = ({ navigation }: ScreenProps): JSX.Element => {
                     <Text style={[GlobalStyles.primaryLabel, { marginLeft: 10, fontSize: 14, fontWeight: '400' }]}>CONTACT US</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
     headerSection: {
         marginHorizontal: 90,
-        marginTop: 80,
         alignItems: 'center',
-        justifyContent: 'center',
+        paddingTop: 20,
+        justifyContent: 'flex-start',
+        width: '100%',
+        height: 230,
+        backgroundColor: GoDeliveryColors.place,
+        alignSelf: 'center'
     },
     headerTitle: {
-        fontSize: 36,
-        fontWeight: "600",
-        color: GoDeliveryColors.primary,
-        textAlign: 'center',
+        fontSize: 28,
+        fontWeight: "bold",
+        color: GoDeliveryColors.labelColor,
+        textAlign: 'left',
+    },
+    userAvatar: {
+        width: 100,
+        height: 100,
+        borderRadius: 200,
     },
     orderButtonSection: {
         paddingHorizontal: 50,
-        paddingVertical: 15,
+        marginTop: -60,
         alignSelf: 'center',
     },
     orderButtonBack: {

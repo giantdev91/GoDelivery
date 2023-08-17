@@ -10,6 +10,16 @@ const GlobalStyles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 40,
     },
+    authenticationScreenLogoBack: {
+        backgroundColor: GoDeliveryColors.primary,
+        alignItems: 'center',
+        height: 200,
+        justifyContent: 'center'
+    },
+    authenticationScreenLogo: {
+        width: 250,
+        resizeMode: 'contain',
+    },
     shadowProp: {
         ...Platform.select({
             ios: {
@@ -29,17 +39,17 @@ const GlobalStyles = StyleSheet.create({
     },
     primaryButton: {
         alignSelf: 'center',
-        width: 300,
-        height: 60,
+        width: "100%",
+        height: 50,
         backgroundColor: GoDeliveryColors.primary,
-        borderRadius: 30,
+        borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
     },
     primaryLabel: {
         color: GoDeliveryColors.white,
-        fontSize: 14,
-        fontWeight: "400",
+        fontSize: 16,
+        fontWeight: "bold",
     },
     primaryEmphasizeLabel: {
         color: GoDeliveryColors.primary,

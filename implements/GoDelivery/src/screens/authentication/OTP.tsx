@@ -89,13 +89,13 @@ const OTPScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
 
     return (
         <View style={[GlobalStyles.container]}>
-            <View style={styles.headerSection}>
+            <View style={GlobalStyles.authenticationScreenLogoBack}>
                 <BackButton navigation={navigation} />
-                <Image source={require('../../../assets/images/company_logo.png')}
-                    style={styles.logo}
+                <Image source={require('../../../assets/images/company-logo-white.png')}
+                    style={GlobalStyles.authenticationScreenLogo}
                 />
             </View>
-            <View style={[{ flex: 1, padding: 30, flexDirection: 'column', alignItems: 'center' }]}>
+            <View style={[{ flex: 1, paddingHorizontal: 20, paddingVertical: 30, flexDirection: 'column', alignItems: 'center' }]}>
                 <View style={{ paddingHorizontal: 40, alignItems: 'center', paddingBottom: 20 }}>
                     <Text style={styles.titleLabelStyle}> OTP Verification</Text>
                     <Text style={[styles.labelStyle, { marginVertical: 10 }]}>We will send you a one time password on this <Text style={{ fontWeight: "700" }}>Mobile Number</Text></Text>
@@ -135,7 +135,7 @@ const OTPScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View>
+                <View style={{ width: '100%', margin: 20 }}>
                     <PrimaryButton buttonText='Submit' handler={confirmCode} />
                     <View style={{ marginTop: 30 }}>
                         <TouchableOpacity style={styles.footerTitleBack} onPress={navigateToLogin}>
@@ -150,18 +150,6 @@ const OTPScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
 }
 
 const styles = StyleSheet.create({
-    headerSection: {
-        backgroundColor: GoDeliveryColors.white,
-        alignItems: 'center',
-        height: 250,
-        justifyContent: 'center',
-        borderBottomLeftRadius: 20,
-        borderBottomRightRadius: 20,
-    },
-    logo: {
-        width: 380,
-        resizeMode: 'contain',
-    },
     titleLabelStyle: {
         fontSize: 22,
         fontWeight: "700",

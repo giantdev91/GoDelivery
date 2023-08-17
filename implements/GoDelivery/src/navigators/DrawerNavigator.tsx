@@ -3,7 +3,9 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import TabNavigator from './TabNavigator';
 import GoDeliveryColors from '../styles/colors';
 import DrawerMenu from '../components/DrawerMenu';
+import ProfileHomeScreen from '../screens/settings/ProfileHome';
 import ProfileScreen from '../screens/settings/Profile'
+import SelectLanguageScreen from '../screens/settings/SelectLanguage';
 import LocationsScreen from '../screens/settings/Locations'
 import TracksScreen from '../screens/settings/Tracks'
 
@@ -24,7 +26,10 @@ function DrawerNavigator(): JSX.Element {
             drawerContent={props => <DrawerMenu {...props} />}
         >
             <Drawer.Screen name="Home" component={TabNavigator} />
-            <Drawer.Screen name="Profile" component={ProfileScreen} />
+            <Drawer.Screen name="ProfileHome" component={ProfileHomeScreen} />
+            <Drawer.Screen name="MyProfile" component={ProfileScreen} />
+            <Drawer.Screen name="SelectLanguage" component={SelectLanguageScreen} />
+            <Drawer.Screen name="myLocation" component={ProfileScreen} />
             <Drawer.Screen name="Locations" component={LocationsScreen} />
             <Drawer.Screen name="Tracks" component={TracksScreen} />
         </Drawer.Navigator>

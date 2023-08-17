@@ -15,7 +15,7 @@ const HeaderBar = (props: HeaderBarProps): JSX.Element => {
     return (
         <View style={styles.headerSection}>
             <TouchableOpacity style={styles.headerBackButton} onPress={handleBack}>
-                <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.primary} />
+                <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.white} />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>{props.title}</Text>
         </View>
@@ -24,15 +24,17 @@ const HeaderBar = (props: HeaderBarProps): JSX.Element => {
 
 const styles = StyleSheet.create({
     headerSection: {
-        alignItems: 'center',
+        alignItems: 'flex-start',
         height: 50,
         width: '100%',
         justifyContent: 'center',
+        backgroundColor: GoDeliveryColors.primary
     },
     headerTitle: {
-        fontSize: 20,
-        fontWeight: "600",
-        color: GoDeliveryColors.primary,
+        fontSize: 22,
+        fontWeight: "bold",
+        color: GoDeliveryColors.white,
+        marginLeft: 80,
     },
     headerBackButton: {
         position: 'absolute',

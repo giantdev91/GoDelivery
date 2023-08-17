@@ -46,26 +46,34 @@ const DrawerMenu = ({ navigation }: DrawerMenuProps): JSX.Element => {
             </View>
             <View style={styles.menuArea}>
                 <TouchableOpacity style={styles.menuButton} onPress={() => { navigation.navigate('Home') }}>
-                    <Icons name="home-outline" size={25} color={GoDeliveryColors.white} />
+                    <Icons name="home-outline" size={25} color={GoDeliveryColors.disabled} />
                     <Text style={styles.menuText}>Home</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.menuButton} onPress={() => { navigation.navigate('Profile') }}>
-                    <Icons name="person-outline" size={25} color={GoDeliveryColors.white} />
+                <TouchableOpacity style={styles.menuButton} onPress={() => { navigation.navigate('Home') }}>
+                    <Icons name="share-social-outline" size={25} color={GoDeliveryColors.disabled} />
+                    <Text style={styles.menuText}>Share the App</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.menuButton} onPress={() => { navigation.navigate('ProfileHome') }}>
+                    <Icons name="person-outline" size={25} color={GoDeliveryColors.disabled} />
                     <Text style={styles.menuText}>Profile</Text>
                 </TouchableOpacity>
-                {/* <TouchableOpacity style={styles.menuButton} onPress={() => { navigation.navigate('Locations') }}>
-                    <Icons name="location-outline" size={25} color={GoDeliveryColors.white} />
-                    <Text style={styles.menuText}>Locations</Text>
-                </TouchableOpacity> */}
                 <TouchableOpacity style={styles.menuButton} onPress={() => { navigation.navigate('Tracks') }}>
-                    <Icons name="map" size={25} color={GoDeliveryColors.white} />
-                    <Text style={styles.menuText}>Estimate</Text>
+                    <Icons name="calculator-outline" size={25} color={GoDeliveryColors.disabled} />
+                    <Text style={styles.menuText}>Price Estimate</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.menuButton} onPress={() => { navigation.navigate('Tracks') }}>
+                    <Icons name="wallet-outline" size={25} color={GoDeliveryColors.disabled} />
+                    <Text style={styles.menuText}>Wallet</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.menuButton} onPress={() => { navigation.navigate('Tracks') }}>
+                    <Icons name="map-outline" size={25} color={GoDeliveryColors.disabled} />
+                    <Text style={styles.menuText}>Track</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.bottomButtonArea}>
                 <TouchableOpacity style={styles.menuButton} onPress={logout}>
-                    <Icons name="power" size={25} color={GoDeliveryColors.white} />
-                    <Text style={styles.menuText}>Sign out</Text>
+                    <Icons name="log-out-outline" size={34} color={GoDeliveryColors.primary} />
+                    <Text style={[styles.menuText, { color: GoDeliveryColors.primary, fontSize: 22, }]}>Sign out</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
@@ -74,22 +82,23 @@ const DrawerMenu = ({ navigation }: DrawerMenuProps): JSX.Element => {
 
 const styles = StyleSheet.create({
     drawerMenuContainer: {
-        padding: 25,
         flex: 1,
+        backgroundColor: GoDeliveryColors.white
     },
     imageSection: {
-        marginHorizontal: 20,
         alignItems: 'center',
-        marginVertical: 30,
+        backgroundColor: GoDeliveryColors.primary,
+        paddingVertical: 20,
     },
     usernameLabel: {
-        fontSize: 18,
-        fontWeight: "600",
+        fontSize: 20,
+        fontWeight: "bold",
         color: GoDeliveryColors.white,
         marginTop: 15,
     },
     menuArea: {
         flex: 1,
+        padding: 20,
     },
     menuButton: {
         flexDirection: 'row',
@@ -97,7 +106,7 @@ const styles = StyleSheet.create({
         marginVertical: 18
     },
     menuText: {
-        color: GoDeliveryColors.white,
+        color: GoDeliveryColors.disabled,
         fontSize: 20,
         fontWeight: "600",
         marginLeft: 20
@@ -108,7 +117,7 @@ const styles = StyleSheet.create({
         borderRadius: 200,
     },
     bottomButtonArea: {
-        marginBottom: 50,
+        padding: 20,
     }
 })
 

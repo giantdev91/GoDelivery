@@ -129,7 +129,7 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
 
     return (
         <View style={[GlobalStyles.container]}>
-            <HeaderBar navigation={navigation} title={'My Profile'} />
+            <HeaderBar navigation={navigation} title={'MY PROFILE'} />
             <ScrollView style={GlobalStyles.container}>
                 <View style={styles.avatarArea}>
                     <View style={{ width: 160, height: 160 }}>

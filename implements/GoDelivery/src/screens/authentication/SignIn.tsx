@@ -18,32 +18,15 @@ import Action from '../../service';
 import allActions from '../../redux/actions';
 import TwillioService from '../../service/TwillioService';
 
-interface SignInScreenProps {
+const SignInScreen = ({ route, navigation }: {
     route: any,
-    navigation: any;
-}
-
-interface HideKeyboardProps {
-    children: JSX.Element
-}
-
-interface SceneProps {
-    jumpTo: (key: string) => void;
-}
-
-const HideKeyboard = ({ children }: HideKeyboardProps) => (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        {children}
-    </TouchableWithoutFeedback>
-)
-
-const SignInRoute = (props: SceneProps) => {
+    navigation: any,
+}) => {
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [phoneError, setPhoneError] = useState('');
     const [activityIndicator, setActivityIndicator] = useState(false);
     const dispatch = useDispatch();
-    const navigation = useNavigation();
 
     // Function to validate phone number
     const validatePhoneNumber = () => {
@@ -116,265 +99,61 @@ const SignInRoute = (props: SceneProps) => {
     };
 
     const navigateToSignup = () => {
-        props.jumpTo('signUp');
+        navigation.navigate('SignUp');
     }
 
     return (
-        <ScrollView style={[GlobalStyles.container, GlobalStyles.contentAreaPadding]} >
-            <View style={{ height: 350, justifyContent: 'center' }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                    <View style={{ flex: 1, }}>
-                        <PhoneInput
-                            containerStyle={{ padding: 0, height: 55, borderRadius: 30, width: '100%' }}
-                            textContainerStyle={{ borderTopRightRadius: 30, borderBottomRightRadius: 30 }}
-                            textInputStyle={{ padding: 0 }}
-                            defaultValue={phone}
-                            defaultCode='MZ'
-                            onChangeFormattedText={text => setPhone(text)}
-                            withShadow
-                        />
-                    </View>
-                    <View style={styles.checkIconArea}>
-                        <Icons
-                            name="checkmark-outline"
-                            size={25}
-                            color={GoDeliveryColors.green}
-                        />
-                    </View>
-                </View>
-                <Text style={styles.textFieldErrorMsgArea}>
-                    {phoneError}
-                </Text>
-                <PasswordInput handler={(val) => { setPassword(val) }} />
-                <View style={styles.textFieldErrorMsgArea}>
-                </View>
-            </View>
-            <View style={{ marginBottom: 80 }}>
-                <PrimaryButton buttonText='Login' handler={signInUser} />
-                <View style={{ marginTop: 30 }}>
-                    <TouchableOpacity style={styles.footerTitleBack} onPress={navigateToSignup}>
-                        <Text style={GlobalStyles.primaryEmphasizeLabel}>You  don’t have an account ? </Text>
-                        <Text style={GlobalStyles.primaryEmphasizeLabelHigher}>Sign Up </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-            {activityIndicator && <ActivityIndicator size={'large'} style={{ position: 'absolute', alignSelf: 'center', bottom: 150, }} />}
-        </ScrollView>
-    );
-};
-
-const SignUpRoute = (props: SceneProps) => {
-    const [phone, setPhone] = useState('');
-    const [phoneError, setPhoneError] = useState('');
-    const [username, setUsername] = useState('');
-    const [usernameError, setUsernameError] = useState('');
-    const [password, setPassword] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [confirmPasswordError, setConfirmPasswordError] = useState('');
-    const [activityIndicator, setActivityIndicator] = useState(false);
-
-    const navigation = useNavigation();
-
-    const navigateToSignin = () => {
-        props.jumpTo('signIn');
-    }
-
-    // Function to validate phone number
-    const validatePhoneNumber = () => {
-        const argPhone = String(phone).replace(/[^\d]/g, '');
-        if (argPhone.length > 10) {
-            setPhoneError('');
-            return String('+' + argPhone);
-        } else if (argPhone.length == 10) {
-            setPhoneError('');
-            return String('+91' + argPhone);
-        } else {
-            setPhoneError('Please insert valid phone number.');
-            console.log('Please insert valid phone number.');
-            return '';
-        }
-        return argPhone;
-    };
-
-    const validateInputForm = () => {
-        let valid = true;
-        if (!username) {
-            setUsernameError('Please insert username.');
-            valid = false;
-        } else {
-            setUsernameError('');
-        }
-        if (!password) {
-            setPasswordError('Please set password');
-            valid = false;
-        } else {
-            setPasswordError('');
-        }
-        if (!confirmPassword) {
-            setConfirmPasswordError('Please confirm password.');
-            valid = false;
-        } else {
-            setConfirmPasswordError('');
-        }
-        if (password != confirmPassword) {
-            setConfirmPasswordError('password mismatch.');
-            valid = false;
-        } else {
-            setConfirmPasswordError('');
-        }
-        return valid;
-    }
-
-    const navigateToOTP = async () => {
-        setActivityIndicator(true);
-        if (validateInputForm()) {
-            const argPhone = validatePhoneNumber();
-            if (argPhone) {
-                Action.authentication.phoneCheck({ phone: phone.replace('+', '') })
-                    .then(async (res) => {
-                        const responseData = res.data;
-                        if (responseData.success) {
-                            const param = {
-                                phone: phone,
-                                password: password,
-                                name: username,
-                            }
-                            if (await TwillioService.sendSMSVerfication(argPhone)) {
-                                setActivityIndicator(false);
-                                navigation.navigate('OTP', param);
-                            } else {
-                                Alert.alert('Phone number valid failed');
-                                setActivityIndicator(false);
-                            }
-                        } else {
-                            Alert.alert(responseData.message);
-                            setActivityIndicator(false);
-                        }
-                    }).catch(err => {
-                        setActivityIndicator(false);
-                    });
-            } else {
-                setActivityIndicator(false);
-            }
-        } else {
-            setActivityIndicator(false);
-            return;
-        }
-    }
-    return (
-        <ScrollView style={[GlobalStyles.container, GlobalStyles.contentAreaPadding]} >
-            <View style={{ height: 350, justifyContent: 'center' }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                    <View style={{ flex: 1, }}>
-                        <PhoneInput
-                            containerStyle={{ padding: 0, height: 55, borderRadius: 30, width: '100%' }}
-                            textContainerStyle={{ borderTopRightRadius: 30, borderBottomRightRadius: 30 }}
-                            textInputStyle={{ padding: 0 }}
-                            defaultValue={phone}
-                            defaultCode='MZ'
-                            onChangeFormattedText={text => setPhone(text)}
-                            withShadow
-                        />
-                    </View>
-                    <View style={styles.checkIconArea}>
-                        {phone && (<Icons
-                            name="checkmark-outline"
-                            size={25}
-                            color={GoDeliveryColors.green}
-                        />)}
-                    </View>
-                </View>
-                <Text style={styles.textFieldErrorMsgArea}>
-                    {phoneError}
-                </Text>
-                <CustomizedInput icon='person-outline' placeHolder='User Name' val={username} handler={(val) => { setUsername(val) }} />
-                <Text style={styles.textFieldErrorMsgArea}>
-                    {usernameError}
-                </Text>
-                <PasswordInput handler={(val) => setPassword(val)} />
-                <Text style={styles.textFieldErrorMsgArea}>
-                    {passwordError}
-                </Text>
-                <PasswordInput placeholder='Confirm Password' handler={(val) => setConfirmPassword(val)} />
-                <Text style={styles.textFieldErrorMsgArea}>
-                    {confirmPasswordError}
-                </Text>
-            </View>
-            {activityIndicator && (
-                <ActivityIndicator
-                    size="large"
-                    style={{ position: 'absolute', alignSelf: 'center', bottom: 300 }}
-                />
-            )}
-            <View style={{ marginBottom: 80 }}>
-                <PrimaryButton buttonText='Register' handler={navigateToOTP} />
-                <View style={{ marginTop: 30 }}>
-                    <TouchableOpacity style={styles.footerTitleBack} onPress={navigateToSignin}>
-                        <Text style={GlobalStyles.primaryEmphasizeLabel}>You  have an account ? </Text>
-                        <Text style={GlobalStyles.primaryEmphasizeLabelHigher}>Login</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </ScrollView>
-    );
-};
-
-const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => {
-    const { initialIndex } = route.params ?? 0;
-    const layout = useWindowDimensions();
-    const [index, setIndex] = React.useState(initialIndex);
-    const [routes] = React.useState([
-        { key: 'signIn', title: 'SignIn' },
-        { key: 'signUp', title: 'SignUp' },
-    ]);
-    const renderScene = SceneMap({
-        signIn: SignInRoute,
-        signUp: SignUpRoute,
-    });
-
-    const renderTabBar = (props: SceneRendererProps & { navigationState: NavigationState<any> }) => (
-        <TabBar
-            {...props}
-            activeColor={GoDeliveryColors.primary}
-            inactiveColor={GoDeliveryColors.disabled}
-            indicatorStyle={{ backgroundColor: GoDeliveryColors.primary, height: 5, width: 120, borderRadius: 10, marginLeft: (Dimensions.get('screen').width - 240) / 4 }}
-            style={{ backgroundColor: 'white', borderBottomRightRadius: 20, borderBottomLeftRadius: 20, }}
-            labelStyle={styles.tabLabelStyle}
-        />
-    );
-
-    return (
-
         <SafeAreaView style={[GlobalStyles.container]}>
-            <View style={styles.headerSection}>
-                <Image source={require('../../../assets/images/company_logo.png')}
-                    style={styles.logo}
+            <View style={GlobalStyles.authenticationScreenLogoBack}>
+                <Image source={require('../../../assets/images/company-logo-white.png')}
+                    style={GlobalStyles.authenticationScreenLogo}
                 />
             </View>
-            <TabView
-                navigationState={{ index, routes }}
-                renderScene={renderScene}
-                onIndexChange={setIndex}
-                renderTabBar={renderTabBar}
-                initialLayout={{ width: layout.width }}
-            />
-
+            <ScrollView style={[GlobalStyles.container, GlobalStyles.contentAreaPadding]} >
+                <View style={{ height: 350, justifyContent: 'center' }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ flex: 1, }}>
+                            <PhoneInput
+                                containerStyle={{ padding: 0, height: 55, borderRadius: 30, width: '100%' }}
+                                textContainerStyle={{ borderTopRightRadius: 30, borderBottomRightRadius: 30 }}
+                                textInputStyle={{ padding: 0 }}
+                                defaultValue={phone}
+                                defaultCode='MZ'
+                                onChangeFormattedText={text => setPhone(text)}
+                                withShadow
+                            />
+                        </View>
+                        <View style={styles.checkIconArea}>
+                            <Icons
+                                name="checkmark-outline"
+                                size={25}
+                                color={GoDeliveryColors.green}
+                            />
+                        </View>
+                    </View>
+                    <Text style={styles.textFieldErrorMsgArea}>
+                        {phoneError}
+                    </Text>
+                    <PasswordInput handler={(val) => { setPassword(val) }} />
+                    <View style={styles.textFieldErrorMsgArea}>
+                    </View>
+                </View>
+                <View style={{ marginBottom: 80 }}>
+                    <PrimaryButton buttonText='SignIn' handler={signInUser} />
+                    <View style={{ marginTop: 30 }}>
+                        <TouchableOpacity style={styles.footerTitleBack} onPress={navigateToSignup}>
+                            <Text style={GlobalStyles.primaryEmphasizeLabel}>You  don’t have an account ? </Text>
+                            <Text style={GlobalStyles.primaryEmphasizeLabelHigher}>Sign Up </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                {activityIndicator && <ActivityIndicator size={'large'} style={{ position: 'absolute', alignSelf: 'center', bottom: 150, }} />}
+            </ScrollView>
         </SafeAreaView>
     );
-}
+};
 
 const styles = StyleSheet.create({
-    headerSection: {
-        backgroundColor: GoDeliveryColors.white,
-        alignItems: 'center',
-        height: 150,
-        justifyContent: 'center'
-    },
-    logo: {
-        width: 320,
-        resizeMode: 'contain',
-    },
     tabLabelStyle: {
         fontSize: 16,
         fontWeight: "600",

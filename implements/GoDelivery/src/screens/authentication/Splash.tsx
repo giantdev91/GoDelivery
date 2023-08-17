@@ -21,7 +21,7 @@ const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
     const navigateToSignin = () => {
         navigation.reset({
             index: 0,
-            routes: [{ name: 'SignIn', params: { initialIndex: 0 } }],
+            routes: [{ name: 'SignIn' }],
         });
     }
 
@@ -67,7 +67,7 @@ const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
         <SafeAreaView style={[GlobalStyles.container, styles.background]}>
             <View style={styles.logoSection}>
                 <View style={styles.logoBack}>
-                    <Image source={require('../../../assets/images/company_logo.png')} style={styles.logo} />
+                    <Image source={require('../../../assets/images/company-logo-white.png')} style={styles.logo} />
                 </View>
             </View>
             {activityIndicator && <ActivityIndicator size={'large'} style={{ position: 'absolute', alignSelf: 'center', bottom: 150, }} />}
@@ -77,7 +77,7 @@ const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
                         style={[GlobalStyles.primaryButton, styles.buttonStyle, GlobalStyles.shadowProp]}
                         onPress={navigateToSignin}
                     >
-                        <Text style={[GlobalStyles.primaryLabel, { color: GoDeliveryColors.primary }]}>Get Started</Text>
+                        <Text style={[GlobalStyles.primaryLabel, { color: GoDeliveryColors.primary }]}>START</Text>
                     </TouchableOpacity>
                 )}
             </View>
@@ -97,10 +97,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     logoBack: {
-        width: 250,
-        height: 250,
-        borderRadius: 300,
-        backgroundColor: GoDeliveryColors.white,
         marginBottom: 100,
         alignItems: 'center',
         justifyContent: 'center',
@@ -111,6 +107,7 @@ const styles = StyleSheet.create({
     },
     footerButton: {
         marginBottom: 40,
+        margin: 20,
     },
     buttonStyle: {
         backgroundColor: GoDeliveryColors.white,

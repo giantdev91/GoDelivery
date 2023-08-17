@@ -52,7 +52,9 @@ const styles = StyleSheet.create({
     },
     inputBack: {
         backgroundColor: GoDeliveryColors.white,
-        borderRadius: 25,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: GoDeliveryColors.disabled,
         paddingHorizontal: 20,
         paddingVertical: 0,
         flex: 1,

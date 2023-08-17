@@ -34,7 +34,7 @@ import Header from "components/Headers/Header.js";
 const Order = () => {
   const [orderData, setOrderData] = useState(undefined);
   useEffect(() => {
-    axios.post(`http://34.170.120.223:4000/order/list`).then((res) => {
+    axios.post(`http://34.28.220.154:4000/order/list`).then((res) => {
       setOrderData(res.data.data);
     });
   }, []);

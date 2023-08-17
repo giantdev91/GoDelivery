@@ -20,7 +20,7 @@ const BackButton = ({ navigation }: BackButtonProps): JSX.Element => {
             <FontAwesomeIcon
                 name="chevron-left"
                 size={30}
-                color={GoDeliveryColors.primary}
+                color={GoDeliveryColors.white}
             />
         </TouchableOpacity>
     )
