@@ -5,6 +5,7 @@ import Orders from '../screens/home/Orders';
 import HomeScreen from '../screens/home/Home';
 import NotificationsScreen from '../screens/home/Notifications'
 import GoDeliveryColors from '../styles/colors';
+import OrderStatusNavigator from './HomeNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -18,7 +19,7 @@ function TabNavigator(): JSX.Element {
         }}>
             <Tab.Screen
                 name="Main"
-                component={HomeScreen}
+                component={OrderStatusNavigator}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         <Icons

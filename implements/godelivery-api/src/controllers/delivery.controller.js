@@ -364,6 +364,12 @@ exports.getDeliveryManById = async (req, res) => {
     const deliverymanID = req.params.id;
     const deliveryman = await Delivery_man.findOne({
       where: { id: deliverymanID },
+      include: [
+        {
+          model: Order,
+          as: "orders",
+        },
+      ],
     });
     res.status(200).send({
       success: true,

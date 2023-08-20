@@ -87,6 +87,7 @@ exports.create = async (req, res) => {
       data: order,
     });
   } catch (error) {
+    console.error('error: ', error);
     res.status(200).send({
       success: false,
       code: 500,
@@ -656,7 +657,7 @@ exports.processingDetailByDeliveryman = async (req, res) => {
         {
           model: Client,
           as: "client",
-          attributes: ['id', 'name', 'phone', 'fcmToken']
+          attributes: ['id', 'name', 'phone', 'fcmToken', 'avatar']
         },
       ],
     });

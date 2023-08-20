@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, Linking, Dimensions, Image, TextInput, ActivityIndicator } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, Linking, Dimensions, Image, TextInput, ActivityIndicator, Button, FlatList } from 'react-native';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
 import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
@@ -9,9 +9,11 @@ import Action from '../../service';
 import { ControlButtonProps } from "../../type";
 import Icons from "react-native-vector-icons/Ionicons";
 import Modal from "react-native-modal";
+import { Divider } from 'react-native-paper';
+import { UPDATE_INTERVAL } from '../../common/Constant';
 
-const MAP_WIDTH = Dimensions.get('screen').width - 40;
-const MAP_HEIGHT = 350;
+const MAP_WIDTH = Dimensions.get('screen').width;
+const MAP_HEIGHT = Dimensions.get('screen').height - 275;
 const ASPECT_RATIO = MAP_WIDTH / MAP_HEIGHT;
 const LATITUDE_DELTA = 0.01; //Very high zoom level
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
@@ -25,11 +27,10 @@ const CallButton = (props: ControlButtonProps) => (
     </TouchableOpacity>
 )
 
-type OrderDetailProps = {
-    cancelHandler?: () => void;
-}
-
-const OrderDetail = (props: OrderDetailProps): JSX.Element => {
+const OrderDetail = ({ refreshHandler, navigation }: {
+    refreshHandler: () => void,
+    navigation: any
+}): JSX.Element => {
     const [deliverymanPosition, setDeliverymanPosition] = useState({
         "latitude": 0,
         "longitude": 0,
@@ -58,6 +59,7 @@ const OrderDetail = (props: OrderDetailProps): JSX.Element => {
     const [isModalVisible, setModalVisible] = useState(false);
     const [cancelReason, setCancelReason] = useState('');
     const [activityIndicator, setActivityIndicator] = useState(false);
+    const [showComment, setShowComment] = useState(false);
 
     const deliverymanID = store.getState().CurrentUser.user.id;
 
@@ -94,6 +96,7 @@ const OrderDetail = (props: OrderDetailProps): JSX.Element => {
             .then((res) => {
                 const response = res.data;
                 const orderInfo = response.data;
+                console.log('orderInfo ===> !!!!!!!!!', orderInfo["client"]);
                 setMyOrder(orderInfo);
                 setOrderStatus(orderInfo.status);
                 setSenderLocation({ latitude: parseFloat(orderInfo.fromX), longitude: parseFloat(orderInfo.fromY) });
@@ -118,7 +121,7 @@ const OrderDetail = (props: OrderDetailProps): JSX.Element => {
                     const response = res.data;
                     if (response.status) {
                         setModalVisible(false);
-                        props.cancelHandler();
+                        refreshHandler();
                         setActivityIndicator(false);
                     }
                 }).catch((err) => {
@@ -131,71 +134,41 @@ const OrderDetail = (props: OrderDetailProps): JSX.Element => {
 
     }
 
-    const handleComplete = () => {
+    const handleSend = (orderID: number) => {
         setActivityIndicator(true);
-        Action.order.receiveGoods({ orderID: myOrder.id })
+        Action.order.sendGoods({ orderID: orderID })
             .then((res) => {
                 const response = res.data;
+                setShowComment(false);
+                fetchMyOrder();
                 setActivityIndicator(false);
-                props.cancelHandler();
             }).catch((err) => {
                 console.log("error: ", err);
                 setActivityIndicator(false);
             })
     }
 
+    const handleReceive = (orderID: number) => {
+        navigation.navigate("OrderValidate", { orderID: orderID, phone: myOrder["receiver"] });
+    }
+
     useEffect(() => {
         fetchMyOrder();
-        const interval = setInterval(checkDeliverymanStatus, 60000);
+        const interval = setInterval(checkDeliverymanStatus, UPDATE_INTERVAL);
         return () => {
             clearInterval(interval);
         }
     }, []);
 
     return (
-        <View>
+        <View style={{ flex: 1, height: MAP_HEIGHT }}>
             {
                 myOrder && (
                     <View style={styles.orderInfoArea}>
-                        <View style={styles.orderDetailSection}>
-                            <Text style={GlobalStyles.textDisable}>Sender</Text>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <View>
-                                    <Text style={[GlobalStyles.textBold, { fontSize: 16, fontWeight: 'bold' }]}>{myOrder["client"]["phone"]}</Text>
-                                    <Text style={[GlobalStyles.textBold, { fontSize: 16, fontWeight: 'bold' }]}>{myOrder["client"]["name"]}</Text>
-                                </View>
-                                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                    {
-                                        orderStatus == 1 && (<TouchableOpacity style={styles.cancelBtnBack} onPress={() => setModalVisible(true)} >
-                                            <Text style={[GlobalStyles.primaryLabel, { fontSize: 14, fontWeight: 'bold' }]}>Cancel</Text>
-                                        </TouchableOpacity>)
-                                    }
-                                    <CallButton handler={() => { Linking.openURL(`tel:${myOrder["client"]["phone"]}`); }}  ><Icons name='call-outline' size={20} color={GoDeliveryColors.white} /></CallButton>
-                                </View>
-                            </View>
-                            <Text style={[GlobalStyles.textDisable, { marginTop: 10 }]}>Receiver</Text>
-                            <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <Text style={[GlobalStyles.textBold, { fontSize: 16, fontWeight: 'bold' }]}>{myOrder["receiver"]}</Text>
-                                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                    {
-                                        orderStatus == 2 && (<TouchableOpacity style={[styles.cancelBtnBack, { backgroundColor: GoDeliveryColors.primary }]} onPress={handleComplete} >
-                                            <Text style={[GlobalStyles.primaryLabel, { fontSize: 14, fontWeight: 'bold' }]}>Complete</Text>
-                                        </TouchableOpacity>)
-                                    }
-                                    <CallButton handler={() => { Linking.openURL(`tel:${myOrder["receiver"]}`); }}  ><Icons name='call-outline' size={20} color={GoDeliveryColors.white} /></CallButton>
-                                </View>
-
-                            </View>
-                            <Text style={GlobalStyles.textDisable}>From</Text>
-                            <Text style={GlobalStyles.text}>{myOrder["from"]}</Text>
-                            <Text style={GlobalStyles.textDisable}>To</Text>
-                            <Text style={GlobalStyles.text}>{myOrder["to"]}</Text>
-                            <Text style={GlobalStyles.textDisable}>Expectation time: {renderDateTimeFormat(myOrder["expectationTime"])}</Text>
-                        </View>
-                        <View style={[{ flex: 1, borderWidth: 1, borderColor: GoDeliveryColors.primary }, GlobalStyles.shadowProp]}>
+                        <View style={[{ flex: 1 }, GlobalStyles.shadowProp]}>
                             {allPositionDataLoaded && (
                                 <MapView
-                                    style={{ flex: 1.5, borderColor: 'red', borderWidth: 1 }}
+                                    style={{ flex: 1, }}
                                     provider={PROVIDER_GOOGLE}
                                     region={{
                                         latitude: deliverymanPosition["latitude"],
@@ -206,11 +179,12 @@ const OrderDetail = (props: OrderDetailProps): JSX.Element => {
                                     <Marker
                                         coordinate={senderLocation}
                                         title={'sender'}
+                                        pinColor='red'
                                     />
                                     <Marker
                                         coordinate={receiverLocation}
-
                                         title={'receiver'}
+                                        pinColor='green'
                                     />
                                     <Marker
                                         coordinate={deliverymanPosition}
@@ -251,7 +225,15 @@ const OrderDetail = (props: OrderDetailProps): JSX.Element => {
 
                                 </MapView>
                             )}
+                            <TouchableOpacity onPress={() => setShowComment(true)}>
+                                <View style={styles.orderInfoPadMini}>
+                                    <Text style={GlobalStyles.subTitle}>{myOrder["status"] == 1 ? 'PICK-UP LOCATION' : 'DROP OFF LOCATION'}</Text>
+                                    <Text style={GlobalStyles.text}>{myOrder["status"] == 1 ? myOrder["from"] : myOrder["to"]}</Text>
+                                </View>
+                            </TouchableOpacity>
+
                         </View>
+
                         <Modal isVisible={isModalVisible} onBackdropPress={() => { setModalVisible(false) }}>
                             <View style={{ height: 280, backgroundColor: GoDeliveryColors.white, borderRadius: 30, alignItems: 'center' }}>
                                 <View style={styles.modalBack}>
@@ -266,6 +248,92 @@ const OrderDetail = (props: OrderDetailProps): JSX.Element => {
                                 }
                             </View>
                         </Modal>
+
+                        <Modal
+                            isVisible={showComment}
+                            onSwipeComplete={() => setShowComment(false)}
+                            onBackdropPress={() => { setShowComment(false) }}
+                            swipeDirection={['down']}
+                            propagateSwipe={true}
+                            style={styles.commentModal}
+                        >
+                            <View style={styles.commentModalBack}>
+                                <View style={styles.locationArea}>
+                                    <Divider style={styles.headerDivider} />
+                                    <Text style={GlobalStyles.subTitle}>{myOrder["status"] == 1 ? 'PICK-UP LOCATION' : 'DROP OFF LOCATION'}</Text>
+                                    <Text style={GlobalStyles.text}>{myOrder["status"] == 1 ? myOrder["from"] : myOrder["to"]}</Text>
+                                </View>
+                                <Divider style={styles.divider} />
+                                <View style={[styles.horizontalAlign, { paddingHorizontal: 20, marginVertical: 5 }]}>
+                                    <View>
+                                        {!myOrder["client"]['avatar'] && (
+                                            <Image
+                                                style={styles.userAvatar}
+                                                source={require('../../../assets/images/delivery-man.png')}
+                                            />
+                                        )}
+                                        {myOrder["client"]['avatar'] && (
+                                            <Image style={styles.userAvatar} source={{ uri: myOrder["client"]['avatar'] }} />
+                                        )}
+                                    </View>
+                                    <View style={{ flex: 1 }}>
+                                        <View style={styles.horizontalAlign}>
+                                            <View>
+                                                <Text style={GlobalStyles.subTitle}>Sender details</Text>
+                                                <Text style={GlobalStyles.text}>{myOrder["client"]["name"]}</Text>
+                                                <Text style={GlobalStyles.text}>{myOrder["client"]["phone"]}</Text>
+                                            </View>
+                                            <CallButton handler={() => { Linking.openURL(`tel:${myOrder["client"]["phone"]}`); }}  ><Icons name='call-outline' size={20} color={GoDeliveryColors.white} /></CallButton>
+                                        </View>
+                                    </View>
+                                </View>
+                                <View style={[styles.horizontalAlign, { paddingHorizontal: 20, marginVertical: 5, marginBottom: 20 }]}>
+                                    <View style={{ width: 50 }}>
+                                    </View>
+                                    <View style={{ flex: 1 }}>
+                                        <View style={styles.horizontalAlign}>
+                                            <View>
+                                                <Text style={GlobalStyles.subTitle}>Receiver details</Text>
+                                                <Text style={GlobalStyles.text}>{myOrder["receiver"]}</Text>
+                                            </View>
+                                            <CallButton handler={() => { Linking.openURL(`tel:${myOrder["receiver"]}`); }}  ><Icons name='call-outline' size={20} color={GoDeliveryColors.white} /></CallButton>
+                                        </View>
+                                    </View>
+                                </View>
+                                <Divider style={styles.divider} />
+                                <View style={styles.locationArea}>
+                                    <Text style={GlobalStyles.subTitle}>{myOrder["status"] == 1 ? 'DROP OFF LOCATION' : 'PICK-UP LOCATION'}</Text>
+                                    <Text style={GlobalStyles.text}>{myOrder["status"] == 2 ? myOrder["from"] : myOrder["to"]}</Text>
+                                    {
+                                        myOrder["status"] == 1 && (
+                                            <View style={styles.controlButtonArea}>
+                                                <TouchableOpacity style={[styles.controlButtonBack, GlobalStyles.shadowProp]} onPress={() => handleSend(myOrder["id"])}>
+                                                    <Icons name="archive-outline" size={30} color={GoDeliveryColors.white} />
+                                                    <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.white }]}>Collected</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity style={[styles.controlButtonBack, GlobalStyles.shadowProp, { backgroundColor: GoDeliveryColors.disabled }]} onPress={() => setModalVisible(true)}>
+                                                    <Icons name="trash-outline" size={30} color={GoDeliveryColors.white} />
+                                                    <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.white }]}>Cancel</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        )
+                                    }
+                                    {
+                                        myOrder["status"] == 2 && (
+                                            <View style={styles.controlButtonArea}>
+                                                <TouchableOpacity style={[styles.controlButtonBack, GlobalStyles.shadowProp]} onPress={() => handleReceive(myOrder["id"])}>
+                                                    <Icons name="cart-outline" size={30} color={GoDeliveryColors.white} />
+                                                    <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.white }]}>Delivered</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        )
+                                    }
+                                </View>
+                            </View>
+                            {
+                                activityIndicator && <ActivityIndicator size="large" style={{ position: 'absolute', bottom: 70, alignSelf: 'center' }} />
+                            }
+                        </Modal>
                     </View>
                 )
             }
@@ -277,9 +345,8 @@ const OrderDetail = (props: OrderDetailProps): JSX.Element => {
 const styles = StyleSheet.create({
     orderInfoArea: {
         flex: 1,
+        display: 'flex',
         width: '100%',
-        height: 700,
-        padding: 15,
     },
     orderDetailSection: {
 
@@ -323,12 +390,96 @@ const styles = StyleSheet.create({
         width: '50%',
         paddingHorizontal: 20,
         paddingVertical: 7,
-        borderRadius: 20,
+        borderRadius: 10,
         backgroundColor: GoDeliveryColors.primary,
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 10,
         marginBottom: 30,
+    },
+    orderInfoPadMini: {
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        height: 80,
+        backgroundColor: GoDeliveryColors.white,
+        padding: 20,
+        borderTopStartRadius: 30,
+        borderTopEndRadius: 30,
+        borderWidth: 0.5,
+        borderColor: GoDeliveryColors.place,
+        borderBottomWidth: 0
+    },
+    containerContent: { flex: 1, marginTop: 40 },
+    containerHeader: {
+        flex: 1,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 40,
+        backgroundColor: '#F1F1F1',
+    },
+    headerContent: {
+        marginTop: 0,
+    },
+    Modal: {
+        backgroundColor: '#005252',
+        marginTop: 0,
+    },
+    commentModal: {
+        bottom: 0,
+        justifyContent: 'flex-end',
+        width: '100%',
+        alignSelf: 'center',
+        marginBottom: -20,
+    },
+    commentModalBack: {
+        backgroundColor: GoDeliveryColors.white,
+        borderRadius: 20,
+        paddingVertical: 20,
+    },
+    locationArea: {
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+    },
+    headerDivider: {
+        borderColor: GoDeliveryColors.disabled,
+        borderWidth: 1,
+        width: 70,
+        alignSelf: 'center',
+        marginBottom: 10,
+    },
+    divider: {
+        borderColor: GoDeliveryColors.disabled,
+        borderWidth: 0.5,
+        width: '100%',
+        alignSelf: 'center',
+        marginBottom: 10,
+    },
+    userAvatar: {
+        width: 50,
+        height: 50,
+        borderRadius: 200,
+    },
+    horizontalAlign: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 10
+    },
+    controlButtonArea: {
+        flexDirection: 'row',
+        gap: 30,
+        paddingVertical: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    controlButtonBack: {
+        width: 100,
+        height: 70,
+        backgroundColor: GoDeliveryColors.primary,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 10,
     }
 });
 

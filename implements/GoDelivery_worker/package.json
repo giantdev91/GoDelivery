@@ -13,6 +13,7 @@
     "@react-native-async-storage/async-storage": "^1.19.1",
     "@react-native-clipboard/clipboard": "^1.11.2",
     "@react-native-community/datetimepicker": "^7.4.1",
+    "@react-native-community/netinfo": "^9.4.1",
     "@react-native-firebase/app": "^18.3.0",
     "@react-native-firebase/firestore": "^18.3.0",
     "@react-native-firebase/messaging": "^18.3.0",

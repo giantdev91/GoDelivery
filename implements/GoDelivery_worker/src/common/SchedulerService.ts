@@ -2,6 +2,7 @@ import BackgroundActions from 'react-native-background-actions';
 import Geolocation from 'react-native-geolocation-service';
 import Action from '../service';
 import store from '../redux/store';
+import { UPDATE_INTERVAL } from './Constant';
 
 const backgroundOptions = {
     taskName: 'MyBackgroundTask', // A unique name for your background task.
@@ -30,7 +31,7 @@ const updateCurrentLocation = () => {
             }).then((res) => {
                 const response = res.data;
             }).catch((err) => {
-                console.error('error: ', err);
+                console.error('error: 5', err);
             })
         });
 }
@@ -39,7 +40,7 @@ const updateCurrentLocation = () => {
 const myBackgroundTask = async () => {
     setInterval(() => {
         updateCurrentLocation();
-    }, 60000);
+    }, UPDATE_INTERVAL);
 };
 
 export const startBackgroundServiceScheduler = () => {

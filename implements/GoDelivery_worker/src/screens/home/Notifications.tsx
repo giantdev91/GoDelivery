@@ -47,9 +47,9 @@ const NotificationsScreen = ({ navigation }: ScreenProps): JSX.Element => {
 
     return (
         <View style={[GlobalStyles.container]}>
-            <MenuButton navigation={navigation} />
+            <MenuButton navigation={navigation} color='default' />
             <View style={styles.headerSection}>
-                <Text style={styles.headerTitle}>Notifications</Text>
+                <Text style={styles.headerTitle}>NOTIFICATIONS</Text>
             </View>
             <ScrollView style={styles.scrollArea}>
                 {
@@ -83,7 +83,7 @@ const NotificationsScreen = ({ navigation }: ScreenProps): JSX.Element => {
 const styles = StyleSheet.create({
     headerSection: {
         alignItems: 'center',
-        height: 80,
+        height: 60,
         width: '100%',
         justifyContent: 'center',
     },

@@ -27,21 +27,30 @@ exports.sendNotification = (fcmTokens, title, body, orderId, receiverIds, type) 
             switch (type) {
                 case NOTIFICATION_TYPE_ORDER_CREATED:
                     receiverType = 1;
+                    break;
                 case NOTIFICATION_TYPE_ORDER_ASSIGNED:
                     receiverType = 0;
+                    break;
                 case NOTIFICATION_TYPE_ORDER_CANCEL:
                     receiverType = 1;
+                    break;
                 case NOTIFICATION_TYPE_ORDER_CANCEL_BY_DELIVERYMAN:
                     receiverType = 0;
+                    break;
                 case NOTIFICATION_TYPE_ORDER_PROCESSING:
                     receiverType = 0;
+                    break;
                 case NOTIFICATION_TYPE_ORDER_COMPLETED:
                     receiverType = 0;
+                    break;
                 case NOTIFICATION_TYPE_ORDER_FEEDBACK:
                     receiverType = 1;
+                    break;
                 case NOTIFICATION_TYPE_ORDER_CANNOT_CREATE:
                     receiverType = 0;
+                    break;
             }
+            console.log('receiver type ===> ', receiverType);
             receiverIds.map((receiver) => {
                 Notification.create({
                     content: body,

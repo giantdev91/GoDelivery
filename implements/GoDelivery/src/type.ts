@@ -60,7 +60,13 @@ export type ScreenProps = {
 }
 
 export type TabSceneProps = {
-    handleNext: (position: LocationInfoType) => void;
+    handleNext: (
+        markers: any[],
+        fromStr: string,
+        toStr: string,
+        estimationTime: string,
+        distance: string,
+    ) => void;
     handleBack?: () => void;
     fromLocation?: LocationInfoType,
     toLocation?: LocationInfoType,

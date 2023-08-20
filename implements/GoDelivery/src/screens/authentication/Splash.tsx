@@ -1,115 +1,138 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Text,
+  Image,
+  ImageBackground,
+} from 'react-native';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useSelector, useDispatch } from 'react-redux';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {useSelector, useDispatch} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ActivityIndicator } from 'react-native';
+import {ActivityIndicator} from 'react-native';
 import Action from '../../service';
 import allActions from '../../redux/actions';
 
 interface SplashScreenProps {
-    navigation: any;
+  navigation: any;
 }
 
-const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
-    const [loginFlag, setLoginFlag] = useState(false);
-    const [activityIndicator, setActivityIndicator] = useState(true);
-    const dispatch = useDispatch();
+const SplashScreen = ({navigation}: SplashScreenProps): JSX.Element => {
+  const [loginFlag, setLoginFlag] = useState(false);
+  const [activityIndicator, setActivityIndicator] = useState(true);
+  const dispatch = useDispatch();
 
-    const navigateToSignin = () => {
-        navigation.reset({
+  const navigateToSignin = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'SignIn'}],
+    });
+  };
+
+  const checkUserLoginStatus = async () => {
+    const userDataStr = await AsyncStorage.getItem('CLIENT_DATA');
+    if (userDataStr) {
+      const userData = JSON.parse(userDataStr);
+      Action.client
+        .getById({id: userData.id})
+        .then(response => {
+          const responseData = response.data;
+          dispatch(allActions.UserAction.setUser(responseData.data));
+          storeData(responseData.data);
+          setActivityIndicator(false);
+          navigation.reset({
             index: 0,
-            routes: [{ name: 'SignIn' }],
+            routes: [{name: 'Main'}],
+          });
+        })
+        .catch(err => {
+          console.log('error: ', err);
+          setActivityIndicator(false);
         });
+    } else {
+      setActivityIndicator(false);
+      setLoginFlag(true);
     }
+  };
 
-    const checkUserLoginStatus = async () => {
-        const userDataStr = await AsyncStorage.getItem('CLIENT_DATA');
-        if (userDataStr) {
-            const userData = JSON.parse(userDataStr);
-            Action.client.getById({ id: userData.id })
-                .then(response => {
-                    const responseData = response.data;
-                    dispatch(allActions.UserAction.setUser(responseData.data));
-                    storeData(responseData.data);
-                    setActivityIndicator(false);
-                    navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'Main' }],
-                    });
-                })
-                .catch(err => {
-                    console.log("error: ", err);
-                    setActivityIndicator(false);
-                })
-        } else {
-            setActivityIndicator(false);
-            setLoginFlag(true);
-        }
-
+  const storeData = async (userData: any) => {
+    try {
+      await AsyncStorage.setItem('CLIENT_DATA', JSON.stringify(userData));
+    } catch {
+      console.log('error occured!');
     }
+  };
 
-    const storeData = async (userData: any) => {
-        try {
-            await AsyncStorage.setItem('CLIENT_DATA', JSON.stringify(userData));
-        } catch {
-            console.log('error occured!');
-        }
-    }
+  useEffect(() => {
+    checkUserLoginStatus();
+  });
 
-    useEffect(() => {
-        checkUserLoginStatus();
-    })
-
-    return (
-        <SafeAreaView style={[GlobalStyles.container, styles.background]}>
-            <View style={styles.logoSection}>
-                <View style={styles.logoBack}>
-                    <Image source={require('../../../assets/images/company-logo-white.png')} style={styles.logo} />
-                </View>
-            </View>
-            {activityIndicator && <ActivityIndicator size={'large'} style={{ position: 'absolute', alignSelf: 'center', bottom: 150, }} />}
-            <View style={styles.footerButton}>
-                {loginFlag && (
-                    <TouchableOpacity
-                        style={[GlobalStyles.primaryButton, styles.buttonStyle, GlobalStyles.shadowProp]}
-                        onPress={navigateToSignin}
-                    >
-                        <Text style={[GlobalStyles.primaryLabel, { color: GoDeliveryColors.primary }]}>START</Text>
-                    </TouchableOpacity>
-                )}
-            </View>
-        </SafeAreaView>
-    );
-}
+  return (
+    <ImageBackground
+      source={require('../../../assets/images/splash.png')}
+      style={GlobalStyles.container}>
+      <View style={styles.logoSection}>
+        <View style={styles.logoBack}>
+          <Image
+            source={require('../../../assets/images/company-logo-white.png')}
+            style={styles.logo}
+          />
+        </View>
+      </View>
+      {activityIndicator && (
+        <ActivityIndicator
+          size={'large'}
+          style={{position: 'absolute', alignSelf: 'center', bottom: 150}}
+        />
+      )}
+      <View style={styles.footerButton}>
+        {loginFlag && (
+          <TouchableOpacity
+            style={[
+              GlobalStyles.primaryButton,
+              styles.buttonStyle,
+              GlobalStyles.shadowProp,
+            ]}
+            onPress={navigateToSignin}>
+            <Text
+              style={[
+                GlobalStyles.primaryLabel,
+                {color: GoDeliveryColors.primary},
+              ]}>
+              START
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    </ImageBackground>
+  );
+};
 
 export default SplashScreen;
 
 const styles = StyleSheet.create({
-    background: {
-        backgroundColor: GoDeliveryColors.primary,
-    },
-    logoSection: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    logoBack: {
-        marginBottom: 100,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    logo: {
-        width: 270,
-        resizeMode: 'contain'
-    },
-    footerButton: {
-        marginBottom: 40,
-        margin: 20,
-    },
-    buttonStyle: {
-        backgroundColor: GoDeliveryColors.white,
-    }
-})
+  logoSection: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoBack: {
+    marginBottom: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logo: {
+    width: 270,
+    resizeMode: 'contain',
+  },
+  footerButton: {
+    marginBottom: 40,
+    margin: 20,
+  },
+  buttonStyle: {
+    backgroundColor: GoDeliveryColors.white,
+  },
+});

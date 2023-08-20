@@ -5,15 +5,16 @@ import GoDeliveryColors from '../styles/colors';
 
 interface ScreenProps {
     navigation: any;
+    color?: string;
 }
 
-const MenuButton = ({ navigation }: ScreenProps): JSX.Element => {
+const MenuButton = ({ navigation, color }: ScreenProps): JSX.Element => {
     return (
         <TouchableOpacity
-            style={{ position: 'absolute', left: 20, top: 20 }}
+            style={{ position: 'absolute', left: 20, top: 10 }}
             onPress={() => { navigation.openDrawer(); }}
         >
-            <Icons name={'menu-sharp'} size={45} color={GoDeliveryColors.primary} />
+            <Icons name={'menu-sharp'} size={45} color={color == 'default' ? GoDeliveryColors.primary : GoDeliveryColors.white} />
         </TouchableOpacity>
     )
 }

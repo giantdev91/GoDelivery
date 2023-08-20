@@ -36,6 +36,11 @@ const receiveGoods = async (param: OrderUpdateParam) => {
     return response;
 }
 
+const sendGoods = async (param: OrderUpdateParam) => {
+    const response = await APIService.post('/order/send', param);
+    return response;
+}
+
 export default {
     createOrder,
     createdOrderList,
@@ -43,5 +48,6 @@ export default {
     fetchMyOrder,
     cancelOrder,
     completeOrders,
-    receiveGoods
+    receiveGoods,
+    sendGoods,
 }

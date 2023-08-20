@@ -96,6 +96,16 @@ const GlobalStyles = StyleSheet.create({
         textAlign: 'center',
         color: GoDeliveryColors.primary,
         marginVertical: 15
+    },
+    headerTitle: {
+        color: GoDeliveryColors.secondary,
+        fontSize: 24,
+        fontWeight: 'bold'
+    },
+    subTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: GoDeliveryColors.secondary
     }
 });
 

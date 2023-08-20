@@ -1,12 +1,14 @@
 const GoDeliveryColors = {
     primary: '#FA4A0C',
     primayDisabled: '#F3D7CD',
-    secondary: '#000000',
+    secondary: '#384152',
     disabled: '#9A9A9D',
+    gray: '#606060',
     place: '#C4C4C4',
-    green: '#45D6A8',
+    green: '#07ad3d',
     white: '#FFFFFF',
     background: '#F2F2F2',
+    yellow: '#ff8901'
 }
 
 export default GoDeliveryColors;

@@ -7,6 +7,7 @@ import GoDeliveryColors from '../../styles/colors';
 import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import Action from '../../service';
+import { UPDATE_INTERVAL } from '../../common/Constant';
 
 interface ScreenProps {
     navigation: any;
@@ -127,7 +128,7 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
     useEffect(() => {
         // Call the callback function immediately
         getDeliveryMansInfo();
-        const interval = setInterval(getDeliveryMansInfo, 60000);
+        const interval = setInterval(getDeliveryMansInfo, UPDATE_INTERVAL);
         return () => {
             clearInterval(interval);
         }

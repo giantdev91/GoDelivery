@@ -180,9 +180,9 @@ const OrdersScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
 
     return (
         <View style={[GlobalStyles.container]}>
-            <MenuButton navigation={navigation} />
+            <MenuButton navigation={navigation} color='default' />
             <View style={styles.headerSection}>
-                <Text style={styles.headerTitle}>Work History</Text>
+                <Text style={styles.headerTitle}>WORK HISTORY</Text>
             </View>
             <TabView
                 navigationState={{ index, routes }}
@@ -198,7 +198,7 @@ const OrdersScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
 const styles = StyleSheet.create({
     headerSection: {
         alignItems: 'center',
-        height: 80,
+        height: 60,
         width: '100%',
         justifyContent: 'center',
     },

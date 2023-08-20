@@ -1,0 +1,10 @@
+/keyfiles
+/design
+/assets
+/implements/GoDelivery/.env.production
+/implements/GoDelivery/service-account-key.json
+/implements/GoDelivery/.env
+/implements/GoDelivery_admin/.env
+/implements/GoDelivery_worker/service-account-key.json
+/implements/GoDelivery_worker/.env
+/implements/godelivery-api/serviceAccountKey.json

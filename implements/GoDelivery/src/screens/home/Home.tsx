@@ -17,7 +17,7 @@ const HomeScreen = ({ navigation }: ScreenProps): JSX.Element => {
     const [userData, setUserData] = useState(store.getState().CurrentUser.user);
 
     const handleNewOrder = () => {
-        navigation.navigate('NewOrderCreate');
+        navigation.navigate('LocationSet');
     }
 
     const handleComingSoon = () => {
