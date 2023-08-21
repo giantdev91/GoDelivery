@@ -1,26 +1,25 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   StyleSheet,
-  TouchableOpacity,
   View,
   Text,
   Dimensions,
+  Alert,
 } from 'react-native';
 
 import Icons from 'react-native-vector-icons/Ionicons';
 
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
-import MapView, {Marker, PROVIDER_GOOGLE, Callout} from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
-import {GeoCoordinates, TabSceneProps} from '../../type';
-import {requestLocationPermission} from '../../common/RequestPermission';
+import { useFocusEffect } from '@react-navigation/native';
+import { requestLocationPermission } from '../../common/RequestPermission';
 import PrimaryButton from '../../components/PrimaryButton';
-import {Image} from 'react-native';
-import CustomizedInput from '../../components/CustomizedInput';
 import MapViewDirections from 'react-native-maps-directions';
 import HeaderBar from '../../components/HeaderBar';
+import commonFunctions from '../../common/CommonFunctions';
+import Action from '../../service';
 
 const MAP_WIDTH = Dimensions.get('screen').width - 40;
 const MAP_HEIGHT = 350;
@@ -28,7 +27,7 @@ const ASPECT_RATIO = MAP_WIDTH / MAP_HEIGHT;
 const LATITUDE_DELTA = 0.005; //Very high zoom level
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-const LocationStr = ({icon, text}: {icon: string; text: string}) => {
+const LocationStr = ({ icon, text }: { icon: string; text: string }) => {
   return (
     <View style={styles.locationStrBack}>
       <Icons name={icon} size={24} color={GoDeliveryColors.disabled} />
@@ -39,7 +38,7 @@ const LocationStr = ({icon, text}: {icon: string; text: string}) => {
   );
 };
 
-const LocationSet = ({navigation}: {navigation: any}) => {
+const LocationSet = ({ navigation }: { navigation: any }) => {
   const [position, setPosition] = useState({
     latitude: 10,
     longitude: 10,
@@ -50,10 +49,12 @@ const LocationSet = ({navigation}: {navigation: any}) => {
   const [markers, setMarkers] = useState([]);
   const [estimationTime, setEstimationTime] = useState('');
   const [distance, setDistance] = useState('');
+  const [setting, setSetting] = useState({});
+  const [price, setPrice] = useState(0);
 
   const handleMapPress = (event: any) => {
     if (markers.length < 2) {
-      const {coordinate} = event.nativeEvent;
+      const { coordinate } = event.nativeEvent;
       setMarkers([...markers, coordinate]);
       fetch(
         `https://nominatim.openstreetmap.org/reverse?lat=${coordinate.latitude}&lon=${coordinate.longitude}&format=json`,
@@ -82,13 +83,13 @@ const LocationSet = ({navigation}: {navigation: any}) => {
           error => {
             console.log(error.code, error.message);
           },
-          {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+          { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
         );
       }
     });
   };
 
-  const handleNextButton = () => {
+  const handleNextButton = async () => {
     if (markers.length == 2) {
       const param = {
         markers: markers,
@@ -96,30 +97,90 @@ const LocationSet = ({navigation}: {navigation: any}) => {
         toStr: toStr,
         estimationTime: estimationTime,
         distance: distance,
+        price: price,
       };
       navigation.navigate('DetailInformation', param);
     }
   };
 
+  const handleMapRegionChange = (region) => {
+    const { latitude, longitude } = region;
+    const bounds = commonFunctions.calculateBounds(position.latitude, position.longitude, 100);
+
+    if (
+      latitude < bounds.latitude.min ||
+      latitude > bounds.latitude.max ||
+      longitude < bounds.longitude.min ||
+      longitude > bounds.longitude.max
+    ) {
+      // The new region is outside the allowed bounds
+      // You can show a notification, display an error, or prevent the map from scrolling further
+      Alert.alert('Out of Bounds', 'Please select a location within the 100-kilometer radius.');
+      refreshStatus();
+    } else {
+      // The new region is within the allowed bounds
+      // You can update the map region state or perform any other necessary actions
+    }
+  }
+
+  const refreshStatus = () => {
+    setMarkers([]);
+    setFromStr('');
+    setToStr('');
+    setDistance('');
+  }
+
+  const calculatePriceByDistance = (distance: string) => {
+    var returnVal = 0;
+    var dis = Number.parseFloat(distance);
+    if (dis < 4) {
+      // if the distance is less than 4Km return a constant value
+      // this value should be returned from system admin.
+      returnVal = setting ? setting.basePrice : 89;
+    } else {
+      // if the distance is greater than 4Km, calculate the price by multiply with distance and cost.
+      // cost of 1Km is 20. This value should be obtained from the system admin.
+      returnVal = Math.ceil(Number.parseFloat(setting.basePrice) + (dis - 4) * setting.price);
+    }
+    return returnVal;
+  };
+
+  const checkSystemSetting = async () => {
+    Action.sysSetting.get()
+      .then((res) => {
+        if (res.data.data) {
+          setSetting(res.data.data);
+        }
+      })
+  }
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     refreshStatus();
+  //   }, [])
+  // );
+
   useEffect(() => {
     getCurrentLocation();
+    checkSystemSetting();
   }, []);
 
   return (
     <View style={GlobalStyles.container}>
       <HeaderBar navigation={navigation} title={'PERSONAL DELIVERY'} />
       <View style={styles.formArea}>
-        <View style={{flex: 1}}>
+        <View style={{ flex: 1 }}>
           <LocationStr icon="locate-outline" text={fromStr} />
           <LocationStr icon="location-outline" text={toStr} />
 
           <MapView
-            style={{flex: 1.5, borderColor: 'red', borderWidth: 1}}
+            style={{ flex: 1.5, borderColor: 'red', borderWidth: 1 }}
             provider={PROVIDER_GOOGLE}
             showsUserLocation={true}
             showsMyLocationButton={true}
             loadingEnabled
             onPress={handleMapPress}
+            onRegionChangeComplete={handleMapRegionChange}
             region={{
               latitude: position.latitude,
               longitude: position.longitude,
@@ -164,7 +225,11 @@ const LocationSet = ({navigation}: {navigation: any}) => {
                 strokeColor={GoDeliveryColors.primary}
                 onReady={result => {
                   setEstimationTime(`${Math.ceil(result.duration).toString()}`);
-                  setDistance(`${result.distance.toFixed(2).toString()}`);
+                  const distanceVal = result.distance.toFixed(2).toString();
+                  setDistance(distanceVal);
+                  const priceVal = calculatePriceByDistance(distanceVal);
+                  console.log('price value ====> ', priceVal);
+                  setPrice(priceVal);
                 }}
               />
             )}

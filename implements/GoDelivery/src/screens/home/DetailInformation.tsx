@@ -1,26 +1,14 @@
-import React, {useState} from 'react';
-import {StyleSheet, View, Text, ScrollView, Image} from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, ScrollView, Image } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import GlobalStyles from '../../styles/style';
 import CustomizedInput from '../../components/CustomizedInput';
 import GoDeliveryColors from '../../styles/colors';
 import store from '../../redux/store';
 import HeaderBar from '../../components/HeaderBar';
-import {Divider} from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import PrimaryButton from '../../components/PrimaryButton';
-
-const calculatePriceByDistance = (distance: string) => {
-  var dis = Number.parseFloat(distance);
-  if (dis < 4) {
-    // if the distance is less than 4Km return a constant value
-    // this value should be returned from system admin.
-    return 89;
-  } else {
-    // if the distance is greater than 4Km, calculate the price by multiply with distance and cost.
-    // cost of 1Km is 20. This value should be obtained from the system admin.
-    return (dis - 4) * 20;
-  }
-};
+import CommonFunctions from '../../common/CommonFunctions';
 
 const DetailInformation = ({
   route,
@@ -29,8 +17,7 @@ const DetailInformation = ({
   route: any;
   navigation: any;
 }) => {
-  const {markers, fromStr, toStr, estimationTime, distance} = route.params;
-  const price = calculatePriceByDistance(distance);
+  const { markers, fromStr, toStr, estimationTime, distance, price } = route.params;
 
   const [senderPhone, setSenderPhone] = useState(
     store.getState().CurrentUser.user.phone,
@@ -110,14 +97,14 @@ const DetailInformation = ({
               size={30}
               color={GoDeliveryColors.secondary}
             />
-            <View style={{flex: 1, marginLeft: 5}}>
+            <View style={{ flex: 1, marginLeft: 5 }}>
               <Text style={GlobalStyles.subTitle}>From</Text>
               <Text numberOfLines={2} style={GlobalStyles.text}>
                 {fromStr}
               </Text>
             </View>
           </View>
-          <View style={{marginTop: 10}}>
+          <View style={{ marginTop: 10 }}>
             <CustomizedInput
               icon="call-outline"
               placeHolder="Person to contact"
@@ -128,7 +115,7 @@ const DetailInformation = ({
               error={senderPhoneError}
             />
           </View>
-          <View style={{marginTop: 10}}>
+          <View style={{ marginTop: 10 }}>
             <CustomizedInput
               icon="home-outline"
               placeHolder="Build No / Flat / Floor - Optional"
@@ -144,14 +131,14 @@ const DetailInformation = ({
               size={30}
               color={GoDeliveryColors.secondary}
             />
-            <View style={{flex: 1, marginLeft: 5}}>
+            <View style={{ flex: 1, marginLeft: 5 }}>
               <Text style={GlobalStyles.subTitle}>To</Text>
               <Text numberOfLines={2} style={GlobalStyles.text}>
                 {toStr}
               </Text>
             </View>
           </View>
-          <View style={{marginTop: 10}}>
+          <View style={{ marginTop: 10 }}>
             <CustomizedInput
               icon="call-outline"
               placeHolder="Person to contact"
@@ -162,7 +149,7 @@ const DetailInformation = ({
               error={receiverPhoneError}
             />
           </View>
-          <View style={{marginTop: 10}}>
+          <View style={{ marginTop: 10 }}>
             <CustomizedInput
               icon="home-outline"
               placeHolder="Build No / Flat / Floor - Optional"
@@ -192,7 +179,7 @@ const DetailInformation = ({
               error={weightError}
             />
           </View>
-          <View style={{marginTop: 10}}>
+          <View style={{ marginTop: 10 }}>
             <CustomizedInput
               icon=""
               iconElement={
@@ -210,7 +197,7 @@ const DetailInformation = ({
             />
           </View>
 
-          <View style={{marginTop: 20}}>
+          <View style={{ marginTop: 20 }}>
             <View style={styles.infoLabelBack}>
               <Image
                 source={require('../../../assets/images/icons/distance.png')}

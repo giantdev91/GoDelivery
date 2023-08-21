@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, Image, Dimensions, Linking } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { StyleSheet, TouchableOpacity, View, Text, Image, Dimensions, Linking, ActivityIndicator } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
+import { useFocusEffect } from '@react-navigation/native';
 import GlobalStyles from '../../styles/style';
 import HeaderBar from '../../components/HeaderBar';
 import GoDeliveryColors from '../../styles/colors';
@@ -8,6 +9,7 @@ import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import Action from '../../service';
 import { UPDATE_INTERVAL } from '../../common/Constant';
+import PrimaryButton from '../../components/PrimaryButton';
 
 interface ScreenProps {
     navigation: any;
@@ -29,6 +31,9 @@ interface DeliveryManDetailDialogProps {
     avartar: string,
     rating: number,
     phone: string,
+    motor: string,
+    estimationTime: string,
+    status: number,
 }
 
 const MAP_WIDTH = Dimensions.get('screen').width - 40;
@@ -65,30 +70,37 @@ const DeliveryManDetailDialog = (props: DeliveryManDetailDialogProps) => {
     }
 
     return (
-        <View style={[styles.deliveryManDetailDialog, GlobalStyles.shadowProp]}>
+        <View style={[styles.deliveryManDetailDialog, GlobalStyles.shadowProp, { bottom: props.status == 1 ? 70 : 10 }]}>
             <View style={[{ height: '100%', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }]}>
-                <Image source={require('../../../assets/images/delivery-man.png')} style={{ width: 45, height: 45, }} />
+                {
+                    !props.avartar && (<Image source={require('../../../assets/images/delivery-man.png')} style={{ width: 50, height: 50, }} />)
+                }
+                {
+                    props.avartar && (<Image source={{ uri: props.avartar }} style={{ width: 50, height: 50, }} />)
+                }
                 <View style={{ flexDirection: 'column', height: '100%', marginLeft: 10, alignItems: 'flex-start', justifyContent: 'space-evenly' }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                    {/* <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                         <Icons name='star' size={20} color={'gold'} />
                         <Text style={[GlobalStyles.text, { marginLeft: 10, }]}>{props.rating}</Text>
-                    </View>
-                    <Text style={GlobalStyles.text}>{props.name}</Text>
+                    </View> */}
+                    <Text style={GlobalStyles.subTitle}>{props.name}</Text>
+                    <Text style={GlobalStyles.text}>{props.motor}</Text>
+                    <Text style={GlobalStyles.text}>Est. time: {Math.ceil(parseFloat(props.estimationTime))} min</Text>
                 </View>
             </View>
-            <View style={[{ height: '100%', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center' }]}>
+            <View style={[{ height: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 10 }]}>
                 <ControlButton handler={handleCall}>
                     <View style={[{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },]}>
                         <Icons name='call-outline' size={15} color={GoDeliveryColors.white} />
                         <Text style={[GlobalStyles.text, { color: GoDeliveryColors.white, marginLeft: 10 }]}>call</Text>
                     </View>
                 </ControlButton>
-                <ControlButton handler={handleSMS}>
+                {/* <ControlButton handler={handleSMS}>
                     <View style={[{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },]}>
                         <Icons name='paper-plane-outline' size={15} color={GoDeliveryColors.white} />
                         <Text style={[GlobalStyles.text, { color: GoDeliveryColors.white, marginLeft: 10 }]}>message</Text>
                     </View>
-                </ControlButton>
+                </ControlButton> */}
             </View>
         </View>
     )
@@ -96,11 +108,13 @@ const DeliveryManDetailDialog = (props: DeliveryManDetailDialogProps) => {
 
 const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
 
-    const { senderLocation, receiverLocation, deliverymanID, orderStatus } = route.params;
+    const { senderLocation, receiverLocation, deliverymanID, orderID } = route.params;
+    const [orderStatus, setOrderStatus] = useState(1);
     const [deliverymanPosition, setDeliverymanPosition] = useState({ latitude: 0, longitude: 0 });
     const [deliverymanPositionStr, setDeliverymanPositionStr] = useState('');
     const [deliveryman, setDeliveryman] = useState({});
     const [estimationTime, setEstimationTime] = useState('');
+    const [activityIndicator, setActivityIndicator] = useState(false);
 
     const getDeliveryMansInfo = () => {
         Action.deliveryman.getById(deliverymanID)
@@ -122,13 +136,53 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
             }).catch((err) => {
                 console.log("error: ", err);
             })
+    }
+
+    const handleCancel = () => {
+        setActivityIndicator(true);
+        const param = {
+            orderID: orderID,
+            cancelReason: '',
+            by: 0,
+            deliverymanID: deliverymanID
+        }
+        Action.order.cancelOrder(param)
+            .then((res) => {
+                const response = res.data;
+                setActivityIndicator(false);
+                navigation.goBack();
+            }).catch((err) => {
+                console.log("error: ", err);
+            })
 
     }
 
+    const checkOrderStatus = () => {
+        Action.order.getByID({ orderID: orderID })
+            .then((res) => {
+                const response = res.data;
+                if (response.data.status == 1 || response.data.status == 2) {
+                    setOrderStatus(response.data.status);
+                } else {
+                    navigation.goBack();
+                }
+            })
+    }
+
+    const refreshStatus = () => {
+        checkOrderStatus();
+        getDeliveryMansInfo();
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            refreshStatus();
+        }, [])
+    );
+
     useEffect(() => {
         // Call the callback function immediately
-        getDeliveryMansInfo();
-        const interval = setInterval(getDeliveryMansInfo, UPDATE_INTERVAL);
+        const interval = setInterval(refreshStatus, UPDATE_INTERVAL);
         return () => {
             clearInterval(interval);
         }
@@ -136,7 +190,7 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
 
     return (
         <View style={[GlobalStyles.container]}>
-            <HeaderBar navigation={navigation} />
+            <HeaderBar navigation={navigation} title={orderStatus == 1 ? 'IN PROGRESS' : 'DELIVERING'} />
             <MapView
                 style={{ flex: 1.5, borderColor: 'red', borderWidth: 1 }}
                 provider={PROVIDER_GOOGLE}
@@ -184,13 +238,44 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
                 />)}
 
             </MapView>
-            <DistanceComponent locationStr={deliverymanPositionStr} estimationTime={estimationTime} />
-            <DeliveryManDetailDialog avartar={deliveryman.avatar} name={deliveryman.name} phone={deliveryman.phone} rating={deliveryman.rating} />
+            {/* <DistanceComponent locationStr={deliverymanPositionStr} estimationTime={estimationTime} /> */}
+            <DeliveryManDetailDialog
+                avartar={deliveryman.avatar}
+                motor={deliveryman.motor}
+                name={deliveryman.name}
+                phone={deliveryman.phone}
+                rating={deliveryman.rating}
+                estimationTime={estimationTime}
+                status={orderStatus}
+            />
+            {
+                orderStatus == 1 && (
+                    <View style={{ width: '95%', alignSelf: 'center', marginBottom: 10 }}>
+                        <PrimaryButton buttonText='CANCEL' handler={handleCancel} />
+                    </View>
+                )
+            }
+            {
+                activityIndicator && (
+                    <ActivityIndicator style={{ position: 'absolute', justifyContent: 'center', alignSelf: 'center', bottom: 200 }} size="large" />
+                )
+            }
         </View>
     )
 }
 
 const styles = StyleSheet.create({
+    headerSection: {
+        alignItems: 'center',
+        height: 80,
+        width: '100%',
+        justifyContent: 'center',
+    },
+    headerTitle: {
+        fontSize: 20,
+        fontWeight: "600",
+        color: GoDeliveryColors.primary,
+    },
     avatarArea: {
         marginTop: 30,
         paddingVertical: 30,
@@ -215,7 +300,7 @@ const styles = StyleSheet.create({
         top: 55,
         alignSelf: 'center',
         width: '90%',
-        borderRadius: 40,
+        borderRadius: 10,
         backgroundColor: GoDeliveryColors.white,
         height: 60,
         flexDirection: 'row',
@@ -224,10 +309,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     deliveryManDetailDialog: {
-        width: '80%',
+        width: '95%',
         backgroundColor: 'white',
-        borderRadius: 20,
-        height: 85,
+        borderRadius: 10,
+        height: 90,
         position: 'absolute',
         bottom: 80,
         alignSelf: 'center',

@@ -101,6 +101,10 @@ const Order = sequelize.define("order", {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },
+  distance: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
 });
 
 Order.belongsTo(Client, {

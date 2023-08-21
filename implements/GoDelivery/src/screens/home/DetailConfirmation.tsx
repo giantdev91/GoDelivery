@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -20,21 +20,8 @@ import GoDeliveryColors from '../../styles/colors';
 import Action from '../../service';
 import store from '../../redux/store';
 import HeaderBar from '../../components/HeaderBar';
-import {Divider} from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import PrimaryButton from '../../components/PrimaryButton';
-
-const calculatePriceByDistance = (distance: string) => {
-  var dis = Number.parseFloat(distance);
-  if (dis < 4) {
-    // if the distance is less than 4Km return a constant value
-    // this value should be returned from system admin.
-    return 89;
-  } else {
-    // if the distance is greater than 4Km, calculate the price by multiply with distance and cost.
-    // cost of 1Km is 20. This value should be obtained from the system admin.
-    return (dis - 4) * 20;
-  }
-};
 
 // Function to get the day suffix (e.g., 1st, 2nd, 3rd, etc.)
 function getDaySuffix(day: number) {
@@ -83,7 +70,7 @@ const DetailConfirmation = ({
   const onChange = (event: any, selectedDate: any) => {
     const dateObj = selectedDate;
     const day = dateObj.getDate();
-    const month = dateObj.toLocaleDateString('en-US', {month: 'long'});
+    const month = dateObj.toLocaleDateString('en-US', { month: 'long' });
     const year = dateObj.getFullYear();
     const formattedDate = `${day}${getDaySuffix(day)} ${month} ${year}`;
     setExpectationDate(formattedDate);
@@ -150,6 +137,7 @@ const DetailConfirmation = ({
       goodsVolumn: goodsVolumn,
       goodsWeight: goodsWeight,
       price: price,
+      distance: distance,
     };
     Action.order
       .createOrder(param)
@@ -181,12 +169,12 @@ const DetailConfirmation = ({
               size={30}
               color={GoDeliveryColors.secondary}
             />
-            <View style={{flex: 1, marginLeft: 5}}>
+            <View style={{ flex: 1, marginLeft: 5 }}>
               <Text style={GlobalStyles.subTitle}>Sender details</Text>
               <Text style={GlobalStyles.text}>{username}</Text>
               <Text style={GlobalStyles.text}>{senderPhone}</Text>
 
-              <Text style={[GlobalStyles.subTitle, {marginTop: 10}]}>
+              <Text style={[GlobalStyles.subTitle, { marginTop: 10 }]}>
                 Receiver details
               </Text>
               {/* <Text style={GlobalStyles.text}>{username}</Text> */}
@@ -200,12 +188,12 @@ const DetailConfirmation = ({
               size={30}
               color={GoDeliveryColors.secondary}
             />
-            <View style={{flex: 1, marginLeft: 5}}>
+            <View style={{ flex: 1, marginLeft: 5 }}>
               <Text style={GlobalStyles.subTitle}>Pick-up location</Text>
               <Text style={GlobalStyles.text} numberOfLines={2}>
                 {from}
               </Text>
-              <Text style={[GlobalStyles.subTitle, {marginTop: 10}]}>
+              <Text style={[GlobalStyles.subTitle, { marginTop: 10 }]}>
                 Delivery location
               </Text>
               <Text style={GlobalStyles.text}>{to}</Text>
@@ -217,7 +205,7 @@ const DetailConfirmation = ({
               source={require('../../../assets/images/icons/date.png')}
               style={styles.iconImg}
             />
-            <View style={{flex: 1, marginLeft: 5}}>
+            <View style={{ flex: 1, marginLeft: 5 }}>
               <Text style={GlobalStyles.subTitle}>Pick-up date</Text>
               {!expectationDate && (
                 <TouchableOpacity
@@ -228,7 +216,7 @@ const DetailConfirmation = ({
               )}
               {expectationDate && (
                 <View
-                  style={{flexDirection: 'row', alignItems: 'center', gap: 20}}>
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
                   <Text style={GlobalStyles.text} numberOfLines={2}>
                     {expectationDate}
                   </Text>
@@ -247,7 +235,7 @@ const DetailConfirmation = ({
               source={require('../../../assets/images/icons/time.png')}
               style={styles.iconImg}
             />
-            <View style={{flex: 1, marginLeft: 5}}>
+            <View style={{ flex: 1, marginLeft: 5 }}>
               <Text style={GlobalStyles.subTitle}>Pick-up time</Text>
               {!expectationTime && (
                 <TouchableOpacity
@@ -258,7 +246,7 @@ const DetailConfirmation = ({
               )}
               {expectationTime && (
                 <View
-                  style={{flexDirection: 'row', alignItems: 'center', gap: 20}}>
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
                   <Text style={GlobalStyles.text}>{expectationTime}</Text>
                   <TouchableOpacity
                     onPress={showTimePicker}
@@ -270,7 +258,7 @@ const DetailConfirmation = ({
             </View>
           </View>
 
-          <View style={{marginTop: 20}}>
+          <View style={{ marginTop: 20 }}>
             <View style={styles.infoLabelBack}>
               <Image
                 source={require('../../../assets/images/icons/distance.png')}
@@ -294,7 +282,7 @@ const DetailConfirmation = ({
       {activityIndicator && (
         <ActivityIndicator
           size={'large'}
-          style={{position: 'absolute', alignSelf: 'center', bottom: 150}}
+          style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
         />
       )}
     </View>

@@ -114,6 +114,7 @@ const InProgressScreen = ({ navigation }: ScreenProps): JSX.Element => {
                 receiverLocation: receiverLocation,
                 deliverymanID: orderDetail["deliverymanID"],
                 orderStatus: orderDetail["status"],
+                orderID: orderDetail["id"],
             };
             navigation.navigate('InProgressDetail', param);
         }
@@ -165,18 +166,26 @@ const InProgressScreen = ({ navigation }: ScreenProps): JSX.Element => {
         }
     }
 
-    // Use useFocusEffect to fetch orders whenever the screen gains focus
     useFocusEffect(
         useCallback(() => {
             loadInProgressOrders();
         }, [])
     );
 
+    useEffect(() => {
+        // Call the callback function immediately
+        loadInProgressOrders();
+        const interval = setInterval(loadInProgressOrders, 5000);
+        return () => {
+            clearInterval(interval);
+        }
+    }, []);
+
     return (
         <View style={[GlobalStyles.container]}>
             <MenuButton navigation={navigation} />
             <View style={styles.headerSection}>
-                <Text style={styles.headerTitle}>In Progress</Text>
+                <Text style={styles.headerTitle}>IN PROGRESS</Text>
             </View>
             <ScrollView style={styles.scrollArea}>
                 {
@@ -201,15 +210,14 @@ const InProgressScreen = ({ navigation }: ScreenProps): JSX.Element => {
                                         {
                                             (order["status"] == 1) && (
                                                 <View style={{ flexDirection: 'row', }}>
-                                                    <ControlButton handler={() => { handleSend(order["id"]) }}>SEND</ControlButton>
-                                                    <View style={{ marginLeft: 10 }}></View>
+                                                    {/* <ControlButton handler={() => { handleSend(order["id"]) }}>SEND</ControlButton> */}
                                                     <ControlButton handler={() => { handleCancel(index) }} color='gray'>CANCEL</ControlButton>
                                                 </View>
                                             )
                                         }
-                                        {
+                                        {/* {
                                             (order["status"] == 2) && (order["receiver"] == phone) && (<ControlButton handler={() => { handleReceive(order["id"]) }}>RECEIVE</ControlButton>)
-                                        }
+                                        } */}
                                     </View>
                                     <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
                                         {(order["status"] > 0) && (<CallButton handler={() => { handleCall(order["delivery_man"]?.phone) }} ><Icons name='call-outline' size={20} color={GoDeliveryColors.white} /></CallButton>)}

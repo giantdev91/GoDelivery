@@ -20,11 +20,12 @@ const OrderValidate = ({ navigation, route }: {
 
     const handleReceive = async () => {
         setActivityIndicator(true);
-        if (await TwillioService.checkVerification(phone, value)) {
+        if (await TwillioService.checkVerification('+' + phone, value)) {
             Action.order.receiveGoods({ orderID: orderID })
                 .then((res) => {
                     const response = res.data;
                     setActivityIndicator(false);
+                    Alert.alert('GoDelivery', "Successfully completed!");
                     navigation.navigate("OrderHome");
                 }).catch((err) => {
                     console.log("error: ", err);

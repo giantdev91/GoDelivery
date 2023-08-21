@@ -83,7 +83,7 @@ const DrawerMenu = ({ navigation }: DrawerMenuProps): JSX.Element => {
                 <TouchableOpacity
                     style={styles.menuButton}
                     onPress={() => {
-                        navigation.navigate('Tracks');
+                        navigation.navigate('PriceEstimate');
                     }}>
                     <Icons
                         name="calculator-outline"

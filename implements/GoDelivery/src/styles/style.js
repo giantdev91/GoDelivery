@@ -89,6 +89,13 @@ const GlobalStyles = StyleSheet.create({
     processingColor: {
         color: '#FA4A0C'
     },
+    textMedium: {
+        fontSize: 16,
+        fontWeight: "500",
+        alignSelf: 'center',
+        textAlign: 'center',
+        color: GoDeliveryColors.secondary,
+    },
     subTitleText: {
         fontSize: 20,
         fontWeight: "400",

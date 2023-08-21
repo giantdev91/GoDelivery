@@ -8,6 +8,7 @@ import ProfileScreen from '../screens/settings/Profile'
 import SelectLanguageScreen from '../screens/settings/SelectLanguage';
 import LocationsScreen from '../screens/settings/Locations'
 import TracksScreen from '../screens/settings/Tracks'
+import PriceEstimate from '../screens/settings/PriceEstimate';
 
 const Drawer = createDrawerNavigator();
 
@@ -32,6 +33,7 @@ function DrawerNavigator(): JSX.Element {
             <Drawer.Screen name="myLocation" component={ProfileScreen} />
             <Drawer.Screen name="Locations" component={LocationsScreen} />
             <Drawer.Screen name="Tracks" component={TracksScreen} />
+            <Drawer.Screen name="PriceEstimate" component={PriceEstimate} />
         </Drawer.Navigator>
     )
 }

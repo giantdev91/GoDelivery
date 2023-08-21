@@ -7,15 +7,16 @@ const deliveryRoute = require("./routes/delivery");
 const orderRoute = require("./routes/order");
 const notificationRoute = require("./routes/notification");
 const syslogRoute = require("./routes/sys_log");
+const sysSettingRoute = require("./routes/sys_setting");
 
 const { httpLogStream } = require("./utils/logger");
-const admin = require('firebase-admin');
+const admin = require("firebase-admin");
 
 const app = express();
 
 async () => {
-  await sequelize.sync({ force: false });
-  console.log("synced");
+    await sequelize.sync({ force: false });
+    console.log("synced");
 };
 
 app.use(express.json());
@@ -29,27 +30,28 @@ app.use("/deliveryman", deliveryRoute);
 app.use("/order", orderRoute);
 app.use("/notification", notificationRoute);
 app.use("/syslog", syslogRoute);
+app.use("/sysSetting", sysSettingRoute);
 
 app.get("/", (req, res) => {
-  res.status(200).send({
-    status: "success",
-    data: {
-      message: "API working fine",
-    },
-  });
+    res.status(200).send({
+        status: "success",
+        data: {
+            message: "API working fine",
+        },
+    });
 });
 
 app.use((err, req, res, next) => {
-  res.status(err.statusCode || 500).send({
-    status: "error",
-    message: err.message,
-  });
-  next();
+    res.status(err.statusCode || 500).send({
+        status: "error",
+        message: err.message,
+    });
+    next();
 });
 var serviceAccount = require("../serviceAccountKey.json");
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+    credential: admin.credential.cert(serviceAccount),
 });
 
 module.exports = app;

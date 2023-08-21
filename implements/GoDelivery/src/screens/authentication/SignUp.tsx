@@ -157,7 +157,7 @@ const SignUpScreen = ({route, navigation}: {route: any; navigation: any}) => {
                 containerStyle={{
                   padding: 0,
                   height: 55,
-                  borderRadius: 30,
+                  borderRadius: 10,
                   width: '100%',
                   borderWidth: 1,
                   borderColor: GoDeliveryColors.disabled,

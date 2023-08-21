@@ -9,13 +9,14 @@ const { Op } = require("sequelize");
 
 exports.signup = async (req, res) => {
   try {
-    const { name, phone, password } = req.body;
+    const { name, phone, password, motor } = req.body;
     const hashedPassword = hashPassword(password.trim());
 
     const delivery_man = await Delivery_man.create({
       phone: phone,
       name: name,
       password: hashedPassword,
+      motor: motor,
     });
 
     res.status(200).send({

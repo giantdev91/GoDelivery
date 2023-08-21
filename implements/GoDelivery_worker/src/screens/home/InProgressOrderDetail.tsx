@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, Linking, Dimensions, Image, TextInput, ActivityIndicator, Button, FlatList } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, Linking, Dimensions, Image, TextInput, ActivityIndicator, Button, FlatList, Alert } from 'react-native';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
 import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
@@ -10,7 +10,9 @@ import { ControlButtonProps } from "../../type";
 import Icons from "react-native-vector-icons/Ionicons";
 import Modal from "react-native-modal";
 import { Divider } from 'react-native-paper';
+import { useFocusEffect } from '@react-navigation/native';
 import { UPDATE_INTERVAL } from '../../common/Constant';
+import TwillioService from '../../service/TwillioService';
 
 const MAP_WIDTH = Dimensions.get('screen').width;
 const MAP_HEIGHT = Dimensions.get('screen').height - 275;
@@ -78,6 +80,7 @@ const OrderDetail = ({ refreshHandler, navigation }: {
     }
 
     const checkDeliverymanStatus = () => {
+        console.log('interval is working ............................');
         Action.deliveryman.getById(deliverymanID)
             .then((res) => {
                 const response = res.data;
@@ -96,7 +99,6 @@ const OrderDetail = ({ refreshHandler, navigation }: {
             .then((res) => {
                 const response = res.data;
                 const orderInfo = response.data;
-                console.log('orderInfo ===> !!!!!!!!!', orderInfo["client"]);
                 setMyOrder(orderInfo);
                 setOrderStatus(orderInfo.status);
                 setSenderLocation({ latitude: parseFloat(orderInfo.fromX), longitude: parseFloat(orderInfo.fromY) });
@@ -134,23 +136,35 @@ const OrderDetail = ({ refreshHandler, navigation }: {
 
     }
 
-    const handleSend = (orderID: number) => {
+    const handleSend = async (orderID: number) => {
         setActivityIndicator(true);
-        Action.order.sendGoods({ orderID: orderID })
-            .then((res) => {
-                const response = res.data;
-                setShowComment(false);
-                fetchMyOrder();
-                setActivityIndicator(false);
-            }).catch((err) => {
-                console.log("error: ", err);
-                setActivityIndicator(false);
-            })
+        if (await TwillioService.sendSMSVerfication('+' + myOrder["receiver"])) {
+            Action.order.sendGoods({ orderID: orderID })
+                .then((res) => {
+                    const response = res.data;
+                    setShowComment(false);
+                    fetchMyOrder();
+                    setActivityIndicator(false);
+                    Alert.alert('GoDelivery', "Successfully updated!");
+                }).catch((err) => {
+                    console.log("error: ", err);
+                    setActivityIndicator(false);
+                })
+        } else {
+            Alert.alert('Phone number valid failed');
+            setActivityIndicator(false);
+        }
     }
 
     const handleReceive = (orderID: number) => {
         navigation.navigate("OrderValidate", { orderID: orderID, phone: myOrder["receiver"] });
     }
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchMyOrder();
+        }, [])
+    );
 
     useEffect(() => {
         fetchMyOrder();
@@ -227,6 +241,7 @@ const OrderDetail = ({ refreshHandler, navigation }: {
                             )}
                             <TouchableOpacity onPress={() => setShowComment(true)}>
                                 <View style={styles.orderInfoPadMini}>
+                                    <Divider style={styles.headerDivider} />
                                     <Text style={GlobalStyles.subTitle}>{myOrder["status"] == 1 ? 'PICK-UP LOCATION' : 'DROP OFF LOCATION'}</Text>
                                     <Text style={GlobalStyles.text}>{myOrder["status"] == 1 ? myOrder["from"] : myOrder["to"]}</Text>
                                 </View>
@@ -401,7 +416,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         width: '100%',
-        height: 80,
+        height: 120,
         backgroundColor: GoDeliveryColors.white,
         padding: 20,
         borderTopStartRadius: 30,

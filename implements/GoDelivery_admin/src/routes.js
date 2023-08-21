@@ -23,58 +23,66 @@ import Tables from "views/examples/Tables.js";
 import Client from "views/examples/Client";
 import Deliveryman from "views/examples/Deliveryman";
 import Order from "views/examples/Order";
+import SysSetting from "views/examples/SysSetting";
 
 var routes = [
-  {
-    path: "/index",
-    name: "Dashboard",
-    icon: "ni ni-tv-2 text-primary",
-    component: <Index />,
-    layout: "/admin",
-  },
+    {
+        path: "/index",
+        name: "Dashboard",
+        icon: "ni ni-tv-2 text-primary",
+        component: <Index />,
+        layout: "/admin",
+    },
 
-  // {
-  //   path: "/tables",
-  //   name: "Tables",
-  //   icon: "ni ni-bullet-list-67 text-red",
-  //   component: <Tables />,
-  //   layout: "/admin",
-  // },
-  {
-    path: "/deliveryman",
-    name: "Delivery mans",
-    icon: "ni ni-circle-08 text-pink",
-    component: <Deliveryman />,
-    layout: "/admin",
-  },
-  {
-    path: "/client",
-    name: "Clients",
-    icon: "ni ni-circle-08 text-pink",
-    component: <Client />,
-    layout: "/admin",
-  },
-  {
-    path: "/order",
-    name: "Order",
-    icon: "ni ni-circle-08 text-pink",
-    component: <Order />,
-    layout: "/admin",
-  },
-  // {
-  //   path: "/register",
-  //   name: "Register",
-  //   icon: "ni ni-circle-08 text-pink",
-  //   component: <Register />,
-  //   layout: "/auth",
-  // },
+    // {
+    //   path: "/tables",
+    //   name: "Tables",
+    //   icon: "ni ni-bullet-list-67 text-red",
+    //   component: <Tables />,
+    //   layout: "/admin",
+    // },
+    {
+        path: "/deliveryman",
+        name: "Delivery mans",
+        icon: "ni ni-single-02 text-red",
+        component: <Deliveryman />,
+        layout: "/admin",
+    },
+    {
+        path: "/client",
+        name: "Clients",
+        icon: "ni ni-circle-08 text-yellow",
+        component: <Client />,
+        layout: "/admin",
+    },
+    {
+        path: "/order",
+        name: "Order",
+        icon: "ni ni ni-collection text-info",
+        component: <Order />,
+        layout: "/admin",
+    },
+    {
+        path: "/setting",
+        name: "Setting",
+        icon: "ni ni-settings text-warning",
+        component: <SysSetting />,
+        layout: "/admin",
+    },
+    // {
+    //   path: "/register",
+    //   name: "Register",
+    //   icon: "ni ni-circle-08 text-pink",
+    //   component: <Register />,
+    //   layout: "/auth",
+    // },
 
-  // {
-  //   path: "/login",
-  //   name: "Login",
-  //   icon: "ni ni-key-25 text-info",
-  //   component: <Login />,
-  //   layout: "/auth",
-  // },
+    // {
+    //   path: "/login",
+    //   name: "Login",
+    //   icon: "ni ni-key-25 text-info",
+    //   component: <Login />,
+    //   layout: "/auth",
+    // },
 ];
 export default routes;

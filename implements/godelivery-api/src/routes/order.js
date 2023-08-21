@@ -31,4 +31,6 @@ router.route("/createdOrderList").post(asyncHandler(orderController.createdOrder
 
 router.route("/processingDetailByDeliveryman").post(asyncHandler(orderController.processingDetailByDeliveryman));
 
+router.route("/getById").post(asyncHandler(orderController.getByID));
+
 module.exports = router;

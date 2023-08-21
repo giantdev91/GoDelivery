@@ -9,7 +9,7 @@ interface ScreenProps {
 const TracksScreen = ({ navigation }: ScreenProps): JSX.Element => {
     return (
         <View style={[GlobalStyles.container]}>
-            <Text>Tracks Screen</Text>
+            <Text style={GlobalStyles.subTitleText}>Coming Soon!</Text>
         </View>
     )
 }

@@ -48,7 +48,7 @@ const NotificationsScreen = ({ navigation }: ScreenProps): JSX.Element => {
         <View style={[GlobalStyles.container]}>
             <MenuButton navigation={navigation} />
             <View style={styles.headerSection}>
-                <Text style={styles.headerTitle}>Notifications</Text>
+                <Text style={styles.headerTitle}>NOTIFICATIONS</Text>
             </View>
             <ScrollView style={styles.scrollArea}>
                 {

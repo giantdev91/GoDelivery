@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, useWindowDimensions, TouchableOpacity, View, Text, Platform, Image, ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import GlobalStyles from '../../styles/style';
@@ -97,6 +97,14 @@ const SentRoute = (props: SceneProps) => {
                 console.log('error: ', err);
             })
     }
+
+    useEffect(() => {
+        // Call the callback function immediately
+        const interval = setInterval(fetchCompletedOrders, 5000);
+        return () => {
+            clearInterval(interval);
+        }
+    }, []);
 
     useFocusEffect(
         useCallback(() => {
@@ -248,7 +256,7 @@ const OrdersScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
         <View style={[GlobalStyles.container]}>
             <MenuButton navigation={navigation} />
             <View style={styles.headerSection}>
-                <Text style={styles.headerTitle}>Order History</Text>
+                <Text style={styles.headerTitle}>ORDER HISTORY</Text>
             </View>
             <TabView
                 navigationState={{ index, routes }}
@@ -312,7 +320,7 @@ const styles = StyleSheet.create({
         backgroundColor: GoDeliveryColors.primary,
         paddingHorizontal: 20,
         paddingVertical: 5,
-        borderRadius: 20
+        borderRadius: 5
     },
     feedbackModalback: {
         position: 'absolute',

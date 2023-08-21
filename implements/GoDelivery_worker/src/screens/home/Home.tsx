@@ -101,6 +101,10 @@ const HomeScreen = ({ navigation }: {
     useFocusEffect(
         useCallback(() => {
             refreshHandler();
+            const interval = setInterval(fetchCreatedOrderList, 10000);
+            return () => {
+                clearInterval(interval);
+            }
         }, [])
     );
 

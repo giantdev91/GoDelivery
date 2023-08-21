@@ -29,10 +29,10 @@ const NewOrderCard = ({ order, handleAccept }: {
                         </View>
                     </View>
                     <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end' }}>
-                        {/* <Text style={GlobalStyles.subTitle}>{order["price"] && (`MZN ${order["price"]}`)}</Text> */}
-                        <Text style={GlobalStyles.subTitle}>MZN 89.00</Text>
-                        {/* <Text style={GlobalStyles.subTitle}>{order["distance"] && order["distance"]}</Text> */}
-                        <Text style={GlobalStyles.textBold}>2.8 KM</Text>
+                        <Text style={GlobalStyles.subTitle}>{order["price"] && (`MZN ${order["price"]}`)}</Text>
+                        {/* <Text style={GlobalStyles.subTitle}>MZN 89.00</Text> */}
+                        <Text style={GlobalStyles.subTitle}>{order["distance"] && (`${order["distance"]} KM`)}</Text>
+                        {/* <Text style={GlobalStyles.textBold}>2.8 KM</Text> */}
                     </View>
                 </View>
                 <View style={styles.locationStrArea}>

@@ -36,6 +36,11 @@ const cancelOrder = async (param: CancelOrderParam) => {
     return response;
 }
 
+const getByID = async (param: CancelOrderParam) => {
+    const response = await APIService.post('/order/getByID', param);
+    return response;
+}
+
 export default {
     createOrder,
     inprogressOrders,
@@ -43,5 +48,6 @@ export default {
     receiveGoods,
     completeOrders,
     leaveFeedback,
-    cancelOrder
+    cancelOrder,
+    getByID
 }
