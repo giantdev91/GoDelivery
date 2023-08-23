@@ -27,6 +27,8 @@ const DetailInformation = ({
     useState('');
   const [receiverPhone, setReceiverPhone] = useState('');
   const [receiverPhoneError, setReceiverPhoneError] = useState(false);
+  const [receiverName, setReceiverName] = useState('');
+  const [receiverNameError, setReceiverNameError] = useState(false);
   const [toLocationReferBuilding, setToLocationReferBuilding] = useState('');
   const [weight, setWeight] = useState('');
   const [weightError, setWeightError] = useState(false);
@@ -46,6 +48,12 @@ const DetailInformation = ({
       returnVal = false;
     } else {
       setReceiverPhoneError(false);
+    }
+    if (!receiverName) {
+      setReceiverNameError(true);
+      returnVal = false;
+    } else {
+      setReceiverNameError(false);
     }
     if (!weight) {
       setWeightError(true);
@@ -68,6 +76,7 @@ const DetailInformation = ({
         sender: store.getState().CurrentUser.user.id,
         senderPhone: senderPhone,
         receiver: receiverPhone,
+        receiverName: receiverName,
         from: fromStr,
         fromX: markers[0].latitude,
         fromY: markers[0].longitude,
@@ -76,7 +85,7 @@ const DetailInformation = ({
         toX: markers[1].latitude,
         toY: markers[1].longitude,
         toLocationReferBuilding: toLocationReferBuilding,
-        // expectationTime: expectationTime,
+        estimationTime: estimationTime,
         goodsVolumn: volume,
         goodsWeight: weight,
         distance: distance,
@@ -141,12 +150,22 @@ const DetailInformation = ({
           <View style={{ marginTop: 10 }}>
             <CustomizedInput
               icon="call-outline"
-              placeHolder="Person to contact"
+              placeHolder="Phone to contact"
               keyboardType="number"
               val={receiverPhone}
               handler={setReceiverPhone}
               showCheck={true}
               error={receiverPhoneError}
+            />
+          </View>
+          <View style={{ marginTop: 10 }}>
+            <CustomizedInput
+              icon="person-outline"
+              placeHolder="User name to contact"
+              val={receiverName}
+              handler={setReceiverName}
+              showCheck={true}
+              error={receiverNameError}
             />
           </View>
           <View style={{ marginTop: 10 }}>

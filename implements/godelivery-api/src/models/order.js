@@ -13,6 +13,10 @@ const Order = sequelize.define("order", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  receiverName: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   from: {
     type: DataTypes.STRING,
     allowNull: true,

@@ -2,6 +2,7 @@ import { Text, TouchableOpacity, View, StyleSheet } from "react-native"
 import Icons from 'react-native-vector-icons/Ionicons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import GoDeliveryColors from "../styles/colors";
+import GlobalStyles from "../styles/style";
 
 const DeliveryType = ({ title, content, handler }: {
     title: string,
@@ -9,7 +10,7 @@ const DeliveryType = ({ title, content, handler }: {
     handler: () => void
 }) => {
     return (
-        <TouchableOpacity style={styles.cardBack} onPress={handler}>
+        <TouchableOpacity style={[styles.cardBack, GlobalStyles.shadowProp]} onPress={handler}>
             <View style={{ flex: 1 }}>
                 <Text style={styles.cardTitle}>{title}</Text>
                 <Text style={styles.content}>{content}</Text>
@@ -28,12 +29,9 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         width: '100%',
         backgroundColor: 'white',
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 10,
+        borderRadius: 20,
         padding: 20,
-        height: 120,
-        marginVertical: 15,
+        height: 125,
     },
     cardTitle: {
         fontSize: 24,

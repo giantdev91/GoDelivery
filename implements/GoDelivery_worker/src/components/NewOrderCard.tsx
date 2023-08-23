@@ -109,8 +109,8 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
     },
     divider: {
-        borderColor: GoDeliveryColors.disabled,
-        borderWidth: 0.5,
+        borderColor: GoDeliveryColors.place,
+        borderWidth: 0.25,
         width: '100%',
     },
     acceptBtnBack: {

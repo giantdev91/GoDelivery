@@ -33,7 +33,7 @@ const ProfileHomeScreen = ({ navigation }: ScreenProps): JSX.Element => {
         <View style={[GlobalStyles.container]}>
             <HeaderBar navigation={navigation} title={'PROFILE'} />
             <View style={[GlobalStyles.container, { padding: 30, }]}>
-                <TouchableOpacity style={styles.cardBack} onPress={navigateToProfile}>
+                <TouchableOpacity style={[styles.cardBack, GlobalStyles.shadowProp]} onPress={navigateToProfile}>
                     <View>
                         {
                             !userData["avatar"] && (
@@ -52,11 +52,11 @@ const ProfileHomeScreen = ({ navigation }: ScreenProps): JSX.Element => {
                     </View>
                     <FontAwesomeIcon name='chevron-right' size={20} color={GoDeliveryColors.labelColor} />
                 </TouchableOpacity>
-                <View style={[styles.cardBack, { flexDirection: 'column', justifyContent: 'space-around', alignItems: 'flex-start' }]}>
+                <View style={[styles.cardBack, { flexDirection: 'column', justifyContent: 'space-around', alignItems: 'flex-start' }, GlobalStyles.shadowProp]}>
                     <TouchableOpacity onPress={navigateToSelectLanguage}>
                         <Text style={[styles.content, { fontSize: 18, }]}>Change Language</Text>
                     </TouchableOpacity>
-                    <Divider style={{ borderColor: GoDeliveryColors.disabled, borderWidth: 0.5, width: '100%' }} />
+                    <Divider style={{ borderColor: GoDeliveryColors.place, borderWidth: 0.25, width: '100%' }} />
                     <TouchableOpacity>
                         <Text style={[styles.content, { fontSize: 18, }]}>My Saved Locations</Text>
                     </TouchableOpacity>
@@ -78,9 +78,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
         backgroundColor: 'white',
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 10,
+        borderRadius: 20,
         padding: 20,
         height: 140,
         marginVertical: 15,

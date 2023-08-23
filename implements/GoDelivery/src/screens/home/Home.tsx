@@ -106,9 +106,10 @@ const styles = StyleSheet.create({
         borderRadius: 200,
     },
     orderButtonSection: {
-        paddingHorizontal: 50,
+        paddingHorizontal: 20,
         marginTop: -60,
         alignSelf: 'center',
+        gap: 20,
     },
     orderButtonBack: {
         borderRadius: 50,

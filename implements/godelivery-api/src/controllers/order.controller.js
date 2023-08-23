@@ -22,6 +22,7 @@ exports.create = async (req, res) => {
         const {
             sender,
             receiver,
+            receiverName,
             from,
             to,
             fromLocationReferBuilding,
@@ -60,6 +61,7 @@ exports.create = async (req, res) => {
             order = await Order.create({
                 sender: sender,
                 receiver: receiver,
+                receiverName: receiverName,
                 from: from,
                 to: to,
                 fromLocationReferBuilding: fromLocationReferBuilding,

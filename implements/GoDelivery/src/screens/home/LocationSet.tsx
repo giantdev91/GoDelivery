@@ -20,6 +20,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import HeaderBar from '../../components/HeaderBar';
 import commonFunctions from '../../common/CommonFunctions';
 import Action from '../../service';
+import { DEFAULT_ARRIVAL_TIME } from '../../common/Constant';
 
 const MAP_WIDTH = Dimensions.get('screen').width - 40;
 const MAP_HEIGHT = 350;
@@ -140,7 +141,7 @@ const LocationSet = ({ navigation }: { navigation: any }) => {
     } else {
       // if the distance is greater than 4Km, calculate the price by multiply with distance and cost.
       // cost of 1Km is 20. This value should be obtained from the system admin.
-      returnVal = Math.ceil(Number.parseFloat(setting.basePrice) + (dis - 4) * setting.price);
+      returnVal = Math.ceil(Number.parseFloat(setting.basePrice) * dis / 4);
     }
     return returnVal;
   };
@@ -224,7 +225,7 @@ const LocationSet = ({ navigation }: { navigation: any }) => {
                 strokeWidth={4}
                 strokeColor={GoDeliveryColors.primary}
                 onReady={result => {
-                  setEstimationTime(`${Math.ceil(result.duration).toString()}`);
+                  setEstimationTime(`${Math.ceil(result.duration + DEFAULT_ARRIVAL_TIME).toString()}`);
                   const distanceVal = result.distance.toFixed(2).toString();
                   setDistance(distanceVal);
                   const priceVal = calculatePriceByDistance(distanceVal);

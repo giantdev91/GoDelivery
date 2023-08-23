@@ -80,7 +80,6 @@ const OrderDetail = ({ refreshHandler, navigation }: {
     }
 
     const checkDeliverymanStatus = () => {
-        console.log('interval is working ............................');
         Action.deliveryman.getById(deliverymanID)
             .then((res) => {
                 const response = res.data;
@@ -309,6 +308,7 @@ const OrderDetail = ({ refreshHandler, navigation }: {
                                         <View style={styles.horizontalAlign}>
                                             <View>
                                                 <Text style={GlobalStyles.subTitle}>Receiver details</Text>
+                                                <Text style={GlobalStyles.text}>{myOrder["receiverName"]}</Text>
                                                 <Text style={GlobalStyles.text}>{myOrder["receiver"]}</Text>
                                             </View>
                                             <CallButton handler={() => { Linking.openURL(`tel:${myOrder["receiver"]}`); }}  ><Icons name='call-outline' size={20} color={GoDeliveryColors.white} /></CallButton>

@@ -36,6 +36,15 @@ function getDaySuffix(day: number) {
   }
 }
 
+const formatDate = () => {
+  const dateObj = new Date();
+  const day = dateObj.getDate();
+  const month = dateObj.toLocaleDateString('en-US', { month: 'long' });
+  const year = dateObj.getFullYear();
+  const formattedDate = `${day}${getDaySuffix(day)} ${month} ${year}`;
+  return formattedDate;
+}
+
 const DetailConfirmation = ({
   route,
   navigation,
@@ -46,6 +55,7 @@ const DetailConfirmation = ({
   const {
     senderPhone,
     receiver,
+    receiverName,
     from,
     fromX,
     fromY,
@@ -58,14 +68,16 @@ const DetailConfirmation = ({
     goodsWeight,
     distance,
     price,
+    estimationTime
   } = route.params;
   const username = store.getState().CurrentUser.user.name;
-
-  const [expectationTime, setExpectationTime] = useState('');
-  const [expectationDate, setExpectationDate] = useState('');
+  const [expectationTime, setExpectationTime] = useState(estimationTime);
+  const [expectationDate, setExpectationDate] = useState(formatDate());
   const [expectDate, setExpectDate] = useState('');
   const [expectTime, setExpectTime] = useState('');
   const [activityIndicator, setActivityIndicator] = useState(false);
+
+
 
   const onChange = (event: any, selectedDate: any) => {
     const dateObj = selectedDate;
@@ -121,10 +133,13 @@ const DetailConfirmation = ({
 
   const handleNext = () => {
     setActivityIndicator(true);
+    var currentDate = new Date();
+    var expectDateTime = new Date(currentDate.getTime() + estimationTime * 60000);
     const param = {
       sender: store.getState().CurrentUser.user.id,
       senderPhone: senderPhone,
       receiver: receiver,
+      receiverName: receiverName,
       from: from,
       fromX: fromX,
       fromY: fromY,
@@ -133,7 +148,7 @@ const DetailConfirmation = ({
       toX: toX,
       toY: toY,
       toLocationReferBuilding: toLocationReferBuilding,
-      expectationTime: new Date(`${expectDate} ${expectTime}`),
+      expectationTime: expectDateTime,
       goodsVolumn: goodsVolumn,
       goodsWeight: goodsWeight,
       price: price,
@@ -178,6 +193,7 @@ const DetailConfirmation = ({
                 Receiver details
               </Text>
               {/* <Text style={GlobalStyles.text}>{username}</Text> */}
+              <Text style={GlobalStyles.text}>{receiverName}</Text>
               <Text style={GlobalStyles.text}>{receiver}</Text>
             </View>
           </View>
@@ -207,24 +223,24 @@ const DetailConfirmation = ({
             />
             <View style={{ flex: 1, marginLeft: 5 }}>
               <Text style={GlobalStyles.subTitle}>Pick-up date</Text>
-              {!expectationDate && (
+              {/* {!expectationDate && (
                 <TouchableOpacity
                   onPress={showDatePicker}
                   style={styles.dateTimePicker}>
                   <Text style={GlobalStyles.text}>Set Date</Text>
                 </TouchableOpacity>
-              )}
+              )} */}
               {expectationDate && (
                 <View
                   style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
                   <Text style={GlobalStyles.text} numberOfLines={2}>
                     {expectationDate}
                   </Text>
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                     onPress={showDatePicker}
                     style={styles.dateTimePickerReset}>
                     <Text style={GlobalStyles.text}>Reset</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                 </View>
               )}
             </View>
@@ -237,22 +253,22 @@ const DetailConfirmation = ({
             />
             <View style={{ flex: 1, marginLeft: 5 }}>
               <Text style={GlobalStyles.subTitle}>Pick-up time</Text>
-              {!expectationTime && (
+              {/* {!expectationTime && (
                 <TouchableOpacity
                   onPress={showTimePicker}
                   style={styles.dateTimePicker}>
                   <Text style={GlobalStyles.text}>Set Time</Text>
                 </TouchableOpacity>
-              )}
+              )} */}
               {expectationTime && (
                 <View
                   style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
-                  <Text style={GlobalStyles.text}>{expectationTime}</Text>
-                  <TouchableOpacity
+                  <Text style={GlobalStyles.text}>{expectationTime}min</Text>
+                  {/* <TouchableOpacity
                     onPress={showTimePicker}
                     style={styles.dateTimePickerReset}>
                     <Text style={GlobalStyles.text}>Reset</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                 </View>
               )}
             </View>

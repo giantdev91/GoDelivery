@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
 
-import {RadioButton} from 'react-native-paper';
+import { RadioButton } from 'react-native-paper';
 import GlobalStyles from '../../styles/style';
 import HeaderBar from '../../components/HeaderBar';
 import CustomizedInput from '../../components/CustomizedInput';
@@ -20,34 +20,37 @@ interface ScreenProps {
   navigation: any;
 }
 
-const NewOrderComplete = ({navigation}: ScreenProps): JSX.Element => {
+const NewOrderComplete = ({ navigation }: ScreenProps): JSX.Element => {
   const handleToHome = () => {
-    navigation.navigate('NewOrderHome');
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'InProgress' }],
+    });
   };
 
   return (
     <View
       style={[
         GlobalStyles.container,
-        {backgroundColor: GoDeliveryColors.white},
+        { backgroundColor: GoDeliveryColors.white },
       ]}>
       {/* <HeaderBar navigation={navigation} title={'New Order'} /> */}
-      <View style={{justifyContent: 'flex-start', alignItems: 'flex-start'}}>
+      <View style={{ justifyContent: 'flex-start', alignItems: 'flex-start' }}>
         <Image
           source={require('../../../assets/images/goods.jpg')}
-          style={[{width: '100%', height: 300, resizeMode: 'cover'}]}
+          style={[{ width: '100%', height: 300, resizeMode: 'cover' }]}
         />
         <Image
           source={require('../../../assets/images/company_logo.png')}
-          style={{position: 'absolute', top: 200}}
+          style={{ position: 'absolute', top: 200 }}
         />
       </View>
-      <View style={{marginTop: 80, marginHorizontal: 40}}>
+      <View style={{ marginTop: 80, marginHorizontal: 40 }}>
         <Text style={styles.markLabel}>
           Great! Your order will be delivered soon.
         </Text>
       </View>
-      <View style={{marginTop: 50, padding: 20}}>
+      <View style={{ marginTop: 50, padding: 20 }}>
         <PrimaryButton buttonText="Home" handler={handleToHome} />
       </View>
     </View>
