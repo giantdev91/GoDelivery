@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Image,
@@ -15,14 +15,15 @@ import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
 import PasswordInput from '../../components/PasswordInput';
 import PrimaryButton from '../../components/PrimaryButton';
-import {TouchableOpacity} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import messaging from '@react-native-firebase/messaging';
-import {useDispatch} from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Action from '../../service';
 import allActions from '../../redux/actions';
+import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
 
-const SignInScreen = ({route, navigation}: {route: any; navigation: any}) => {
+const SignInScreen = ({ route, navigation }: { route: any; navigation: any }) => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [phoneError, setPhoneError] = useState('');
@@ -32,17 +33,13 @@ const SignInScreen = ({route, navigation}: {route: any; navigation: any}) => {
   // Function to validate phone number
   const validatePhoneNumber = () => {
     const argPhone = String(phone).replace(/[^\d]/g, '');
-    if (argPhone.length > 10) {
-      setPhoneError('');
-      return String('+' + argPhone);
-    } else if (argPhone.length == 10) {
-      setPhoneError('');
-      return String('+91' + argPhone);
-    } else {
+    if (argPhone.length != 9) {
       setPhoneError('Please insert valid phone number.');
       return '';
+    } else {
+      setPhoneError('');
+      return `+258${argPhone}`;
     }
-    return argPhone;
   };
 
   const storeData = async (userData: any) => {
@@ -64,7 +61,7 @@ const SignInScreen = ({route, navigation}: {route: any; navigation: any}) => {
       const token = await messaging().getToken();
       if (argPhone) {
         Action.authentication
-          .login({phone: phone.replace('+', ''), password: password})
+          .login({ phone: argPhone.replace('+', ''), password: password })
           .then(response => {
             const responseData = response.data;
             if (responseData.success) {
@@ -80,7 +77,7 @@ const SignInScreen = ({route, navigation}: {route: any; navigation: any}) => {
                 .then(res => {
                   navigation.reset({
                     index: 0,
-                    routes: [{name: 'Main', params: {initialIndex: 0}}],
+                    routes: [{ name: 'Main', params: { initialIndex: 0 } }],
                   });
                 })
                 .catch(err => {
@@ -118,15 +115,16 @@ const SignInScreen = ({route, navigation}: {route: any; navigation: any}) => {
       </View>
       <ScrollView
         style={[GlobalStyles.container, GlobalStyles.contentAreaPadding]}>
-        <View style={{height: 350, justifyContent: 'center'}}>
+        <View style={{ height: 350, justifyContent: 'center' }}>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <View style={{flex: 1}}>
-              <PhoneInput
+            <View style={{ flex: 1 }}>
+              <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' />
+              {/* <PhoneInput
                 containerStyle={{
                   padding: 0,
                   height: 55,
@@ -139,12 +137,12 @@ const SignInScreen = ({route, navigation}: {route: any; navigation: any}) => {
                   borderTopRightRadius: 30,
                   borderBottomRightRadius: 30,
                 }}
-                textInputStyle={{padding: 0}}
+                textInputStyle={{ padding: 0 }}
                 defaultValue={phone}
                 defaultCode="MZ"
-                onChangeFormattedText={text => setPhone(text)}
+                onChangeFormattedText={text => { setPhone(text); console.log('text ========> ', text) }}
                 withShadow
-              />
+              /> */}
             </View>
             <View style={styles.checkIconArea}>
               <Icons
@@ -162,9 +160,9 @@ const SignInScreen = ({route, navigation}: {route: any; navigation: any}) => {
           />
           <View style={styles.textFieldErrorMsgArea}></View>
         </View>
-        <View style={{marginBottom: 80}}>
+        <View style={{ marginBottom: 80 }}>
           <PrimaryButton buttonText="SignIn" handler={signInUser} />
-          <View style={{marginTop: 30}}>
+          <View style={{ marginTop: 30 }}>
             <TouchableOpacity
               style={styles.footerTitleBack}
               onPress={navigateToSignup}>
@@ -180,7 +178,7 @@ const SignInScreen = ({route, navigation}: {route: any; navigation: any}) => {
         {activityIndicator && (
           <ActivityIndicator
             size={'large'}
-            style={{position: 'absolute', alignSelf: 'center', bottom: 150}}
+            style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
           />
         )}
       </ScrollView>

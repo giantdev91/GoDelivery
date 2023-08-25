@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   useWindowDimensions,
@@ -27,16 +27,17 @@ import GoDeliveryColors from '../../styles/colors';
 import CustomizedInput from '../../components/CustomizedInput';
 import PasswordInput from '../../components/PasswordInput';
 import PrimaryButton from '../../components/PrimaryButton';
-import {TouchableOpacity} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import messaging from '@react-native-firebase/messaging';
-import {useSelector, useDispatch} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Action from '../../service';
 import allActions from '../../redux/actions';
 import TwillioService from '../../service/TwillioService';
+import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
 
-const SignUpScreen = ({route, navigation}: {route: any; navigation: any}) => {
+const SignUpScreen = ({ route, navigation }: { route: any; navigation: any }) => {
   const [phone, setPhone] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [username, setUsername] = useState('');
@@ -76,34 +77,30 @@ const SignUpScreen = ({route, navigation}: {route: any; navigation: any}) => {
     return valid;
   };
 
+  // Function to validate phone number
   const validatePhoneNumber = () => {
     const argPhone = String(phone).replace(/[^\d]/g, '');
-    if (argPhone.length > 10) {
-      setPhoneError('');
-      return String('+' + argPhone);
-    } else if (argPhone.length == 10) {
-      setPhoneError('');
-      return String('+91' + argPhone);
-    } else {
+    if (argPhone.length != 9) {
       setPhoneError('Please insert valid phone number.');
-      console.log('Please insert valid phone number.');
       return '';
+    } else {
+      setPhoneError('');
+      return `+258${argPhone}`;
     }
-    return argPhone;
   };
 
   const navigateToOTP = async () => {
     setActivityIndicator(true);
+    const argPhone = validatePhoneNumber();
     if (validateInputForm()) {
-      const argPhone = validatePhoneNumber();
       if (argPhone) {
         Action.authentication
-          .phoneCheck({phone: phone.replace('+', '')})
+          .phoneCheck({ phone: argPhone.replace('+', '') })
           .then(async res => {
             const responseData = res.data;
             if (responseData.success) {
               const param = {
-                phone: phone,
+                phone: argPhone,
                 password: password,
                 name: username,
               };
@@ -145,15 +142,16 @@ const SignUpScreen = ({route, navigation}: {route: any; navigation: any}) => {
       </View>
       <ScrollView
         style={[GlobalStyles.container, GlobalStyles.contentAreaPadding]}>
-        <View style={{height: 350, justifyContent: 'center'}}>
+        <View style={{ height: 350, justifyContent: 'center' }}>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <View style={{flex: 1}}>
-              <PhoneInput
+            <View style={{ flex: 1 }}>
+              <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' />
+              {/* <PhoneInput
                 containerStyle={{
                   padding: 0,
                   height: 55,
@@ -166,12 +164,12 @@ const SignUpScreen = ({route, navigation}: {route: any; navigation: any}) => {
                   borderTopRightRadius: 30,
                   borderBottomRightRadius: 30,
                 }}
-                textInputStyle={{padding: 0}}
+                textInputStyle={{ padding: 0 }}
                 defaultValue={phone}
                 defaultCode="MZ"
                 onChangeFormattedText={text => setPhone(text)}
                 withShadow
-              />
+              /> */}
             </View>
             <View style={styles.checkIconArea}>
               {phone && (
@@ -206,12 +204,12 @@ const SignUpScreen = ({route, navigation}: {route: any; navigation: any}) => {
         {activityIndicator && (
           <ActivityIndicator
             size="large"
-            style={{position: 'absolute', alignSelf: 'center', bottom: 300}}
+            style={{ position: 'absolute', alignSelf: 'center', bottom: 300 }}
           />
         )}
-        <View style={{marginBottom: 80}}>
+        <View style={{ marginBottom: 80 }}>
           <PrimaryButton buttonText="SignUp" handler={navigateToOTP} />
-          <View style={{marginTop: 30}}>
+          <View style={{ marginTop: 30 }}>
             <TouchableOpacity
               style={styles.footerTitleBack}
               onPress={navigateToSignin}>

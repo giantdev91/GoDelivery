@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { StyleSheet, TouchableOpacity, View, Image, ScrollView, Alert } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Image, ScrollView, Alert, Text } from 'react-native';
 import GlobalStyles from '../../styles/style';
 import HeaderBar from '../../components/HeaderBar';
 import CustomizedInput from '../../components/CustomizedInput';
@@ -17,6 +17,7 @@ import Action from '../../service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import allActions from '../../redux/actions';
 import { useSelector, useDispatch } from 'react-redux';
+import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
 
 interface ScreenProps {
     navigation: any;
@@ -26,8 +27,10 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
     var currentUser = store.getState().CurrentUser.user;
     const [userData, setUserData] = useState({});
     const [avatarUri, setAvatarUri] = useState(currentUser.avatar);
-    const [phone, setPhone] = useState(currentUser.phone);
+    const [phone, setPhone] = useState(currentUser.phone.slice(3));
+    const [phoneError, setPhoneError] = useState('');
     const [username, setUsername] = useState(currentUser.name);
+    const [usernameError, setUsernameError] = useState('');
     const [password, setPassword] = useState('');
     const [modalActivitiIndicator, setModalActivityIndicator] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false);
@@ -43,37 +46,56 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
         }
     }
 
-    const handleSubmit = () => {
-        setActivityIndicator(true);
-        const param = {
-            clientId: store.getState().CurrentUser.user.id
+    const validateForm = () => {
+        var validFlag = true;
+        if (phone.length != 9) {
+            setPhoneError('Please insert valid phone number.');
+            validFlag = false;
+        } else {
+            setPhoneError('');
         }
-        if (avatarUri) {
-            param.avatar = avatarUri;
+        if (!username) {
+            setUsernameError('Please insert user name.');
+            validFlag = false;
+        } else {
+            setUsernameError('');
         }
-        if (phone) {
-            param.phone = phone;
-        }
-        if (username) {
-            param.name = username;
-        }
-        if (password) {
-            param.password = password;
-        }
+        return validFlag;
+    }
 
-        Action.client.updateProfile(param)
-            .then((res) => {
-                const response = res.data;
-                if (response.success) {
-                    Alert.alert("Save success!");
-                    dispatch(allActions.UserAction.setUser(response.data));
-                    storeData(response.data);
-                }
-                setActivityIndicator(false);
-            }).catch((err) => {
-                console.log("error: ", err);
-                setActivityIndicator(false);
-            });
+    const handleSubmit = () => {
+        if (validateForm()) {
+            setActivityIndicator(true);
+            const param = {
+                clientId: store.getState().CurrentUser.user.id
+            }
+            if (avatarUri) {
+                param.avatar = avatarUri;
+            }
+            if (phone) {
+                param.phone = `258${phone}`;
+            }
+            if (username) {
+                param.name = username;
+            }
+            if (password) {
+                param.password = password;
+            }
+
+            Action.client.updateProfile(param)
+                .then((res) => {
+                    const response = res.data;
+                    if (response.success) {
+                        Alert.alert("Save success!");
+                        dispatch(allActions.UserAction.setUser(response.data));
+                        storeData(response.data);
+                    }
+                    setActivityIndicator(false);
+                }).catch((err) => {
+                    console.log("error: ", err);
+                    setActivityIndicator(false);
+                });
+        }
     }
 
     const setPickerResponse = async (response: any) => {
@@ -123,7 +145,7 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
         useCallback(() => {
             currentUser = store.getState().CurrentUser.user;
             setUsername(currentUser.name);
-            setPhone(currentUser.phone);
+            setPhone(currentUser.phone.slice(3));
         }, [])
     );
 
@@ -164,12 +186,11 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
                 </View>
                 <View style={styles.profileFormArea}>
                     <View style={{ marginTop: 20 }}>
-                        <CustomizedInput icon='call-outline' placeHolder='Phone number' keyboardType='number' handler={setPhone} val={phone} />
-                        <View style={styles.textFieldErrorMsgArea}>
-                        </View>
+                        <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' />
+                        {/* <CustomizedInput icon='call-outline' placeHolder='Phone number' keyboardType='number' handler={setPhone} val={phone} /> */}
+                        <Text style={styles.textFieldErrorMsgArea}>{phoneError}</Text>
                         <CustomizedInput icon='person-outline' placeHolder='Username' handler={setUsername} val={username} />
-                        <View style={styles.textFieldErrorMsgArea}>
-                        </View>
+                        <Text style={styles.textFieldErrorMsgArea}>{usernameError}</Text>
                         <PasswordInput handler={(val) => { setPassword(val) }} />
                         <View style={styles.textFieldErrorMsgArea}>
                         </View>
@@ -250,6 +271,7 @@ const styles = StyleSheet.create({
     textFieldErrorMsgArea: {
         height: 35,
         paddingLeft: 20,
+        color: GoDeliveryColors.primary
     },
     modalContainer: {
         justifyContent: 'flex-end',

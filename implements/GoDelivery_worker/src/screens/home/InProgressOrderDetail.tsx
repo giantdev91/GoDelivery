@@ -137,26 +137,28 @@ const OrderDetail = ({ refreshHandler, navigation }: {
 
     const handleSend = async (orderID: number) => {
         setActivityIndicator(true);
-        if (await TwillioService.sendSMSVerfication('+' + myOrder["receiver"])) {
-            Action.order.sendGoods({ orderID: orderID })
-                .then((res) => {
-                    const response = res.data;
-                    setShowComment(false);
-                    fetchMyOrder();
-                    setActivityIndicator(false);
-                    Alert.alert('GoDelivery', "Successfully updated!");
-                }).catch((err) => {
-                    console.log("error: ", err);
-                    setActivityIndicator(false);
-                })
-        } else {
-            Alert.alert('Phone number valid failed');
-            setActivityIndicator(false);
-        }
+        Action.order.sendGoods({ orderID: orderID })
+            .then((res) => {
+                const response = res.data;
+                setShowComment(false);
+                fetchMyOrder();
+                setActivityIndicator(false);
+                Alert.alert('GoDelivery', "Successfully updated!");
+            }).catch((err) => {
+                console.log("error: ", err);
+                setActivityIndicator(false);
+            })
     }
 
-    const handleReceive = (orderID: number) => {
-        navigation.navigate("OrderValidate", { orderID: orderID, phone: myOrder["receiver"] });
+    const handleReceive = async (orderID: number) => {
+        setActivityIndicator(true);
+        if (await TwillioService.sendSMSVerfication('+' + myOrder["receiver"])) {
+            setActivityIndicator(false);
+            navigation.navigate("OrderValidate", { orderID: orderID, phone: myOrder["receiver"] });
+        } else {
+            Alert.alert("GoDelivery", 'Send verification code failed. Try again.');
+            setActivityIndicator(false);
+        }
     }
 
     useFocusEffect(

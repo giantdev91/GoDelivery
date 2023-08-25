@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     },
     content: {
         fontSize: 16,
-        fontWeight: '400',
+        fontWeight: '500',
         color: GoDeliveryColors.labelColor,
     }
 });

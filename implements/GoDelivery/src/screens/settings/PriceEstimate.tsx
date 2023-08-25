@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
     StyleSheet,
     View,
@@ -23,6 +23,8 @@ import HeaderBar from '../../components/HeaderBar';
 import commonFunctions from '../../common/CommonFunctions';
 import Action from '../../service';
 import { DEFAULT_ARRIVAL_TIME } from '../../common/Constant';
+import { GeoCoordinates } from '../../type';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 const MAP_WIDTH = Dimensions.get('screen').width - 40;
 const MAP_HEIGHT = 350;
@@ -30,16 +32,16 @@ const ASPECT_RATIO = MAP_WIDTH / MAP_HEIGHT;
 const LATITUDE_DELTA = 0.005; //Very high zoom level
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-const LocationStr = ({ icon, text }: { icon: string; text: string }) => {
-    return (
-        <View style={styles.locationStrBack}>
-            <Icons name={icon} size={24} color={GoDeliveryColors.disabled} />
-            <Text style={styles.locationStr} numberOfLines={2}>
-                {text}
-            </Text>
-        </View>
-    );
-};
+// const LocationStr = ({ icon, text }: { icon: string; text: string }) => {
+//     return (
+//         <View style={styles.locationStrBack}>
+//             <Icons name={icon} size={24} color={GoDeliveryColors.disabled} />
+//             <Text style={styles.locationStr} numberOfLines={2}>
+//                 {text}
+//             </Text>
+//         </View>
+//     );
+// };
 
 const PriceEstimate = ({ navigation }: { navigation: any }) => {
     const [position, setPosition] = useState({
@@ -48,25 +50,42 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
     });
     const [fromStr, setFromStr] = useState('From');
     const [toStr, setToStr] = useState('To');
-    const [markers, setMarkers] = useState([]);
+    const [markers, setMarkers] = useState([{}, {}]);
     const [estimationTime, setEstimationTime] = useState('');
     const [distance, setDistance] = useState('');
     const [setting, setSetting] = useState({});
     const [price, setPrice] = useState(0);
+    const [fromSearchHeight, setFromSearchHeight] = useState(0);
+    const [toSearchHeight, setToSearchHeight] = useState(0);
+
+    const fromRef = useRef();
+    const toRef = useRef();
 
     const handleMapPress = (event: any) => {
-        if (markers.length < 2) {
+        setFromSearchHeight(0);
+        setToSearchHeight(0);
+        if (Object.keys(markers[0]).length == 0 || Object.keys(markers[1]).length == 0) {
             const { coordinate } = event.nativeEvent;
-            setMarkers([...markers, coordinate]);
+            var index = 0;
+            if (Object.keys(markers[0]).length == 0) {
+                index = 0;
+            } else {
+                index = 1;
+            }
+            var markersTemp = markers;
+            markersTemp[index] = coordinate;
+            setMarkers(markersTemp);
             fetch(
                 `https://nominatim.openstreetmap.org/reverse?lat=${coordinate.latitude}&lon=${coordinate.longitude}&format=json`,
             )
                 .then(response => response.json())
                 .then(data => {
-                    if (markers.length == 0) {
+                    if (index == 0) {
                         setFromStr(data.display_name);
+                        fromRef.current?.setAddressText(data.display_name);
                     } else {
                         setToStr(data.display_name);
+                        toRef.current?.setAddressText(data.display_name);
                     }
                 })
                 .catch(error => console.error('Error:', error));
@@ -92,25 +111,22 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
     };
 
     const handleRequest = () => {
-        if (markers.length == 2) {
-            const param = {
-                markers: markers,
-                fromStr: fromStr,
-                toStr: toStr,
-                estimationTime: estimationTime,
-                distance: distance,
-                price: price,
-            };
-            navigation.navigate('DetailInformation', param);
+        if (Number.parseFloat(distance) > 100) {
+            Alert.alert("GoDelivery", "The delivery distance for an order must be less than 100 kilometers.");
+        } else {
+            if (Object.keys(markers[0]).length > 0 && Object.keys(markers[1]).length > 0) {
+                const param = {
+                    markers: markers,
+                    fromStr: fromStr,
+                    toStr: toStr,
+                    estimationTime: estimationTime,
+                    distance: distance,
+                    price: price,
+                };
+                navigation.navigate('DetailInformation', param);
+            }
         }
     };
-
-    const refreshStatus = () => {
-        setMarkers([]);
-        setFromStr('');
-        setToStr('');
-        setDistance('');
-    }
 
     const handleMapRegionChange = (region) => {
         const { latitude, longitude } = region;
@@ -131,6 +147,17 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
             // You can update the map region state or perform any other necessary actions
         }
     }
+
+    const refreshStatus = () => {
+        setMarkers([{}, {}]);
+        setFromStr('');
+        setToStr('');
+        setDistance('');
+        fromRef.current?.setAddressText('');
+        toRef.current?.setAddressText('');
+    }
+
+
 
     const calculatePriceByDistance = (distance: string) => {
         var returnVal = 0;
@@ -156,6 +183,17 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
             })
     }
 
+    const syncLocationData = (crd: GeoCoordinates, positionStr: string, index: number) => {
+        var markersTemp = markers;
+        markersTemp[index] = crd;
+        setMarkers(markersTemp);
+        if (index == 0) {
+            setFromStr(positionStr)
+        } else {
+            setToStr(positionStr);
+        }
+    }
+
     useFocusEffect(
         useCallback(() => {
             refreshStatus();
@@ -172,9 +210,80 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
             <HeaderBar navigation={navigation} title={'ESTIMATE'} />
             <View style={styles.formArea}>
                 <View style={{ flex: 1 }}>
-                    <LocationStr icon="locate-outline" text={fromStr} />
-                    <LocationStr icon="location-outline" text={toStr} />
-
+                    {/* <LocationStr icon="locate-outline" text={fromStr} />
+                    <LocationStr icon="location-outline" text={toStr} /> */}
+                    <View style={{ minHeight: 50, height: fromSearchHeight, flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}>
+                        <Icons name={"locate-outline"} size={24} color={GoDeliveryColors.disabled} style={{ marginTop: 10 }} />
+                        <GooglePlacesAutocomplete
+                            ref={fromRef}
+                            placeholder='From'
+                            fetchDetails={true}
+                            onPress={(data, details = null) => {
+                                const location = details?.geometry.location;
+                                setFromSearchHeight(0);
+                                if (location) {
+                                    syncLocationData({
+                                        latitude: location?.lat,
+                                        longitude: location?.lng,
+                                    }, data.description, 0);
+                                }
+                            }}
+                            listViewDisplayed={'auto'}
+                            textInputProps={{
+                                onFocus(e) {
+                                    setFromSearchHeight(200);
+                                },
+                                onChangeText(text) {
+                                    if (!text) {
+                                        setFromSearchHeight(0);
+                                    } else {
+                                        setFromSearchHeight(200);
+                                    }
+                                },
+                            }}
+                            query={{
+                                key: 'AIzaSyCNl5jl7Zk09SMHDPHQI4j-6mfu3Jg0bdg',
+                                language: 'en',
+                                components: 'country:mz'
+                            }}
+                        />
+                    </View>
+                    <View style={{ minHeight: 50, height: toSearchHeight, flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}>
+                        <Icons name={"location-outline"} size={24} color={GoDeliveryColors.disabled} style={{ marginTop: 10 }} />
+                        <GooglePlacesAutocomplete
+                            ref={toRef}
+                            placeholder='To'
+                            fetchDetails={true}
+                            onPress={(data, details = null) => {
+                                const location = details?.geometry.location;
+                                setToSearchHeight(0);
+                                if (location) {
+                                    syncLocationData({
+                                        latitude: location?.lat,
+                                        longitude: location?.lng,
+                                    }, data.description, 1);
+                                }
+                            }}
+                            listViewDisplayed={'auto'}
+                            textInputProps={{
+                                onFocus(e) {
+                                    setToSearchHeight(200);
+                                },
+                                onChangeText(text) {
+                                    if (!text) {
+                                        setToSearchHeight(0);
+                                    } else {
+                                        setToSearchHeight(200);
+                                    }
+                                },
+                            }}
+                            query={{
+                                key: 'AIzaSyCNl5jl7Zk09SMHDPHQI4j-6mfu3Jg0bdg',
+                                language: 'en',
+                                components: 'country:mz'
+                            }}
+                        />
+                    </View>
                     <MapView
                         style={{ flex: 1.5, borderColor: 'red', borderWidth: 1 }}
                         provider={PROVIDER_GOOGLE}
@@ -190,7 +299,7 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
                             longitudeDelta: LONGITUDE_DELTA,
                         }}>
                         {markers.map((marker, index) => (
-                            <Marker
+                            (Object.keys(marker).length > 0) && (<Marker
                                 key={index}
                                 coordinate={marker}
                                 title={index == 0 ? 'from' : 'to'}
@@ -209,16 +318,19 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
                                             );
                                             if (index == 0) {
                                                 setFromStr(data.display_name);
+                                                fromRef.current?.setAddressText(data.display_name);
                                             } else {
                                                 setToStr(data.display_name);
+                                                toRef.current?.setAddressText(data.display_name);
                                             }
                                         })
                                         .catch(error => console.error('Error:', error));
                                 }}
                                 pinColor={index == 0 ? 'red' : 'green'}
-                            />
+                            />)
+
                         ))}
-                        {markers.length == 2 && (
+                        {(Object.keys(markers[0]).length > 0 && Object.keys(markers[1]).length > 0) && (
                             <MapViewDirections
                                 origin={markers[0]}
                                 destination={markers[1]}
@@ -245,7 +357,7 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
                             <View style={styles.infoArea}>
                                 <Image source={require('../../../assets/images/icons/price.png')} style={styles.iconImage} />
                                 <Text style={GlobalStyles.subTitle}>Price:</Text>
-                                <Text style={GlobalStyles.textMedium}>{price}MT</Text>
+                                <Text style={GlobalStyles.textMedium}>MZN {price}</Text>
                             </View>
                             <View style={styles.infoArea}>
                                 <Image source={require('../../../assets/images/icons/time.png')} style={styles.iconImage} />

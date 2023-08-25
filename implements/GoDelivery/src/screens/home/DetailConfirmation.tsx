@@ -22,6 +22,7 @@ import store from '../../redux/store';
 import HeaderBar from '../../components/HeaderBar';
 import { Divider } from 'react-native-paper';
 import PrimaryButton from '../../components/PrimaryButton';
+import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
 
 // Function to get the day suffix (e.g., 1st, 2nd, 3rd, etc.)
 function getDaySuffix(day: number) {
@@ -71,6 +72,8 @@ const DetailConfirmation = ({
     estimationTime
   } = route.params;
   const username = store.getState().CurrentUser.user.name;
+  const [receiverPhone, setReceiverPhone] = useState(receiver.slice(3));
+  const [receiverPhoneError, setReceiverPhoneError] = useState('');
   const [expectationTime, setExpectationTime] = useState(estimationTime);
   const [expectationDate, setExpectationDate] = useState(formatDate());
   const [expectDate, setExpectDate] = useState('');
@@ -131,45 +134,59 @@ const DetailConfirmation = ({
     return formatedTime;
   };
 
+  const validateForm = () => {
+    var validFlag = true;
+    if (receiverPhone.length != 9) {
+      setReceiverPhoneError('Please enter valid phone number.');
+      validFlag = false;
+    } else {
+      setReceiverPhoneError('');
+    }
+    return validFlag;
+  }
+
   const handleNext = () => {
-    setActivityIndicator(true);
-    var currentDate = new Date();
-    var expectDateTime = new Date(currentDate.getTime() + estimationTime * 60000);
-    const param = {
-      sender: store.getState().CurrentUser.user.id,
-      senderPhone: senderPhone,
-      receiver: receiver,
-      receiverName: receiverName,
-      from: from,
-      fromX: fromX,
-      fromY: fromY,
-      fromLocationReferBuilding: fromLocationReferBuilding,
-      to: to,
-      toX: toX,
-      toY: toY,
-      toLocationReferBuilding: toLocationReferBuilding,
-      expectationTime: expectDateTime,
-      goodsVolumn: goodsVolumn,
-      goodsWeight: goodsWeight,
-      price: price,
-      distance: distance,
-    };
-    Action.order
-      .createOrder(param)
-      .then(res => {
-        const response = res.data;
-        setActivityIndicator(false);
-        if (response.success) {
-          navigation.navigate('OrderComplete');
-        } else {
+    if (validateForm()) {
+      setActivityIndicator(true);
+      var currentDate = new Date();
+      var expectDateTime = new Date(currentDate.getTime() + estimationTime * 60000);
+      const param = {
+        sender: store.getState().CurrentUser.user.id,
+        senderPhone: senderPhone,
+        receiver: receiver,
+        receiverName: receiverName,
+        from: from,
+        fromX: fromX,
+        fromY: fromY,
+        fromLocationReferBuilding: fromLocationReferBuilding,
+        to: to,
+        toX: toX,
+        toY: toY,
+        toLocationReferBuilding: toLocationReferBuilding,
+        expectationTime: expectDateTime,
+        goodsVolumn: goodsVolumn,
+        goodsWeight: goodsWeight,
+        price: price,
+        distance: distance,
+      };
+      Action.order
+        .createOrder(param)
+        .then(res => {
+          const response = res.data;
+          setActivityIndicator(false);
+          if (response.success) {
+            navigation.navigate('OrderComplete');
+          } else {
+            Alert.alert('Operation failed. Try again.');
+          }
+        })
+        .catch(err => {
+          console.log('error: ', err);
+          setActivityIndicator(false);
           Alert.alert('Operation failed. Try again.');
-        }
-      })
-      .catch(err => {
-        console.log('error: ', err);
-        setActivityIndicator(false);
-        Alert.alert('Operation failed. Try again.');
-      });
+        });
+    }
+
   };
 
   return (
@@ -194,7 +211,9 @@ const DetailConfirmation = ({
               </Text>
               {/* <Text style={GlobalStyles.text}>{username}</Text> */}
               <Text style={GlobalStyles.text}>{receiverName}</Text>
-              <Text style={GlobalStyles.text}>{receiver}</Text>
+              <CustomizedPhoneInput value={receiverPhone} handler={setReceiverPhone} />
+              <Text style={styles.textFieldErrorMsgArea}>{receiverPhoneError}</Text>
+              {/* <Text style={GlobalStyles.text}>{receiver}</Text> */}
             </View>
           </View>
 
@@ -287,7 +306,7 @@ const DetailConfirmation = ({
                 source={require('../../../assets/images/icons/price.png')}
                 style={styles.iconImg}
               />
-              <Text style={GlobalStyles.subTitle}>Price: {price}MT</Text>
+              <Text style={GlobalStyles.subTitle}>Price: MZN {price}</Text>
             </View>
           </View>
         </View>
@@ -337,7 +356,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   textFieldErrorMsgArea: {
-    height: 25,
+    height: 20,
     paddingLeft: 20,
     color: GoDeliveryColors.primary,
   },

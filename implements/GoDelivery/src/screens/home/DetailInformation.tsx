@@ -9,6 +9,7 @@ import HeaderBar from '../../components/HeaderBar';
 import { Divider } from 'react-native-paper';
 import PrimaryButton from '../../components/PrimaryButton';
 import CommonFunctions from '../../common/CommonFunctions';
+import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
 
 const DetailInformation = ({
   route,
@@ -22,50 +23,60 @@ const DetailInformation = ({
   const [senderPhone, setSenderPhone] = useState(
     store.getState().CurrentUser.user.phone,
   );
-  const [senderPhoneError, setSenderPhoneError] = useState(false);
+  const [senderPhoneError, setSenderPhoneError] = useState('');
   const [fromLocationReferBuilding, setFromLocationReferBuilding] =
     useState('');
   const [receiverPhone, setReceiverPhone] = useState('');
-  const [receiverPhoneError, setReceiverPhoneError] = useState(false);
+  const [receiverPhoneError, setReceiverPhoneError] = useState('');
   const [receiverName, setReceiverName] = useState('');
-  const [receiverNameError, setReceiverNameError] = useState(false);
+  const [receiverNameError, setReceiverNameError] = useState('');
   const [toLocationReferBuilding, setToLocationReferBuilding] = useState('');
   const [weight, setWeight] = useState('');
-  const [weightError, setWeightError] = useState(false);
+  const [weightError, setWeightError] = useState('');
   const [volume, setVolume] = useState('');
-  const [volumeError, setVolumeError] = useState(false);
+  const [volumeError, setVolumeError] = useState('');
 
   const formValidate = () => {
     var returnVal = true;
-    if (!senderPhone) {
-      setSenderPhoneError(true);
+    // if (senderPhone.length != 9) {
+    //   setSenderPhoneError('Please insert valid phone number');
+    //   returnVal = false;
+    // } else {
+    //   setSenderPhoneError('');
+    // }
+    if (receiverPhone.length != 9) {
+      setReceiverPhoneError('Please insert valid phone number');
       returnVal = false;
     } else {
-      setSenderPhoneError(false);
-    }
-    if (!receiverPhone) {
-      setReceiverPhoneError(true);
-      returnVal = false;
-    } else {
-      setReceiverPhoneError(false);
+      setReceiverPhoneError('');
     }
     if (!receiverName) {
-      setReceiverNameError(true);
+      setReceiverNameError('Please insert receiver name.');
       returnVal = false;
     } else {
-      setReceiverNameError(false);
+      setReceiverNameError('');
     }
     if (!weight) {
-      setWeightError(true);
+      setWeightError('Please enter a valid weight for the goods.');
       returnVal = false;
     } else {
-      setWeightError(false);
+      if (Number.parseFloat(weight) > 50) {
+        setWeightError('It should be less than 50.');
+        returnVal = false;
+      } else {
+        setWeightError('');
+      }
     }
     if (!volume) {
-      setVolumeError(true);
+      setVolumeError('Please enter a valid volume for the goods.');
       returnVal = false;
     } else {
-      setVolumeError(false);
+      if (Number.parseFloat(volume) > 50) {
+        setVolumeError('It should be less than 50.');
+        returnVal = false;
+      } else {
+        setVolumeError('');
+      }
     }
     return returnVal;
   };
@@ -75,7 +86,7 @@ const DetailInformation = ({
       const param = {
         sender: store.getState().CurrentUser.user.id,
         senderPhone: senderPhone,
-        receiver: receiverPhone,
+        receiver: `258${receiverPhone}`,
         receiverName: receiverName,
         from: fromStr,
         fromX: markers[0].latitude,
@@ -114,7 +125,9 @@ const DetailInformation = ({
             </View>
           </View>
           <View style={{ marginTop: 10 }}>
-            <CustomizedInput
+            <CustomizedPhoneInput value={senderPhone.slice(3)} handler={() => { }} disabled={true} placeholder='Phone to contact' />
+            <Text style={styles.textFieldErrorMsgArea}>{senderPhoneError}</Text>
+            {/* <CustomizedInput
               icon="call-outline"
               placeHolder="Person to contact"
               keyboardType="number"
@@ -122,7 +135,7 @@ const DetailInformation = ({
               handler={setSenderPhone}
               showCheck={true}
               error={senderPhoneError}
-            />
+            /> */}
           </View>
           <View style={{ marginTop: 10 }}>
             <CustomizedInput
@@ -148,15 +161,8 @@ const DetailInformation = ({
             </View>
           </View>
           <View style={{ marginTop: 10 }}>
-            <CustomizedInput
-              icon="call-outline"
-              placeHolder="Phone to contact"
-              keyboardType="number"
-              val={receiverPhone}
-              handler={setReceiverPhone}
-              showCheck={true}
-              error={receiverPhoneError}
-            />
+            <CustomizedPhoneInput value={receiverPhone} handler={setReceiverPhone} placeholder='Phone to contact' />
+            <Text style={styles.textFieldErrorMsgArea}>{receiverPhoneError}</Text>
           </View>
           <View style={{ marginTop: 10 }}>
             <CustomizedInput
@@ -165,8 +171,8 @@ const DetailInformation = ({
               val={receiverName}
               handler={setReceiverName}
               showCheck={true}
-              error={receiverNameError}
             />
+            <Text style={styles.textFieldErrorMsgArea}>{receiverNameError}</Text>
           </View>
           <View style={{ marginTop: 10 }}>
             <CustomizedInput
@@ -178,9 +184,7 @@ const DetailInformation = ({
               showCheck={true}
             />
           </View>
-
           <Divider style={styles.divider} />
-
           <View>
             <CustomizedInput
               icon=""
@@ -195,8 +199,8 @@ const DetailInformation = ({
               val={weight}
               handler={setWeight}
               showCheck={true}
-              error={weightError}
             />
+            <Text style={styles.textFieldErrorMsgArea}>{weightError}</Text>
           </View>
           <View style={{ marginTop: 10 }}>
             <CustomizedInput
@@ -212,8 +216,8 @@ const DetailInformation = ({
               val={volume}
               handler={setVolume}
               showCheck={true}
-              error={volumeError}
             />
+            <Text style={styles.textFieldErrorMsgArea}>{volumeError}</Text>
           </View>
 
           <View style={{ marginTop: 20 }}>
@@ -229,7 +233,7 @@ const DetailInformation = ({
                 source={require('../../../assets/images/icons/price.png')}
                 style={styles.iconImg}
               />
-              <Text style={GlobalStyles.subTitle}>Price: {price}MT</Text>
+              <Text style={GlobalStyles.subTitle}>Price: MZN {price}</Text>
             </View>
           </View>
         </View>
@@ -273,7 +277,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   textFieldErrorMsgArea: {
-    height: 25,
+    height: 15,
     paddingLeft: 20,
     color: GoDeliveryColors.primary,
   },
