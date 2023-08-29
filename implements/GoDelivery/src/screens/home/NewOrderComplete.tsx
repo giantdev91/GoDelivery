@@ -67,10 +67,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginVertical: 20,
   },
-  textFieldErrorMsgArea: {
-    height: 25,
-    paddingLeft: 20,
-  },
   markLabel: {
     fontSize: 32,
     fontWeight: '800',

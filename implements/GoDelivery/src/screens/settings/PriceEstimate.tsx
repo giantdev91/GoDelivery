@@ -54,7 +54,7 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
     const [estimationTime, setEstimationTime] = useState('');
     const [distance, setDistance] = useState('');
     const [setting, setSetting] = useState({});
-    const [price, setPrice] = useState(0);
+    const [price, setPrice] = useState('');
     const [fromSearchHeight, setFromSearchHeight] = useState(0);
     const [toSearchHeight, setToSearchHeight] = useState(0);
 
@@ -160,16 +160,12 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
 
 
     const calculatePriceByDistance = (distance: string) => {
-        var returnVal = 0;
+        var returnVal = '';
         var dis = Number.parseFloat(distance);
         if (dis < 4) {
-            // if the distance is less than 4Km return a constant value
-            // this value should be returned from system admin.
-            returnVal = setting ? setting.basePrice : 89;
+            returnVal = (setting ? setting.basePrice : 89).toString();
         } else {
-            // if the distance is greater than 4Km, calculate the price by multiply with distance and cost.
-            // cost of 1Km is 20. This value should be obtained from the system admin.
-            returnVal = Math.ceil(Number.parseFloat(setting.basePrice) * dis / 4);
+            returnVal = (Number.parseFloat(setting.basePrice) * dis / 4).toFixed(2);
         }
         return returnVal;
     };
@@ -210,85 +206,11 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
             <HeaderBar navigation={navigation} title={'ESTIMATE'} />
             <View style={styles.formArea}>
                 <View style={{ flex: 1 }}>
-                    {/* <LocationStr icon="locate-outline" text={fromStr} />
-                    <LocationStr icon="location-outline" text={toStr} /> */}
-                    <View style={{ minHeight: 50, height: fromSearchHeight, flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}>
-                        <Icons name={"locate-outline"} size={24} color={GoDeliveryColors.disabled} style={{ marginTop: 10 }} />
-                        <GooglePlacesAutocomplete
-                            ref={fromRef}
-                            placeholder='From'
-                            fetchDetails={true}
-                            onPress={(data, details = null) => {
-                                const location = details?.geometry.location;
-                                setFromSearchHeight(0);
-                                if (location) {
-                                    syncLocationData({
-                                        latitude: location?.lat,
-                                        longitude: location?.lng,
-                                    }, data.description, 0);
-                                }
-                            }}
-                            listViewDisplayed={'auto'}
-                            textInputProps={{
-                                onFocus(e) {
-                                    setFromSearchHeight(200);
-                                },
-                                onChangeText(text) {
-                                    if (!text) {
-                                        setFromSearchHeight(0);
-                                    } else {
-                                        setFromSearchHeight(200);
-                                    }
-                                },
-                            }}
-                            query={{
-                                key: 'AIzaSyCNl5jl7Zk09SMHDPHQI4j-6mfu3Jg0bdg',
-                                language: 'en',
-                                components: 'country:mz'
-                            }}
-                        />
-                    </View>
-                    <View style={{ minHeight: 50, height: toSearchHeight, flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}>
-                        <Icons name={"location-outline"} size={24} color={GoDeliveryColors.disabled} style={{ marginTop: 10 }} />
-                        <GooglePlacesAutocomplete
-                            ref={toRef}
-                            placeholder='To'
-                            fetchDetails={true}
-                            onPress={(data, details = null) => {
-                                const location = details?.geometry.location;
-                                setToSearchHeight(0);
-                                if (location) {
-                                    syncLocationData({
-                                        latitude: location?.lat,
-                                        longitude: location?.lng,
-                                    }, data.description, 1);
-                                }
-                            }}
-                            listViewDisplayed={'auto'}
-                            textInputProps={{
-                                onFocus(e) {
-                                    setToSearchHeight(200);
-                                },
-                                onChangeText(text) {
-                                    if (!text) {
-                                        setToSearchHeight(0);
-                                    } else {
-                                        setToSearchHeight(200);
-                                    }
-                                },
-                            }}
-                            query={{
-                                key: 'AIzaSyCNl5jl7Zk09SMHDPHQI4j-6mfu3Jg0bdg',
-                                language: 'en',
-                                components: 'country:mz'
-                            }}
-                        />
-                    </View>
                     <MapView
                         style={{ flex: 1.5, borderColor: 'red', borderWidth: 1 }}
                         provider={PROVIDER_GOOGLE}
                         showsUserLocation={true}
-                        showsMyLocationButton={true}
+                        showsMyLocationButton={false}
                         loadingEnabled
                         onPress={handleMapPress}
                         onRegionChangeComplete={handleMapRegionChange}
@@ -326,7 +248,7 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
                                         })
                                         .catch(error => console.error('Error:', error));
                                 }}
-                                pinColor={index == 0 ? 'red' : 'green'}
+                                pinColor={index == 0 ? 'green' : 'red'}
                             />)
 
                         ))}
@@ -347,6 +269,80 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
                             />
                         )}
                     </MapView>
+                    <View style={{ position: 'absolute', width: '100%', paddingHorizontal: 20, marginTop: 10 }}>
+                        <View style={{ minHeight: 50, height: fromSearchHeight, flexDirection: 'row', alignItems: 'flex-start', backgroundColor: GoDeliveryColors.white, paddingHorizontal: 15, borderRadius: 10, marginVertical: 3 }}>
+                            <Icons name={"locate-outline"} size={24} color={GoDeliveryColors.green} style={{ marginTop: 10 }} />
+                            <GooglePlacesAutocomplete
+                                ref={fromRef}
+                                placeholder='From'
+                                fetchDetails={true}
+                                onPress={(data, details = null) => {
+                                    const location = details?.geometry.location;
+                                    setFromSearchHeight(0);
+                                    if (location) {
+                                        syncLocationData({
+                                            latitude: location?.lat,
+                                            longitude: location?.lng,
+                                        }, data.description, 0);
+                                    }
+                                }}
+                                listViewDisplayed={'auto'}
+                                textInputProps={{
+                                    onFocus(e) {
+                                        setFromSearchHeight(200);
+                                    },
+                                    onChangeText(text) {
+                                        if (!text) {
+                                            setFromSearchHeight(0);
+                                        } else {
+                                            setFromSearchHeight(200);
+                                        }
+                                    },
+                                }}
+                                query={{
+                                    key: 'AIzaSyCNl5jl7Zk09SMHDPHQI4j-6mfu3Jg0bdg',
+                                    language: 'en',
+                                    components: 'country:mz'
+                                }}
+                            />
+                        </View>
+                        <View style={{ minHeight: 50, height: toSearchHeight, flexDirection: 'row', alignItems: 'flex-start', backgroundColor: GoDeliveryColors.white, paddingHorizontal: 15, borderRadius: 10, marginVertical: 3 }}>
+                            <Icons name={"location-outline"} size={24} color={GoDeliveryColors.primary} style={{ marginTop: 10 }} />
+                            <GooglePlacesAutocomplete
+                                ref={toRef}
+                                placeholder='To'
+                                fetchDetails={true}
+                                onPress={(data, details = null) => {
+                                    const location = details?.geometry.location;
+                                    setToSearchHeight(0);
+                                    if (location) {
+                                        syncLocationData({
+                                            latitude: location?.lat,
+                                            longitude: location?.lng,
+                                        }, data.description, 1);
+                                    }
+                                }}
+                                listViewDisplayed={'auto'}
+                                textInputProps={{
+                                    onFocus(e) {
+                                        setToSearchHeight(200);
+                                    },
+                                    onChangeText(text) {
+                                        if (!text) {
+                                            setToSearchHeight(0);
+                                        } else {
+                                            setToSearchHeight(200);
+                                        }
+                                    },
+                                }}
+                                query={{
+                                    key: 'AIzaSyCNl5jl7Zk09SMHDPHQI4j-6mfu3Jg0bdg',
+                                    language: 'en',
+                                    components: 'country:mz'
+                                }}
+                            />
+                        </View>
+                    </View>
                     {distance && (
                         <View style={[styles.informationPad, GlobalStyles.shadowProp]}>
                             <View style={styles.infoArea}>
@@ -367,24 +363,23 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
                         </View>
                     )}
                 </View>
+                <View style={styles.buttonRow}>
+                    <PrimaryButton buttonText="REQUEST" handler={handleRequest} />
+                </View>
             </View>
-            <View style={styles.buttonRow}>
-                <PrimaryButton buttonText="REQUEST" handler={handleRequest} />
-            </View>
+
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     formArea: {
-        paddingHorizontal: 20,
         flex: 1,
     },
     buttonRow: {
-        height: 70,
+        position: 'absolute',
+        bottom: 20,
         flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
         paddingHorizontal: 20,
     },
     backButton: {
@@ -428,14 +423,15 @@ const styles = StyleSheet.create({
     },
     informationPad: {
         position: 'absolute',
-        bottom: 0,
+        bottom: 85,
         backgroundColor: GoDeliveryColors.white,
-        width: '100%',
+        width: '90%',
         borderRadius: 20,
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
         paddingHorizontal: 20,
         paddingVertical: 10,
+        alignSelf: 'center'
     },
     informationStr: {
         color: GoDeliveryColors.secondary,

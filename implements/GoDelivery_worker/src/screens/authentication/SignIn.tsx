@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Image,
@@ -17,22 +17,23 @@ import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
 import PasswordInput from '../../components/PasswordInput';
 import PrimaryButton from '../../components/PrimaryButton';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useDispatch} from 'react-redux';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useDispatch } from 'react-redux';
 import Action from '../../service';
 import allActions from '../../redux/actions';
 import messaging from '@react-native-firebase/messaging';
-import {requestLocationPermission} from '../../common/RequestPermission';
-import {startBackgroundServiceScheduler} from '../../common/SchedulerService';
+import { requestLocationPermission } from '../../common/RequestPermission';
+import { startBackgroundServiceScheduler } from '../../common/SchedulerService';
 import Geolocation from 'react-native-geolocation-service';
 import store from '../../redux/store';
+import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
 
 interface SignInScreenProps {
   route: any;
   navigation: any;
 }
 
-const SignInScreen = ({route, navigation}: SignInScreenProps): JSX.Element => {
+const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [phoneError, setPhoneError] = useState('');
@@ -42,17 +43,13 @@ const SignInScreen = ({route, navigation}: SignInScreenProps): JSX.Element => {
   // Function to validate phone number
   const validatePhoneNumber = () => {
     const argPhone = String(phone).replace(/[^\d]/g, '');
-    if (argPhone.length > 10) {
-      setPhoneError('');
-      return String('+' + argPhone);
-    } else if (argPhone.length == 10) {
-      setPhoneError('');
-      return String('+91' + argPhone);
-    } else {
+    if (argPhone.length != 9) {
       setPhoneError('Please insert valid phone number.');
       return '';
+    } else {
+      setPhoneError('');
+      return `+258${argPhone}`;
     }
-    return argPhone;
   };
 
   const storeData = async (userData: any) => {
@@ -69,7 +66,6 @@ const SignInScreen = ({route, navigation}: SignInScreenProps): JSX.Element => {
       const locationLatitude = crd.latitude.toString();
       const locationLongitude = crd.longitude.toString();
       const deliverymanID = store.getState().CurrentUser.user.id;
-
       Action.deliveryman
         .updateLocation({
           deliverymanID: deliverymanID,
@@ -82,7 +78,13 @@ const SignInScreen = ({route, navigation}: SignInScreenProps): JSX.Element => {
         .catch(err => {
           console.error('error: ', err);
         });
-    });
+    },
+      error => {
+        // See error code charts below.
+        console.log(error.code, error.message);
+      },
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 5000 },
+    );
   };
 
   const signInUser = async () => {
@@ -98,7 +100,7 @@ const SignInScreen = ({route, navigation}: SignInScreenProps): JSX.Element => {
         const token = await messaging().getToken();
 
         Action.authentication
-          .login({phone: phone.replace('+', ''), password: password})
+          .login({ phone: argPhone.replace('+', ''), password: password })
           .then(response => {
             const responseData = response.data;
             if (responseData.success) {
@@ -122,7 +124,7 @@ const SignInScreen = ({route, navigation}: SignInScreenProps): JSX.Element => {
                     if (res) {
                       navigation.reset({
                         index: 0,
-                        routes: [{name: 'Main', params: {initialIndex: 0}}],
+                        routes: [{ name: 'Main', params: { initialIndex: 0 } }],
                       });
                     }
                   });
@@ -158,57 +160,44 @@ const SignInScreen = ({route, navigation}: SignInScreenProps): JSX.Element => {
       </View>
       <ScrollView
         style={[GlobalStyles.container, GlobalStyles.contentAreaPadding]}>
-        <View style={{height: 350, justifyContent: 'center'}}>
+        <View style={{ height: 350, justifyContent: 'center' }}>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <View style={{flex: 1}}>
-              <PhoneInput
-                containerStyle={{
-                  padding: 0,
-                  height: 55,
-                  borderRadius: 10,
-                  width: '100%',
-                  borderWidth: 1,
-                  borderColor: GoDeliveryColors.disabled,
-                }}
-                textContainerStyle={{
-                  borderTopRightRadius: 30,
-                  borderBottomRightRadius: 30,
-                }}
-                textInputStyle={{padding: 0}}
-                defaultValue={phone}
-                defaultCode="MZ"
-                onChangeFormattedText={text => setPhone(text)}
-                withShadow
-              />
+            <View style={{ flex: 1 }}>
+              <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
             </View>
             <View style={styles.checkIconArea}>
-              <Icons
-                name="checkmark-outline"
-                size={25}
-                color={GoDeliveryColors.green}
-              />
+              {
+                phone && (
+                  <Icons
+                    name="checkmark-outline"
+                    size={25}
+                    color={GoDeliveryColors.green}
+                  />
+                )
+              }
+
             </View>
           </View>
-          <Text style={styles.textFieldErrorMsgArea}>{phoneError}</Text>
+          <Text style={GlobalStyles.textFieldErrorMsgArea}>{phoneError}</Text>
           <PasswordInput
             handler={val => {
               setPassword(val);
             }}
           />
-          <View style={styles.textFieldErrorMsgArea}></View>
+          <View style={GlobalStyles.textFieldErrorMsgArea}></View>
         </View>
-        <View style={{marginBottom: 80}}>
+        <View style={{ marginBottom: 80 }}>
           <PrimaryButton buttonText="SignIn" handler={signInUser} />
         </View>
         {activityIndicator && (
           <ActivityIndicator
             size={'large'}
-            style={{position: 'absolute', alignSelf: 'center', bottom: 150}}
+            style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
           />
         )}
       </ScrollView>

@@ -291,10 +291,6 @@ const styles = StyleSheet.create({
         padding: 20,
         flex: 1,
     },
-    textFieldErrorMsgArea: {
-        height: 35,
-        paddingLeft: 20,
-    },
     distanceComponent: {
         position: 'absolute',
         top: 55,

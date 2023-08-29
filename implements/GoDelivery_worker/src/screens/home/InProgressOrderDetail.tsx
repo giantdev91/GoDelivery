@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
     },
     divider: {
         borderColor: GoDeliveryColors.disabled,
-        borderWidth: 0.5,
+        borderWidth: 0.25,
         width: '100%',
         alignSelf: 'center',
         marginBottom: 10,

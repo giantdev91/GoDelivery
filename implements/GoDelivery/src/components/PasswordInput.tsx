@@ -1,11 +1,12 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import GoDeliveryColors from '../styles/colors';
 
 interface PasswordInputProps {
   placeholder?: string;
   handler: (val: string) => void;
+  error?: boolean;
 }
 
 const PasswordInput = (props: PasswordInputProps): JSX.Element => {
@@ -19,7 +20,7 @@ const PasswordInput = (props: PasswordInputProps): JSX.Element => {
 
   return (
     <View style={styles.background}>
-      <View style={styles.inputBack}>
+      <View style={[styles.inputBack, { borderColor: props.error ? GoDeliveryColors.primary : GoDeliveryColors.disabled }]}>
         <Icons
           name={'lock-closed-outline'}
           size={25}

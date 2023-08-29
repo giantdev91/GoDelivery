@@ -84,8 +84,14 @@ const SignUpScreen = ({ route, navigation }: { route: any; navigation: any }) =>
       setPhoneError('Please insert valid phone number.');
       return '';
     } else {
-      setPhoneError('');
-      return `+258${argPhone}`;
+      const prefix = Number.parseInt(argPhone.substring(0, 2));
+      if (prefix > 81 && prefix < 88) {
+        setPhoneError('');
+        return `+258${argPhone}`;
+      } else {
+        setPhoneError('Please insert valid phone number.');
+        return '';
+      }
     }
   };
 
@@ -150,26 +156,7 @@ const SignUpScreen = ({ route, navigation }: { route: any; navigation: any }) =>
               alignItems: 'center',
             }}>
             <View style={{ flex: 1 }}>
-              <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' />
-              {/* <PhoneInput
-                containerStyle={{
-                  padding: 0,
-                  height: 55,
-                  borderRadius: 10,
-                  width: '100%',
-                  borderWidth: 1,
-                  borderColor: GoDeliveryColors.disabled,
-                }}
-                textContainerStyle={{
-                  borderTopRightRadius: 30,
-                  borderBottomRightRadius: 30,
-                }}
-                textInputStyle={{ padding: 0 }}
-                defaultValue={phone}
-                defaultCode="MZ"
-                onChangeFormattedText={text => setPhone(text)}
-                withShadow
-              /> */}
+              <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
             </View>
             <View style={styles.checkIconArea}>
               {phone && (
@@ -181,7 +168,7 @@ const SignUpScreen = ({ route, navigation }: { route: any; navigation: any }) =>
               )}
             </View>
           </View>
-          <Text style={styles.textFieldErrorMsgArea}>{phoneError}</Text>
+          <Text style={GlobalStyles.textFieldErrorMsgArea}>{phoneError}</Text>
           <CustomizedInput
             icon="person-outline"
             placeHolder="User Name"
@@ -189,15 +176,17 @@ const SignUpScreen = ({ route, navigation }: { route: any; navigation: any }) =>
             handler={val => {
               setUsername(val);
             }}
+            error={usernameError.length > 0}
           />
-          <Text style={styles.textFieldErrorMsgArea}>{usernameError}</Text>
-          <PasswordInput handler={val => setPassword(val)} />
-          <Text style={styles.textFieldErrorMsgArea}>{passwordError}</Text>
+          <Text style={GlobalStyles.textFieldErrorMsgArea}>{usernameError}</Text>
+          <PasswordInput handler={val => setPassword(val)} error={passwordError.length > 0} />
+          <Text style={GlobalStyles.textFieldErrorMsgArea}>{passwordError}</Text>
           <PasswordInput
             placeholder="Confirm Password"
             handler={val => setConfirmPassword(val)}
+            error={confirmPasswordError.length > 0}
           />
-          <Text style={styles.textFieldErrorMsgArea}>
+          <Text style={GlobalStyles.textFieldErrorMsgArea}>
             {confirmPasswordError}
           </Text>
         </View>

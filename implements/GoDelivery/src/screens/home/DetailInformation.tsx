@@ -11,6 +11,9 @@ import PrimaryButton from '../../components/PrimaryButton';
 import CommonFunctions from '../../common/CommonFunctions';
 import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
 
+const MAX_VOLUME = 135;
+const MAX_WEIGHT = 50;
+
 const DetailInformation = ({
   route,
   navigation,
@@ -48,7 +51,13 @@ const DetailInformation = ({
       setReceiverPhoneError('Please insert valid phone number');
       returnVal = false;
     } else {
-      setReceiverPhoneError('');
+      const prefix = Number.parseInt(receiverPhone.substring(0, 2));
+      if (prefix > 81 && prefix < 88) {
+        setReceiverPhoneError('');
+      } else {
+        setReceiverPhoneError('Please insert valid phone number');
+        returnVal = false;
+      }
     }
     if (!receiverName) {
       setReceiverNameError('Please insert receiver name.');
@@ -60,8 +69,8 @@ const DetailInformation = ({
       setWeightError('Please enter a valid weight for the goods.');
       returnVal = false;
     } else {
-      if (Number.parseFloat(weight) > 50) {
-        setWeightError('It should be less than 50.');
+      if (Number.parseFloat(weight) > MAX_WEIGHT) {
+        setWeightError(`It should be less than ${MAX_WEIGHT}.`);
         returnVal = false;
       } else {
         setWeightError('');
@@ -71,8 +80,8 @@ const DetailInformation = ({
       setVolumeError('Please enter a valid volume for the goods.');
       returnVal = false;
     } else {
-      if (Number.parseFloat(volume) > 50) {
-        setVolumeError('It should be less than 50.');
+      if (Number.parseFloat(volume) > MAX_VOLUME) {
+        setVolumeError(`It should be less than ${MAX_VOLUME}.`);
         returnVal = false;
       } else {
         setVolumeError('');
@@ -115,10 +124,10 @@ const DetailInformation = ({
             <Icons
               name="locate-outline"
               size={30}
-              color={GoDeliveryColors.secondary}
+              color={GoDeliveryColors.green}
             />
             <View style={{ flex: 1, marginLeft: 5 }}>
-              <Text style={GlobalStyles.subTitle}>From</Text>
+              <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.secondary }]}>From</Text>
               <Text numberOfLines={2} style={GlobalStyles.text}>
                 {fromStr}
               </Text>
@@ -126,7 +135,7 @@ const DetailInformation = ({
           </View>
           <View style={{ marginTop: 10 }}>
             <CustomizedPhoneInput value={senderPhone.slice(3)} handler={() => { }} disabled={true} placeholder='Phone to contact' />
-            <Text style={styles.textFieldErrorMsgArea}>{senderPhoneError}</Text>
+            <Text style={GlobalStyles.textFieldErrorMsgArea}>{senderPhoneError}</Text>
             {/* <CustomizedInput
               icon="call-outline"
               placeHolder="Person to contact"
@@ -151,18 +160,18 @@ const DetailInformation = ({
             <Icons
               name="location-outline"
               size={30}
-              color={GoDeliveryColors.secondary}
+              color={GoDeliveryColors.primary}
             />
             <View style={{ flex: 1, marginLeft: 5 }}>
-              <Text style={GlobalStyles.subTitle}>To</Text>
+              <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.secondary }]}>To</Text>
               <Text numberOfLines={2} style={GlobalStyles.text}>
                 {toStr}
               </Text>
             </View>
           </View>
           <View style={{ marginTop: 10 }}>
-            <CustomizedPhoneInput value={receiverPhone} handler={setReceiverPhone} placeholder='Phone to contact' />
-            <Text style={styles.textFieldErrorMsgArea}>{receiverPhoneError}</Text>
+            <CustomizedPhoneInput value={receiverPhone} handler={setReceiverPhone} placeholder='Phone to contact' error={receiverPhoneError.length > 0} />
+            <Text style={GlobalStyles.textFieldErrorMsgArea}>{receiverPhoneError}</Text>
           </View>
           <View style={{ marginTop: 10 }}>
             <CustomizedInput
@@ -171,8 +180,9 @@ const DetailInformation = ({
               val={receiverName}
               handler={setReceiverName}
               showCheck={true}
+              error={receiverNameError.length > 0}
             />
-            <Text style={styles.textFieldErrorMsgArea}>{receiverNameError}</Text>
+            <Text style={GlobalStyles.textFieldErrorMsgArea}>{receiverNameError}</Text>
           </View>
           <View style={{ marginTop: 10 }}>
             <CustomizedInput
@@ -199,8 +209,9 @@ const DetailInformation = ({
               val={weight}
               handler={setWeight}
               showCheck={true}
+              error={weightError.length > 0}
             />
-            <Text style={styles.textFieldErrorMsgArea}>{weightError}</Text>
+            <Text style={GlobalStyles.textFieldErrorMsgArea}>{weightError}</Text>
           </View>
           <View style={{ marginTop: 10 }}>
             <CustomizedInput
@@ -216,8 +227,9 @@ const DetailInformation = ({
               val={volume}
               handler={setVolume}
               showCheck={true}
+              error={volumeError.length > 0}
             />
-            <Text style={styles.textFieldErrorMsgArea}>{volumeError}</Text>
+            <Text style={GlobalStyles.textFieldErrorMsgArea}>{volumeError}</Text>
           </View>
 
           <View style={{ marginTop: 20 }}>
@@ -323,7 +335,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     borderColor: GoDeliveryColors.disabled,
-    borderWidth: 0.5,
+    borderWidth: 0.25,
     width: '100%',
     marginVertical: 30,
   },

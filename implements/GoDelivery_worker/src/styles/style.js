@@ -4,7 +4,7 @@ import GoDeliveryColors from './colors';
 const GlobalStyles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: GoDeliveryColors.background
+        backgroundColor: GoDeliveryColors.background,
     },
     contentAreaPadding: {
         paddingHorizontal: 20,
@@ -14,7 +14,7 @@ const GlobalStyles = StyleSheet.create({
         backgroundColor: GoDeliveryColors.primary,
         alignItems: 'center',
         height: 200,
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     authenticationScreenLogo: {
         width: 250,
@@ -33,13 +33,13 @@ const GlobalStyles = StyleSheet.create({
             },
             android: {
                 elevation: 8,
-                shadowColor: GoDeliveryColors.secondary
+                shadowColor: GoDeliveryColors.secondary,
             },
         }),
     },
     primaryButton: {
         alignSelf: 'center',
-        width: "100%",
+        width: '100%',
         height: 50,
         backgroundColor: GoDeliveryColors.primary,
         borderRadius: 10,
@@ -49,26 +49,26 @@ const GlobalStyles = StyleSheet.create({
     primaryLabel: {
         color: GoDeliveryColors.white,
         fontSize: 16,
-        fontWeight: "bold",
+        fontWeight: 'bold',
     },
     primaryEmphasizeLabel: {
         color: GoDeliveryColors.primary,
         fontSize: 14,
-        fontWeight: "400",
+        fontWeight: '400',
     },
     primaryEmphasizeLabelHigher: {
         color: GoDeliveryColors.primary,
         fontSize: 15,
-        fontWeight: "700",
+        fontWeight: '700',
     },
     indicator: {
         borderWidth: 1,
-        borderColor: 'red'
+        borderColor: 'red',
     },
     textSmall: {
         fontSize: 12,
         fontWeight: '400',
-        color: GoDeliveryColors.secondary
+        color: GoDeliveryColors.secondary,
     },
     text: {
         fontSize: 14,
@@ -82,36 +82,41 @@ const GlobalStyles = StyleSheet.create({
     },
     textDisable: {
         fontSize: 14,
-        fontWeight: "400",
-        color: GoDeliveryColors.disabled
+        fontWeight: '400',
+        color: GoDeliveryColors.disabled,
     },
     diabledColor: {
-        color: GoDeliveryColors.disabled
+        color: GoDeliveryColors.disabled,
     },
     assignedColor: {
-        color: '#F47B0A'
+        color: '#F47B0A',
     },
     processingColor: {
-        color: '#FA4A0C'
+        color: '#FA4A0C',
     },
     subTitleText: {
         fontSize: 20,
-        fontWeight: "bold",
+        fontWeight: 'bold',
         alignSelf: 'center',
         textAlign: 'center',
         color: GoDeliveryColors.primary,
-        marginVertical: 15
+        marginVertical: 15,
     },
     headerTitle: {
         color: GoDeliveryColors.secondary,
         fontSize: 24,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
     subTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: GoDeliveryColors.secondary
-    }
+        color: GoDeliveryColors.secondary,
+    },
+    textFieldErrorMsgArea: {
+        height: 30,
+        paddingLeft: 20,
+        color: GoDeliveryColors.primary,
+    },
 });
 
 export default GlobalStyles;

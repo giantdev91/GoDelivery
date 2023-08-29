@@ -5904,6 +5904,11 @@ react-native-background-actions@^3.0.0:
   dependencies:
     eventemitter3 "^4.0.7"
 
+react-native-country-flag@^1.1.9:
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/react-native-country-flag/-/react-native-country-flag-1.1.9.tgz#015fa9b4f757f47a800e5f542209e0de27d6836d"
+  integrity sha512-oNeNrx7qf04v75uhqUd9JbqHjAFaH8pSGjoXTincqkSPtwgikH5i+qScBXQUDpuH0SwXgsmgMzecphqeR4015w==
+
 react-native-country-picker-modal@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/react-native-country-picker-modal/-/react-native-country-picker-modal-2.0.0.tgz"
@@ -6026,11 +6031,6 @@ react-native-screens@^3.22.1:
   dependencies:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
-
-react-native-swipe-modal-up-down@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-swipe-modal-up-down/-/react-native-swipe-modal-up-down-1.1.0.tgz#53db0cb9b31526ac6038646b7c42752c7e28c857"
-  integrity sha512-ldPWY1IARFoiu4LIsbu0ZgrfYnmYuGQd30S0QFjbMEszGG2+RkseIVFrFDpayLaENSYtvXGvmFR9wRtK342Tow==
 
 react-native-switch@^1.5.1:
   version "1.5.1"

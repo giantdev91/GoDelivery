@@ -16,8 +16,10 @@ import store from '../../redux/store';
 import { useFocusEffect } from '@react-navigation/native';
 import Action from '../../service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
 import allActions from '../../redux/actions';
 import { useSelector, useDispatch } from 'react-redux';
+import Icons from 'react-native-vector-icons/Ionicons';
 
 interface ScreenProps {
     navigation: any;
@@ -27,8 +29,10 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
     var currentUser = store.getState().CurrentUser.user;
     const [userData, setUserData] = useState({});
     const [avatarUri, setAvatarUri] = useState(currentUser.avatar);
-    const [phone, setPhone] = useState(currentUser.phone);
+    const [phone, setPhone] = useState(currentUser.phone.slice(3));
+    const [phoneError, setPhoneError] = useState('');
     const [username, setUsername] = useState(currentUser.name);
+    const [usernameError, setUsernameError] = useState('');
     const [password, setPassword] = useState('');
     const [modalActivitiIndicator, setModalActivityIndicator] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false);
@@ -44,37 +48,63 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
         }
     }
 
+    const validateForm = () => {
+        var validFlag = true;
+        if (phone.length != 9) {
+            setPhoneError('Please insert valid phone number.');
+            validFlag = false;
+        } else {
+            const prefix = Number.parseInt(phone.substring(0, 2));
+            if (prefix > 81 && prefix < 88) {
+                setPhoneError('');
+            } else {
+                validFlag = false;
+                setPhoneError('Please insert valid phone number.');
+            }
+        }
+        if (!username) {
+            setUsernameError('Please insert user name.');
+            validFlag = false;
+        } else {
+            setUsernameError('');
+        }
+        return validFlag;
+    }
+
     const handleSubmit = () => {
-        setActivityIndicator(true);
-        const param = {
-            deliverymanID: store.getState().CurrentUser.user.id
-        }
-        if (avatarUri) {
-            param.avatar = avatarUri;
-        }
-        if (phone) {
-            param.phone = phone;
-        }
-        if (username) {
-            param.name = username;
-        }
-        if (password) {
-            param.password = password;
+        if (validateForm()) {
+            setActivityIndicator(true);
+            const param = {
+                deliverymanID: store.getState().CurrentUser.user.id
+            }
+            if (avatarUri) {
+                param.avatar = avatarUri;
+            }
+            if (phone) {
+                param.phone = `258${phone}`;
+            }
+            if (username) {
+                param.name = username;
+            }
+            if (password) {
+                param.password = password;
+            }
+
+            Action.deliveryman.updateProfile(param)
+                .then((res) => {
+                    const response = res.data;
+                    if (response.success) {
+                        Alert.alert("GoDelivery", "Save success!");
+                        dispatch(allActions.UserAction.setUser(response.data));
+                        storeData(response.data);
+                    }
+                    setActivityIndicator(false);
+                }).catch((err) => {
+                    console.log("error: ", err);
+                    setActivityIndicator(false);
+                });
         }
 
-        Action.deliveryman.updateProfile(param)
-            .then((res) => {
-                const response = res.data;
-                if (response.success) {
-                    Alert.alert("Save success!");
-                    dispatch(allActions.UserAction.setUser(response.data));
-                    storeData(response.data);
-                }
-                setActivityIndicator(false);
-            }).catch((err) => {
-                console.log("error: ", err);
-                setActivityIndicator(false);
-            });
     }
 
     const setPickerResponse = async (response: any) => {
@@ -124,7 +154,7 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
         useCallback(() => {
             currentUser = store.getState().CurrentUser.user;
             setUsername(currentUser.name);
-            setPhone(currentUser.phone);
+            setPhone(currentUser.phone.slice(3));
         }, [])
     );
 
@@ -165,14 +195,32 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
                 </View>
                 <View style={styles.profileFormArea}>
                     <View style={{ marginTop: 20 }}>
-                        <CustomizedInput icon='call-outline' placeHolder='Phone number' keyboardType='number' handler={setPhone} val={phone} />
-                        <View style={styles.textFieldErrorMsgArea}>
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            }}>
+                            <View style={{ flex: 1, }}>
+                                <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
+                            </View>
+                            <View style={styles.checkIconArea}>
+                                {phone && (
+                                    <Icons
+                                        name="checkmark-outline"
+                                        size={25}
+                                        color={GoDeliveryColors.green}
+                                    />
+                                )}
+                            </View>
                         </View>
-                        <CustomizedInput icon='person-outline' placeHolder='Username' handler={setUsername} val={username} />
-                        <View style={styles.textFieldErrorMsgArea}>
-                        </View>
+                        <Text style={GlobalStyles.textFieldErrorMsgArea}>
+                            {phoneError}
+                        </Text>
+                        <CustomizedInput icon='person-outline' placeHolder='Username' handler={setUsername} val={username} error={usernameError.length > 0} />
+                        <Text style={GlobalStyles.textFieldErrorMsgArea}>{usernameError}</Text>
                         <PasswordInput handler={(val) => { setPassword(val) }} />
-                        <View style={styles.textFieldErrorMsgArea}>
+                        <View style={GlobalStyles.textFieldErrorMsgArea}>
                         </View>
                     </View>
                     <View style={{ marginTop: 20 }}>
@@ -248,10 +296,6 @@ const styles = StyleSheet.create({
         padding: 20,
         flex: 1,
     },
-    textFieldErrorMsgArea: {
-        height: 35,
-        paddingLeft: 20,
-    },
     modalContainer: {
         justifyContent: 'flex-end',
         margin: 0,
@@ -268,6 +312,10 @@ const styles = StyleSheet.create({
         backgroundColor: GoDeliveryColors.primary,
         padding: 10,
         borderRadius: 100,
+    },
+    checkIconArea: {
+        width: 35,
+        alignItems: 'flex-end',
     },
 });
 

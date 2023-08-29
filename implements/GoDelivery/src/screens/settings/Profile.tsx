@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import allActions from '../../redux/actions';
 import { useSelector, useDispatch } from 'react-redux';
 import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
+import Icons from 'react-native-vector-icons/Ionicons';
 
 interface ScreenProps {
     navigation: any;
@@ -52,7 +53,13 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
             setPhoneError('Please insert valid phone number.');
             validFlag = false;
         } else {
-            setPhoneError('');
+            const prefix = Number.parseInt(phone.substring(0, 2));
+            if (prefix > 81 && prefix < 88) {
+                setPhoneError('');
+            } else {
+                validFlag = false;
+                setPhoneError('Please insert valid phone number.');
+            }
         }
         if (!username) {
             setUsernameError('Please insert user name.');
@@ -86,7 +93,7 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
                 .then((res) => {
                     const response = res.data;
                     if (response.success) {
-                        Alert.alert("Save success!");
+                        Alert.alert("GoDelivery", "Save success!");
                         dispatch(allActions.UserAction.setUser(response.data));
                         storeData(response.data);
                     }
@@ -186,13 +193,30 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
                 </View>
                 <View style={styles.profileFormArea}>
                     <View style={{ marginTop: 20 }}>
-                        <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' />
-                        {/* <CustomizedInput icon='call-outline' placeHolder='Phone number' keyboardType='number' handler={setPhone} val={phone} /> */}
-                        <Text style={styles.textFieldErrorMsgArea}>{phoneError}</Text>
-                        <CustomizedInput icon='person-outline' placeHolder='Username' handler={setUsername} val={username} />
-                        <Text style={styles.textFieldErrorMsgArea}>{usernameError}</Text>
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            }}>
+                            <View style={{ flex: 1, }}>
+                                <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
+                            </View>
+                            <View style={styles.checkIconArea}>
+                                {phone && (
+                                    <Icons
+                                        name="checkmark-outline"
+                                        size={25}
+                                        color={GoDeliveryColors.green}
+                                    />
+                                )}
+                            </View>
+                        </View>
+                        <Text style={GlobalStyles.textFieldErrorMsgArea}>{phoneError}</Text>
+                        <CustomizedInput icon='person-outline' placeHolder='Username' handler={setUsername} val={username} error={usernameError.length > 0} />
+                        <Text style={GlobalStyles.textFieldErrorMsgArea}>{usernameError}</Text>
                         <PasswordInput handler={(val) => { setPassword(val) }} />
-                        <View style={styles.textFieldErrorMsgArea}>
+                        <View style={GlobalStyles.textFieldErrorMsgArea}>
                         </View>
                     </View>
                     <View style={{ marginTop: 20 }}>
@@ -268,11 +292,6 @@ const styles = StyleSheet.create({
         padding: 20,
         flex: 1,
     },
-    textFieldErrorMsgArea: {
-        height: 35,
-        paddingLeft: 20,
-        color: GoDeliveryColors.primary
-    },
     modalContainer: {
         justifyContent: 'flex-end',
         margin: 0,
@@ -289,6 +308,10 @@ const styles = StyleSheet.create({
         backgroundColor: GoDeliveryColors.primary,
         padding: 10,
         borderRadius: 100,
+    },
+    checkIconArea: {
+        width: 35,
+        alignItems: 'flex-end',
     },
 });
 

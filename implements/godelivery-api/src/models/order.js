@@ -109,6 +109,14 @@ const Order = sequelize.define("order", {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },
+  pickupTime: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  dropoffTime: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
 });
 
 Order.belongsTo(Client, {

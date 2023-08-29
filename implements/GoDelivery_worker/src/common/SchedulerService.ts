@@ -3,6 +3,7 @@ import Geolocation from 'react-native-geolocation-service';
 import Action from '../service';
 import store from '../redux/store';
 import { UPDATE_INTERVAL } from './Constant';
+import { requestLocationPermission } from './RequestPermission';
 
 const backgroundOptions = {
     taskName: 'MyBackgroundTask', // A unique name for your background task.
@@ -17,6 +18,7 @@ const backgroundOptions = {
 };
 
 const updateCurrentLocation = () => {
+
     Geolocation.getCurrentPosition(
         position => {
             const crd = position.coords;
@@ -33,13 +35,23 @@ const updateCurrentLocation = () => {
             }).catch((err) => {
                 console.error('error: 5', err);
             })
-        });
-}
+        },
+        error => {
+            // See error code charts below.
+            console.log(error.code, error.message);
+        },
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 5000 },
+    );
 
+
+}
 
 const myBackgroundTask = async () => {
     setInterval(() => {
-        updateCurrentLocation();
+        const result = requestLocationPermission();
+        result.then(res => {
+            updateCurrentLocation();
+        })
     }, UPDATE_INTERVAL);
 };
 

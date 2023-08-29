@@ -15,6 +15,7 @@ import PrimaryButton from '../../components/PrimaryButton';
 import Modal from "react-native-modal";
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import { TextInput } from 'react-native-gesture-handler';
+import CommonFunctions from '../../common/CommonFunctions'
 
 interface ScreenProps {
     navigation: any;
@@ -112,24 +113,44 @@ const SentRoute = (props: SceneProps) => {
         }, [])
     );
 
+
     return (
         <View style={[GlobalStyles.container]}>
             <ScrollView style={styles.scrollArea}>
                 {
                     orders.map((order, index) => (
                         <View style={styles.dataCard} key={index}>
-                            <View style={{ alignItems: 'flex-start', justifyContent: 'center' }}>
-                                <Text style={GlobalStyles.textBold}>Order {order["orderNo"]}</Text>
-                                <Text style={GlobalStyles.text}>Receiver {order["receiver"]}</Text>
-                                <Text style={GlobalStyles.text}>delivery time {calculateSpentTime(order["createdAt"], order["updatedAt"])}</Text>
+                            <View style={{ alignSelf: 'flex-end' }}>
+                                <Text style={styles.priceTitle}>MZN {order["price"]}</Text>
+                            </View>
+                            <View style={styles.labelRow}>
+                                <Text style={[GlobalStyles.textBold, styles.title]}>Status: </Text>
+                                <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.green }, styles.content]}>{CommonFunctions.renderStatusLabel(order["status"])}</Text>
+                            </View>
+                            <View style={styles.labelRow}>
+                                <Text style={[GlobalStyles.text, styles.title]}>Order: </Text>
+                                <Text style={[GlobalStyles.text, styles.content]}>{order["orderNo"]}</Text>
+                            </View>
+                            <View style={styles.labelRow}>
+                                <Text style={[GlobalStyles.text, styles.title]}>From: </Text>
+                                <Text style={[GlobalStyles.text, styles.content]} numberOfLines={2}>{order["from"]}</Text>
+                            </View>
+                            <View style={styles.labelRow}>
+                                <Text style={[GlobalStyles.text, styles.title]}>To: </Text>
+                                <Text style={[GlobalStyles.text, styles.content]} numberOfLines={2}>{order["to"]}</Text>
+                            </View>
+                            <View style={styles.labelRow}>
+                                <Text style={[GlobalStyles.text, styles.title]}>Details: </Text>
+                                <Text style={[GlobalStyles.text, styles.content]}>{CommonFunctions.formatDate(new Date(order["expectationTime"]))}, {order["distance"]}km, </Text>
                             </View>
                             <View style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
-                                <Text style={GlobalStyles.textDisable}>{renderCreatedAtTime(order["createdAt"])}</Text>
                                 {
-                                    order["rate"] && (<View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
-                                        <Icons name="star" size={20} color={'gold'} />
-                                        <Text style={GlobalStyles.text}> {order["rate"]}</Text>
-                                    </View>)
+                                    order["rate"] && (
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
+                                            <Icons name="star" size={20} color={'gold'} />
+                                            <Text style={GlobalStyles.text}> {order["rate"]}</Text>
+                                        </View>
+                                    )
                                 }
                                 {
                                     !order["rate"] && (
@@ -138,8 +159,6 @@ const SentRoute = (props: SceneProps) => {
                                         </TouchableOpacity>
                                     )
                                 }
-
-                                {/* <Text style={GlobalStyles.textBold}>shipping 5$</Text> */}
                             </View>
                         </View>
                     ))
@@ -149,8 +168,6 @@ const SentRoute = (props: SceneProps) => {
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: 40, marginTop: 60, paddingVertical: 20 }}>
                             <Icons name="document-text-outline" size={120} color={'#c7c7c7'} />
                             <Text style={{ textAlign: 'center', fontSize: 20, color: GoDeliveryColors.secondary, marginTop: 50 }}>No history yet</Text>
-                            {/* <Text style={{ textAlign: 'center', fontSize: 18, marginTop: 15, marginBottom: 100 }}>Hit the orange button down below to Create an order</Text> */}
-                            {/* <PrimaryButton buttonText='Start Ordering' handler={() => { props.navigation.navigate('Main') }} /> */}
                         </View>
                     )
                 }
@@ -200,16 +217,93 @@ const ReceivedRoute = (props: SceneProps) => {
             <ScrollView style={styles.scrollArea}>
                 {
                     orders.map((order, index) => (
-                        <View style={styles.dataCard} key={index}>
-                            <View style={{ alignItems: 'flex-start', justifyContent: 'center' }}>
-                                <Text style={GlobalStyles.textBold}>Order {order["orderNo"]}</Text>
-                                {/* <Text style={GlobalStyles.text}>Sender {order["client"].phone}</Text> */}
-                                <Text style={GlobalStyles.text}>delivery time {calculateSpentTime(order["createdAt"], order["updatedAt"])}</Text>
+                        <View style={[styles.dataCard, { height: 175 }]} key={index}>
+                            <View style={{ alignSelf: 'flex-end' }}>
+                                <Text style={styles.priceTitle}>MZN {order["price"]}</Text>
                             </View>
-                            <View style={{ alignItems: 'flex-end', justifyContent: 'space-evenly', height: '100%' }}>
-                                <Text style={GlobalStyles.textDisable}>{renderCreatedAtTime(order["createdAt"])}</Text>
+                            <View style={styles.labelRow}>
+                                <Text style={[GlobalStyles.textBold, styles.title]}>Status: </Text>
+                                <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.green }, styles.content]}>{CommonFunctions.renderStatusLabel(order["status"])}</Text>
+                            </View>
+                            <View style={styles.labelRow}>
+                                <Text style={[GlobalStyles.text, styles.title]}>Order: </Text>
+                                <Text style={[GlobalStyles.text, styles.content]}>{order["orderNo"]}</Text>
+                            </View>
+                            <View style={styles.labelRow}>
+                                <Text style={[GlobalStyles.text, styles.title]}>From: </Text>
+                                <Text style={[GlobalStyles.text, styles.content]} numberOfLines={2}>{order["from"]}</Text>
+                            </View>
+                            <View style={styles.labelRow}>
+                                <Text style={[GlobalStyles.text, styles.title]}>To: </Text>
+                                <Text style={[GlobalStyles.text, styles.content]} numberOfLines={2}>{order["to"]}</Text>
+                            </View>
+                            <View style={styles.labelRow}>
+                                <Text style={[GlobalStyles.text, styles.title]}>Details: </Text>
+                                <Text style={[GlobalStyles.text, styles.content]}>{CommonFunctions.formatDate(new Date(order["expectationTime"]))}, {order["distance"]}km, </Text>
+                            </View>
+                        </View>
+                    ))
+                }
+                {
+                    orders.length == 0 && (
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: 40, marginTop: 60, paddingVertical: 20 }}>
+                            <Icons name="document-text-outline" size={120} color={'#c7c7c7'} />
+                            <Text style={{ textAlign: 'center', fontSize: 20, color: GoDeliveryColors.secondary, marginTop: 50 }}>No history yet</Text>
+                        </View>
+                    )
+                }
+            </ScrollView>
+        </View>
+    )
+}
 
-                                {/* <Text style={GlobalStyles.textBold}>shipping 5$</Text> */}
+const CanceledRoute = (props: SceneProps) => {
+    const [orders, setOrders] = useState([]);
+
+    const fetchCompletedOrders = () => {
+        Action.order.completeOrders({ status: 4, sender: store.getState().CurrentUser.user.id })
+            .then((res) => {
+                const response = res.data;
+                setOrders(response.data);
+            }).catch((err) => {
+                console.log("error: ", err);
+            })
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchCompletedOrders();
+        }, [])
+    );
+
+    return (
+        <View style={[GlobalStyles.container]}>
+            <ScrollView style={styles.scrollArea}>
+                {
+                    orders.map((order, index) => (
+                        <View style={[styles.dataCard, { height: 175 }]} key={index}>
+                            <View style={{ alignSelf: 'flex-end' }}>
+                                <Text style={styles.priceTitle}>MZN {order["price"]}</Text>
+                            </View>
+                            <View style={styles.labelRow}>
+                                <Text style={[GlobalStyles.textBold, styles.title]}>Status: </Text>
+                                <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.primary }, styles.content]}>{CommonFunctions.renderStatusLabel(order["status"])}</Text>
+                            </View>
+                            <View style={styles.labelRow}>
+                                <Text style={[GlobalStyles.text, styles.title]}>Order: </Text>
+                                <Text style={[GlobalStyles.text, styles.content]}>{order["orderNo"]}</Text>
+                            </View>
+                            <View style={styles.labelRow}>
+                                <Text style={[GlobalStyles.text, styles.title]}>From: </Text>
+                                <Text style={[GlobalStyles.text, styles.content]} numberOfLines={2}>{order["from"]}</Text>
+                            </View>
+                            <View style={styles.labelRow}>
+                                <Text style={[GlobalStyles.text, styles.title]}>To: </Text>
+                                <Text style={[GlobalStyles.text, styles.content]} numberOfLines={2}>{order["to"]}</Text>
+                            </View>
+                            <View style={styles.labelRow}>
+                                <Text style={[GlobalStyles.text, styles.title]}>Details: </Text>
+                                <Text style={[GlobalStyles.text, styles.content]}>{CommonFunctions.formatDate(new Date(order["expectationTime"]))}, {order["distance"]}km</Text>
                             </View>
                         </View>
                     ))
@@ -233,11 +327,13 @@ const OrdersScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
     const [routes] = React.useState([
         { key: 'sent', title: 'SENT' },
         { key: 'received', title: 'RECEIVED' },
+        { key: 'canceled', title: 'CANCELED' },
     ]);
 
     const renderScene = SceneMap({
         sent: SentRoute,
         received: ReceivedRoute,
+        canceled: CanceledRoute,
     });
 
     const renderTabBar = (props: SceneRendererProps & { navigationState: NavigationState<any> }) => (
@@ -282,8 +378,8 @@ const styles = StyleSheet.create({
         color: GoDeliveryColors.primary,
     },
     tabLabelStyle: {
-        fontSize: 16,
-        fontWeight: "600",
+        fontSize: 14,
+        fontWeight: "500",
     },
     scrollArea: {
         padding: 10,
@@ -293,13 +389,13 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         marginHorizontal: 10,
         paddingHorizontal: 20,
-        paddingVertical: 5,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        paddingVertical: 10,
+        flexDirection: 'column',
+        justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: GoDeliveryColors.white,
-        height: 80,
         borderRadius: 10,
+        height: 200,
         ...Platform.select({
             ios: {
                 shadowColor: GoDeliveryColors.secondary,
@@ -372,6 +468,25 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 10,
+    },
+    priceTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: GoDeliveryColors.secondary,
+    },
+    labelRow: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+    },
+    title: {
+        width: 55,
+        justifyContent: 'flex-start'
+    },
+    content: {
+        flex: 1,
+        justifyContent: 'flex-start'
     }
 });
 

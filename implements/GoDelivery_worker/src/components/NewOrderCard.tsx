@@ -23,8 +23,8 @@ const NewOrderCard = ({ order, handleAccept }: {
                                 <Image style={styles.userAvatar} source={{ uri: order["client"]['avatar'] }} />
                             )}
                         </View>
-                        <View>
-                            <Text style={GlobalStyles.subTitle}>{order["client"]["name"]}</Text>
+                        <View style={{ width: 160, }}>
+                            <Text style={GlobalStyles.subTitle} numberOfLines={1}>{order["client"]["name"]}</Text>
                             <Text style={GlobalStyles.textBold}>{order["client"]["phone"]}</Text>
                         </View>
                     </View>

@@ -134,7 +134,7 @@ exports.send = async (req, res) => {
         if (order) {
             //update order status to processing
             await Order.update(
-                { status: 2 }, //processing
+                { status: 2, pickupTime: new Date() }, //processing
                 {
                     where: {
                         id: order.id,
@@ -279,7 +279,7 @@ exports.receive = async (req, res) => {
         if (order) {
             //update order status to complete
             await Order.update(
-                { status: 3 },
+                { status: 3, dropoffTime: new Date() },
                 {
                     where: {
                         id: orderID,
@@ -314,7 +314,7 @@ exports.receive = async (req, res) => {
             res.status(200).send({
                 status: true,
                 code: 200,
-                message: "Order cancel success",
+                message: "Order update success",
             });
         } else {
             res.status(400).send({

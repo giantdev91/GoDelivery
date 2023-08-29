@@ -140,7 +140,13 @@ const DetailConfirmation = ({
       setReceiverPhoneError('Please enter valid phone number.');
       validFlag = false;
     } else {
-      setReceiverPhoneError('');
+      const prefix = Number.parseInt(receiverPhone.substring(0, 2));
+      if (prefix > 81 && prefix < 88) {
+        setReceiverPhoneError('');
+      } else {
+        validFlag = false;
+        setReceiverPhoneError('Please enter valid phone number.');
+      }
     }
     return validFlag;
   }
@@ -211,24 +217,33 @@ const DetailConfirmation = ({
               </Text>
               {/* <Text style={GlobalStyles.text}>{username}</Text> */}
               <Text style={GlobalStyles.text}>{receiverName}</Text>
-              <CustomizedPhoneInput value={receiverPhone} handler={setReceiverPhone} />
-              <Text style={styles.textFieldErrorMsgArea}>{receiverPhoneError}</Text>
+              <CustomizedPhoneInput value={receiverPhone} handler={setReceiverPhone} error={receiverPhoneError.length > 0} />
+              <Text style={GlobalStyles.textFieldErrorMsgArea}>{receiverPhoneError}</Text>
               {/* <Text style={GlobalStyles.text}>{receiver}</Text> */}
             </View>
           </View>
 
-          <View style={styles.locationStrSection}>
+          <View style={[styles.locationStrSection, { marginTop: 10 }]}>
             <Icons
-              name="location-outline"
+              name="locate-outline"
               size={30}
-              color={GoDeliveryColors.secondary}
+              color={GoDeliveryColors.green}
             />
             <View style={{ flex: 1, marginLeft: 5 }}>
               <Text style={GlobalStyles.subTitle}>Pick-up location</Text>
               <Text style={GlobalStyles.text} numberOfLines={2}>
                 {from}
               </Text>
-              <Text style={[GlobalStyles.subTitle, { marginTop: 10 }]}>
+            </View>
+          </View>
+          <View style={[styles.locationStrSection, { marginTop: 5 }]}>
+            <Icons
+              name="location-outline"
+              size={30}
+              color={GoDeliveryColors.primary}
+            />
+            <View style={{ flex: 1, marginLeft: 5 }}>
+              <Text style={[GlobalStyles.subTitle]}>
                 Delivery location
               </Text>
               <Text style={GlobalStyles.text}>{to}</Text>
