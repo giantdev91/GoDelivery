@@ -99,7 +99,8 @@ const CompleteRoute = (props: SceneProps) => {
                             </View>
                             <View style={styles.labelRow}>
                                 <Text style={[GlobalStyles.text, styles.title]}>Details: </Text>
-                                <Text style={[GlobalStyles.text, styles.content]}>{CommonFunctions.formatDate(new Date(order["expectationTime"]))}, {order["distance"]}km</Text>
+                                <Text style={[GlobalStyles.text,]}>{CommonFunctions.formatDate(new Date(order["expectationTime"]))}, {order["distance"]}km, </Text>
+                                <Text style={[GlobalStyles.text, styles.content]}>{CommonFunctions.calculateDeliveryTime(order["pickupTime"], order["dropoffTime"])}</Text>
                             </View>
                         </View>
                     ))

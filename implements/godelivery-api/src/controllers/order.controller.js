@@ -15,6 +15,8 @@ const {
     NOTIFICATION_TYPE_ORDER_COMPLETED,
     NOTIFICATION_TYPE_ORDER_FEEDBACK,
     NOTIFICATION_TYPE_ORDER_CANNOT_CREATE,
+    NOTIFICATION_TYPE_ARRIVE_TO_COLLECT,
+    NOTIFICATION_TYPE_ARRIVE_TO_DELIVER
 } = require("../common/constant");
 
 exports.create = async (req, res) => {
@@ -777,6 +779,76 @@ exports.getByID = async (req, res) => {
             data: orders,
         });
     } catch (error) {
+        res.status(200).send({
+            success: false,
+            code: 500,
+            message: "Internal server error",
+        });
+    } finally {
+        // Close the database connection when done
+    }
+};
+
+exports.arriveNotification = async (req, res) => {
+    try {
+        const { orderID } = req.body;
+
+        // Find orders that match the provided criteria
+        const order = await Order.findOne({
+            where: { id: orderID },
+            include: [
+                {
+                    model: Client,
+                    as: "client",
+                },
+            ],
+        });
+        if (order.status == 1) {
+            // send notification to sender
+            notificationController.sendNotification(
+                [order.client.fcmToken],
+                "GoDelivery",
+                `The delivery person has arrived to collect your goods.`,
+                order.id,
+                [order.client.id],
+                NOTIFICATION_TYPE_ARRIVE_TO_COLLECT
+            );
+        }
+        if (order.status == 2) {
+            // send notification to sender
+            notificationController.sendNotification(
+                [order.client.fcmToken],
+                "GoDelivery",
+                `The delivery person has arrived to deliver your goods.`,
+                order.id,
+                [order.client.id],
+                NOTIFICATION_TYPE_ARRIVE_TO_DELIVER
+            );
+            // get receiver info
+            const receiver = await Client.findOne({
+                where: { phone: order.receiver },
+            });
+            //if the receiver is registered to our system, send notifiction.
+            if (receiver) {
+                //send notification to receiver
+                notificationController.sendNotification(
+                    [receiver.fcmToken],
+                    "GoDelivery",
+                    `The delivery person has arrived to deliver your goods.`,
+                    order.id,
+                    [receiver.id],
+                    NOTIFICATION_TYPE_ARRIVE_TO_DELIVER
+                );
+            }
+        }
+        res.status(200).send({
+            success: true,
+            code: 200,
+            message: "send notification success",
+            data: order,
+        });
+    } catch (error) {
+        console.log('error: ', error);
         res.status(200).send({
             success: false,
             code: 500,

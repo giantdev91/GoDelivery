@@ -9,6 +9,8 @@ const {
     NOTIFICATION_TYPE_ORDER_COMPLETED,
     NOTIFICATION_TYPE_ORDER_FEEDBACK,
     NOTIFICATION_TYPE_ORDER_CANNOT_CREATE,
+    NOTIFICATION_TYPE_ARRIVE_TO_COLLECT,
+    NOTIFICATION_TYPE_ARRIVE_TO_DELIVER,
 
 } = require('../common/constant');
 
@@ -47,6 +49,12 @@ exports.sendNotification = (fcmTokens, title, body, orderId, receiverIds, type) 
                     receiverType = 1;
                     break;
                 case NOTIFICATION_TYPE_ORDER_CANNOT_CREATE:
+                    receiverType = 0;
+                    break;
+                case NOTIFICATION_TYPE_ARRIVE_TO_COLLECT:
+                    receiverType = 0;
+                    break;
+                case NOTIFICATION_TYPE_ARRIVE_TO_DELIVER:
                     receiverType = 0;
                     break;
             }

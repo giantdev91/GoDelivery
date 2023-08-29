@@ -64,9 +64,30 @@ const formatDate = (dateObj: Date) => {
     return formattedDate;
 }
 
+const calculateDeliveryTime = (pickupTime: string, dropoffTime: string) => {
+    if (!pickupTime || !dropoffTime) {
+        return '';
+    }
+    console.log('dropoffTime ============> ', dropoffTime);
+    console.log('pickupTime ============> ', pickupTime);
+    // Define the two date-time values
+    const startDate = new Date(pickupTime);
+    const endDate = new Date(dropoffTime);
+
+    // Calculate the time difference in milliseconds
+    const timeDifference = endDate - startDate;
+
+    // Calculate the duration components
+    const millisecondsInMinute = 1000 * 60;
+    const minutes = Math.floor(timeDifference / millisecondsInMinute);
+
+    // Output the duration
+    return `${minutes} min`;
+}
 
 export default {
     calculateBounds,
     renderStatusLabel,
-    formatDate
+    formatDate,
+    calculateDeliveryTime
 }

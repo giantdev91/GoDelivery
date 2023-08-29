@@ -13,6 +13,7 @@ import { Divider } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { UPDATE_INTERVAL } from '../../common/Constant';
 import TwillioService from '../../service/TwillioService';
+import PrimaryButton from '../../components/PrimaryButton';
 
 const MAP_WIDTH = Dimensions.get('screen').width;
 const MAP_HEIGHT = Dimensions.get('screen').height - 275;
@@ -62,6 +63,7 @@ const OrderDetail = ({ refreshHandler, navigation }: {
     const [cancelReason, setCancelReason] = useState('');
     const [activityIndicator, setActivityIndicator] = useState(false);
     const [showComment, setShowComment] = useState(false);
+    const [arriveClick, setArriveClick] = useState('');
 
     const deliverymanID = store.getState().CurrentUser.user.id;
 
@@ -161,6 +163,23 @@ const OrderDetail = ({ refreshHandler, navigation }: {
         }
     }
 
+    const handleArrive = () => {
+        Action.order.sendArriveNotification({ orderID: myOrder.id })
+            .then((res) => {
+                const response = res.data;
+                if (response.success) {
+                    if (orderStatus == 1) {
+                        setArriveClick('collect');
+                    }
+                    if (orderStatus == 2) {
+                        setArriveClick('deliver');
+                    }
+                }
+            }).catch((err) => {
+                console.error("error: ", err);
+            })
+    }
+
     useFocusEffect(
         useCallback(() => {
             fetchMyOrder();
@@ -247,9 +266,8 @@ const OrderDetail = ({ refreshHandler, navigation }: {
                                     <Text style={GlobalStyles.text}>{myOrder["status"] == 1 ? myOrder["from"] : myOrder["to"]}</Text>
                                 </View>
                             </TouchableOpacity>
-
                         </View>
-
+                        {/* cancel modal start */}
                         <Modal isVisible={isModalVisible} onBackdropPress={() => { setModalVisible(false) }}>
                             <View style={{ height: 280, backgroundColor: GoDeliveryColors.white, borderRadius: 30, alignItems: 'center' }}>
                                 <View style={styles.modalBack}>
@@ -264,7 +282,9 @@ const OrderDetail = ({ refreshHandler, navigation }: {
                                 }
                             </View>
                         </Modal>
+                        {/* cancel modal end */}
 
+                        {/* order detail modal start */}
                         <Modal
                             isVisible={showComment}
                             onSwipeComplete={() => setShowComment(false)}
@@ -274,10 +294,18 @@ const OrderDetail = ({ refreshHandler, navigation }: {
                             style={styles.commentModal}
                         >
                             <View style={styles.commentModalBack}>
-                                <View style={styles.locationArea}>
+                                <View style={[styles.locationArea]}>
                                     <Divider style={styles.headerDivider} />
-                                    <Text style={GlobalStyles.subTitle}>{myOrder["status"] == 1 ? 'PICK-UP LOCATION' : 'DROP OFF LOCATION'}</Text>
-                                    <Text style={GlobalStyles.text}>{myOrder["status"] == 1 ? myOrder["from"] : myOrder["to"]}</Text>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 5 }}>
+                                        <View style={{ flex: 1, }}>
+                                            <Text style={GlobalStyles.subTitle}>{myOrder["status"] == 1 ? 'PICK-UP LOCATION' : 'DROP OFF LOCATION'}</Text>
+                                            <Text style={GlobalStyles.text}>{myOrder["status"] == 1 ? myOrder["from"] : myOrder["to"]}</Text>
+                                        </View>
+                                        <TouchableOpacity style={[styles.arrivedButton, GlobalStyles.shadowProp]} onPress={handleArrive}>
+                                            <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.white }]}>Arrived</Text>
+                                        </TouchableOpacity>
+                                    </View>
+
                                 </View>
                                 <Divider style={styles.divider} />
                                 <View style={[styles.horizontalAlign, { paddingHorizontal: 20, marginVertical: 5 }]}>
@@ -324,7 +352,7 @@ const OrderDetail = ({ refreshHandler, navigation }: {
                                     {
                                         myOrder["status"] == 1 && (
                                             <View style={styles.controlButtonArea}>
-                                                <TouchableOpacity style={[styles.controlButtonBack, GlobalStyles.shadowProp]} onPress={() => handleSend(myOrder["id"])}>
+                                                <TouchableOpacity style={[styles.controlButtonBack, GlobalStyles.shadowProp, { backgroundColor: arriveClick != 'collect' ? GoDeliveryColors.primayDisabled : GoDeliveryColors.primary }]} disabled={arriveClick != 'collect'} onPress={() => handleSend(myOrder["id"])}>
                                                     <Icons name="archive-outline" size={30} color={GoDeliveryColors.white} />
                                                     <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.white }]}>Collected</Text>
                                                 </TouchableOpacity>
@@ -338,7 +366,7 @@ const OrderDetail = ({ refreshHandler, navigation }: {
                                     {
                                         myOrder["status"] == 2 && (
                                             <View style={styles.controlButtonArea}>
-                                                <TouchableOpacity style={[styles.controlButtonBack, GlobalStyles.shadowProp]} onPress={() => handleReceive(myOrder["id"])}>
+                                                <TouchableOpacity style={[styles.controlButtonBack, GlobalStyles.shadowProp, { backgroundColor: arriveClick != 'deliver' ? GoDeliveryColors.primayDisabled : GoDeliveryColors.primary }]} disabled={arriveClick != 'deliver'} onPress={() => handleReceive(myOrder["id"])}>
                                                     <Icons name="cart-outline" size={30} color={GoDeliveryColors.white} />
                                                     <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.white }]}>Delivered</Text>
                                                 </TouchableOpacity>
@@ -351,6 +379,7 @@ const OrderDetail = ({ refreshHandler, navigation }: {
                                 activityIndicator && <ActivityIndicator size="large" style={{ position: 'absolute', bottom: 70, alignSelf: 'center' }} />
                             }
                         </Modal>
+                        {/* order detail modal end */}
                     </View>
                 )
             }
@@ -496,6 +525,12 @@ const styles = StyleSheet.create({
         backgroundColor: GoDeliveryColors.primary,
         alignItems: 'center',
         justifyContent: 'center',
+        borderRadius: 10,
+    },
+    arrivedButton: {
+        backgroundColor: GoDeliveryColors.primary,
+        paddingHorizontal: 10,
+        paddingVertical: 5,
         borderRadius: 10,
     }
 });

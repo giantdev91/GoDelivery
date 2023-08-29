@@ -41,6 +41,11 @@ const sendGoods = async (param: OrderUpdateParam) => {
     return response;
 }
 
+const sendArriveNotification = async (param: OrderUpdateParam) => {
+    const response = await APIService.post("/order/arriveNotification", param);
+    return response;
+}
+
 export default {
     createOrder,
     createdOrderList,
@@ -50,4 +55,5 @@ export default {
     completeOrders,
     receiveGoods,
     sendGoods,
+    sendArriveNotification
 }

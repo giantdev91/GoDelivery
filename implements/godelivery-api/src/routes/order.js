@@ -33,4 +33,6 @@ router.route("/processingDetailByDeliveryman").post(asyncHandler(orderController
 
 router.route("/getById").post(asyncHandler(orderController.getByID));
 
+router.route("/arriveNotification").post(asyncHandler(orderController.arriveNotification));
+
 module.exports = router;

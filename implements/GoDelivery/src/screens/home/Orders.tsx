@@ -113,7 +113,6 @@ const SentRoute = (props: SceneProps) => {
         }, [])
     );
 
-
     return (
         <View style={[GlobalStyles.container]}>
             <ScrollView style={styles.scrollArea}>
@@ -141,7 +140,8 @@ const SentRoute = (props: SceneProps) => {
                             </View>
                             <View style={styles.labelRow}>
                                 <Text style={[GlobalStyles.text, styles.title]}>Details: </Text>
-                                <Text style={[GlobalStyles.text, styles.content]}>{CommonFunctions.formatDate(new Date(order["expectationTime"]))}, {order["distance"]}km, </Text>
+                                <Text style={[GlobalStyles.text]}>{CommonFunctions.formatDate(new Date(order["expectationTime"]))}, {order["distance"]}km, </Text>
+                                <Text style={[GlobalStyles.text, styles.content]}>{CommonFunctions.calculateDeliveryTime(order["pickupTime"], order["dropoffTime"])}</Text>
                             </View>
                             <View style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
                                 {
@@ -239,7 +239,8 @@ const ReceivedRoute = (props: SceneProps) => {
                             </View>
                             <View style={styles.labelRow}>
                                 <Text style={[GlobalStyles.text, styles.title]}>Details: </Text>
-                                <Text style={[GlobalStyles.text, styles.content]}>{CommonFunctions.formatDate(new Date(order["expectationTime"]))}, {order["distance"]}km, </Text>
+                                <Text style={[GlobalStyles.text]}>{CommonFunctions.formatDate(new Date(order["expectationTime"]))}, {order["distance"]}km, </Text>
+                                <Text style={[GlobalStyles.text, styles.content]}>{CommonFunctions.calculateDeliveryTime(order["pickupTime"], order["dropoffTime"])}</Text>
                             </View>
                         </View>
                     ))
