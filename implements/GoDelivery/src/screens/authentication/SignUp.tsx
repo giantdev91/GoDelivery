@@ -1,43 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
-  useWindowDimensions,
   Image,
   StyleSheet,
-  Dimensions,
   Text,
-  TouchableWithoutFeedback,
-  Keyboard,
   ScrollView,
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import {
-  TabView,
-  SceneMap,
-  TabBar,
-  SceneRendererProps,
-  NavigationState,
-} from 'react-native-tab-view';
+
 import Icons from 'react-native-vector-icons/Ionicons';
-import PhoneInput from 'react-native-phone-number-input';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
 import CustomizedInput from '../../components/CustomizedInput';
 import PasswordInput from '../../components/PasswordInput';
-import PrimaryButton from '../../components/PrimaryButton';
 import { TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import messaging from '@react-native-firebase/messaging';
-import { useSelector, useDispatch } from 'react-redux';
 import Action from '../../service';
-import allActions from '../../redux/actions';
 import TwillioService from '../../service/TwillioService';
 import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
+import LargeLabelButton from '../../components/LargeLabelButton';
 
-const SignUpScreen = ({ route, navigation }: { route: any; navigation: any }) => {
+const SignUpScreen = ({ navigation }: { navigation: any }) => {
   const [phone, setPhone] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [username, setUsername] = useState('');
@@ -114,11 +98,11 @@ const SignUpScreen = ({ route, navigation }: { route: any; navigation: any }) =>
                 setActivityIndicator(false);
                 navigation.navigate('OTP', param);
               } else {
-                Alert.alert('Phone number valid failed');
+                Alert.alert("GoDelivery", 'Phone number valid failed');
                 setActivityIndicator(false);
               }
             } else {
-              Alert.alert(responseData.message);
+              Alert.alert("GoDelivery", responseData.message);
               setActivityIndicator(false);
             }
           })
@@ -139,76 +123,79 @@ const SignUpScreen = ({ route, navigation }: { route: any; navigation: any }) =>
   };
 
   return (
-    <SafeAreaView style={[GlobalStyles.container]}>
-      <View style={GlobalStyles.authenticationScreenLogoBack}>
-        <Image
-          source={require('../../../assets/images/company-logo-white.png')}
-          style={GlobalStyles.authenticationScreenLogo}
-        />
-      </View>
-      <ScrollView
-        style={[GlobalStyles.container, GlobalStyles.contentAreaPadding]}>
-        <View style={{ height: 350, justifyContent: 'center' }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <View style={{ flex: 1 }}>
-              <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
-            </View>
-            <View style={styles.checkIconArea}>
-              {phone && (
-                <Icons
-                  name="checkmark-outline"
-                  size={25}
-                  color={GoDeliveryColors.green}
-                />
-              )}
-            </View>
-          </View>
-          <Text style={GlobalStyles.textFieldErrorMsgArea}>{phoneError}</Text>
-          <CustomizedInput
-            icon="person-outline"
-            placeHolder="User Name"
-            val={username}
-            handler={val => {
-              setUsername(val);
-            }}
-            error={usernameError.length > 0}
+    <SafeAreaView style={[GlobalStyles.container, { backgroundColor: GoDeliveryColors.white }]}>
+      <ScrollView>
+        <View style={GlobalStyles.authenticationScreenLogoBack}>
+          <Image
+            source={require('../../../assets/images/sign_up.png')}
+            style={GlobalStyles.authenticationScreenLogo}
           />
-          <Text style={GlobalStyles.textFieldErrorMsgArea}>{usernameError}</Text>
-          <PasswordInput handler={val => setPassword(val)} error={passwordError.length > 0} />
-          <Text style={GlobalStyles.textFieldErrorMsgArea}>{passwordError}</Text>
-          <PasswordInput
-            placeholder="Confirm Password"
-            handler={val => setConfirmPassword(val)}
-            error={confirmPasswordError.length > 0}
-          />
-          <Text style={GlobalStyles.textFieldErrorMsgArea}>
-            {confirmPasswordError}
-          </Text>
         </View>
-        {activityIndicator && (
-          <ActivityIndicator
-            size="large"
-            style={{ position: 'absolute', alignSelf: 'center', bottom: 300 }}
-          />
-        )}
-        <View style={{ marginBottom: 80 }}>
-          <PrimaryButton buttonText="SignUp" handler={navigateToOTP} />
-          <View style={{ marginTop: 30 }}>
-            <TouchableOpacity
-              style={styles.footerTitleBack}
-              onPress={navigateToSignin}>
-              <Text style={GlobalStyles.primaryEmphasizeLabel}>
-                You have an account ?{' '}
-              </Text>
-              <Text style={GlobalStyles.primaryEmphasizeLabelHigher}>
-                SignIn
-              </Text>
-            </TouchableOpacity>
+        <View
+          style={[GlobalStyles.container, GlobalStyles.contentAreaPadding, { backgroundColor: GoDeliveryColors.white }]}>
+          <View style={{ justifyContent: 'center' }}>
+            <Text style={GlobalStyles.authenticationHeaderTitle}>SIGN UP</Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <View style={{ flex: 1 }}>
+                <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
+              </View>
+              <View style={styles.checkIconArea}>
+                {phone && (
+                  <Icons
+                    name="checkmark-outline"
+                    size={25}
+                    color={GoDeliveryColors.green}
+                  />
+                )}
+              </View>
+            </View>
+            <Text style={GlobalStyles.textFieldErrorMsgArea}>{phoneError}</Text>
+            <CustomizedInput
+              icon="person-outline"
+              placeHolder="User Name"
+              val={username}
+              handler={val => {
+                setUsername(val);
+              }}
+              error={usernameError.length > 0}
+            />
+            <Text style={GlobalStyles.textFieldErrorMsgArea}>{usernameError}</Text>
+            <PasswordInput handler={val => setPassword(val)} error={passwordError.length > 0} placeholder="Password" />
+            <Text style={GlobalStyles.textFieldErrorMsgArea}>{passwordError}</Text>
+            <PasswordInput
+              placeholder="Confirm Password"
+              handler={val => setConfirmPassword(val)}
+              error={confirmPasswordError.length > 0}
+            />
+            <Text style={GlobalStyles.textFieldErrorMsgArea}>
+              {confirmPasswordError}
+            </Text>
+          </View>
+          {activityIndicator && (
+            <ActivityIndicator
+              size="large"
+              style={{ position: 'absolute', alignSelf: 'center', bottom: 300 }}
+            />
+          )}
+          <View style={{ marginBottom: 20, }}>
+            <LargeLabelButton buttonText="Sign Up" handler={navigateToOTP} />
+            <View style={{ marginTop: 10 }}>
+              <TouchableOpacity
+                style={styles.footerTitleBack}
+                onPress={navigateToSignin}>
+                <Text style={GlobalStyles.primaryEmphasizeLabel}>
+                  You have an account ?{' '}
+                </Text>
+                <Text style={GlobalStyles.primaryEmphasizeLabelHigher}>
+                  Login
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -217,15 +204,6 @@ const SignUpScreen = ({ route, navigation }: { route: any; navigation: any }) =>
 };
 
 const styles = StyleSheet.create({
-  tabLabelStyle: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  textFieldErrorMsgArea: {
-    height: 35,
-    paddingLeft: 20,
-    color: 'red',
-  },
   footerTitleBack: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -183,13 +183,13 @@ const DetailConfirmation = ({
           if (response.success) {
             navigation.navigate('OrderComplete');
           } else {
-            Alert.alert('Operation failed. Try again.');
+            Alert.alert("GoDelivery", 'Operation failed. Try again.');
           }
         })
         .catch(err => {
           console.log('error: ', err);
           setActivityIndicator(false);
-          Alert.alert('Operation failed. Try again.');
+          Alert.alert("GoDelivery", 'Operation failed. Try again.');
         });
     }
 

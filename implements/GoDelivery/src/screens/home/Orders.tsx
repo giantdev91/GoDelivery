@@ -258,7 +258,7 @@ const ReceivedRoute = (props: SceneProps) => {
     )
 }
 
-const CanceledRoute = (props: SceneProps) => {
+const CancelledRoute = (props: SceneProps) => {
     const [orders, setOrders] = useState([]);
 
     const fetchCompletedOrders = () => {
@@ -328,13 +328,13 @@ const OrdersScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
     const [routes] = React.useState([
         { key: 'sent', title: 'SENT' },
         { key: 'received', title: 'RECEIVED' },
-        { key: 'canceled', title: 'CANCELED' },
+        { key: 'cancelled', title: 'CANCELLED' },
     ]);
 
     const renderScene = SceneMap({
         sent: SentRoute,
         received: ReceivedRoute,
-        canceled: CanceledRoute,
+        cancelled: CancelledRoute,
     });
 
     const renderTabBar = (props: SceneRendererProps & { navigationState: NavigationState<any> }) => (

@@ -138,7 +138,7 @@ const LocationSet = ({ navigation }: { navigation: any }) => {
     ) {
       // The new region is outside the allowed bounds
       // You can show a notification, display an error, or prevent the map from scrolling further
-      Alert.alert('Out of Bounds', 'Please select a location within the 100-kilometer radius.');
+      Alert.alert("GoDelivery", 'Out of Bounds. Please select a location within the 100-kilometer radius.');
       refreshStatus();
     } else {
       // The new region is within the allowed bounds

@@ -9,25 +9,41 @@ import {
   ScrollView,
 } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
-import PasswordInput from '../../components/PasswordInput';
 import { TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import messaging from '@react-native-firebase/messaging';
-import { useDispatch } from 'react-redux';
 import Action from '../../service';
-import allActions from '../../redux/actions';
 import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
 import LargeLabelButton from '../../components/LargeLabelButton';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import TwillioService from '../../service/TwillioService';
 
-const SignInScreen = ({ route, navigation }: { route: any; navigation: any }) => {
+const BackButton = ({ navigation }: {
+  navigation: any
+}): JSX.Element => {
+
+  const backButtonHandler = () => {
+    navigation.goBack();
+  }
+  return (
+    <TouchableOpacity
+      style={styles.backButtonBack}
+      onPress={backButtonHandler}
+    >
+      <FontAwesomeIcon
+        name="chevron-left"
+        size={30}
+        color={GoDeliveryColors.primary}
+      />
+    </TouchableOpacity>
+  )
+}
+
+const ForgetPasswordScreen = ({ navigation }: { navigation: any }) => {
   const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [activityIndicator, setActivityIndicator] = useState(false);
-  const dispatch = useDispatch();
 
   // Function to validate phone number
   const validatePhoneNumber = () => {
@@ -47,51 +63,33 @@ const SignInScreen = ({ route, navigation }: { route: any; navigation: any }) =>
     }
   };
 
-  const storeData = async (userData: any) => {
+  const checkPhone = async () => {
     try {
-      await AsyncStorage.setItem('CLIENT_DATA', JSON.stringify(userData));
-    } catch {
-      console.log('error occured!');
-    }
-  };
-
-  const signInUser = async () => {
-    try {
-      if (!(phone && password)) {
+      if (!phone) {
         return;
       }
       setActivityIndicator(true);
       const argPhone = validatePhoneNumber();
-      //get the fcmToken when client login
-      const token = await messaging().getToken();
       if (argPhone) {
         Action.authentication
-          .login({ phone: argPhone.replace('+', ''), password: password })
-          .then(response => {
+          .phoneCheck({ phone: argPhone.replace('+', '') })
+          .then(async response => {
             const responseData = response.data;
             if (responseData.success) {
-              dispatch(allActions.UserAction.setUser(responseData.data.client));
-              dispatch(allActions.UserAction.setToken(responseData.data.token));
-              storeData(responseData.data.client);
-
-              Action.client
-                .updateFcmToken({
-                  clientID: responseData.data.client.id,
-                  fcmToken: token,
-                })
-                .then(res => {
-                  navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Main', params: { initialIndex: 0 } }],
-                  });
-                })
-                .catch(err => {
-                  console.log('error: ', err);
-                });
+              Alert.alert('GoDelivery', "This phone number is not registered.");
+              setActivityIndicator(false);
             } else {
-              Alert.alert('GoDelivery', responseData.message);
+              if (await TwillioService.sendSMSVerfication(argPhone)) {
+                setActivityIndicator(false);
+                const param = {
+                  phone: argPhone,
+                }
+                navigation.navigate('ForgotOTPCheck', param);
+              } else {
+                Alert.alert('GoDelivery', 'Phone number valid failed');
+                setActivityIndicator(false);
+              }
             }
-            setActivityIndicator(false);
           })
           .catch(error => {
             console.log('error ===> ', error);
@@ -106,27 +104,21 @@ const SignInScreen = ({ route, navigation }: { route: any; navigation: any }) =>
     }
   };
 
-  const navigateToSignup = () => {
-    navigation.navigate('SignUp');
-  };
-
-  const navigateToForgetPassword = () => {
-    navigation.navigate('ForgetPassword');
-  };
-
   return (
     <SafeAreaView style={[GlobalStyles.container, { backgroundColor: GoDeliveryColors.white }]}>
       <ScrollView>
         <View style={GlobalStyles.authenticationScreenLogoBack}>
           <Image
-            source={require('../../../assets/images/login.png')}
+            source={require('../../../assets/images/forgot_password.png')}
             style={GlobalStyles.authenticationScreenLogo}
           />
+          <BackButton navigation={navigation} />
         </View>
         <View
           style={[GlobalStyles.container, GlobalStyles.contentAreaPadding, { backgroundColor: GoDeliveryColors.white }]}>
           <View style={{ justifyContent: 'flex-start', }}>
-            <Text style={GlobalStyles.authenticationHeaderTitle}>LOGIN</Text>
+            <Text style={GlobalStyles.authenticationHeaderTitle}>FORGOT PASSWORD</Text>
+            <Text style={[GlobalStyles.text, { textAlign: 'center', paddingHorizontal: 40, marginBottom: 20, }]}>Please enter your phone number to receive a verification code</Text>
             <View
               style={{
                 flexDirection: 'row',
@@ -147,35 +139,9 @@ const SignInScreen = ({ route, navigation }: { route: any; navigation: any }) =>
               </View>
             </View>
             <Text style={GlobalStyles.textFieldErrorMsgArea}>{phoneError}</Text>
-            <PasswordInput
-              handler={val => {
-                setPassword(val);
-              }}
-            />
-            <View style={{ marginTop: 20 }}>
-              <TouchableOpacity
-                style={styles.footerTitleBack}
-                onPress={navigateToForgetPassword}>
-                <Text style={GlobalStyles.primaryEmphasizeLabel}>
-                  Forgot Your Password?
-                </Text>
-              </TouchableOpacity>
-            </View>
           </View>
-          <View style={{ flex: 1, marginBottom: 30, justifyContent: 'flex-end', marginTop: 120 }}>
-            <LargeLabelButton buttonText="Login" handler={signInUser} />
-            <View style={{ marginTop: 10 }}>
-              <TouchableOpacity
-                style={styles.footerTitleBack}
-                onPress={navigateToSignup}>
-                <Text style={GlobalStyles.primaryEmphasizeLabel}>
-                  You don’t have an account ?{' '}
-                </Text>
-                <Text style={GlobalStyles.primaryEmphasizeLabelHigher}>
-                  Sign Up
-                </Text>
-              </TouchableOpacity>
-            </View>
+          <View style={{ flex: 1, marginBottom: 50, justifyContent: 'flex-end', marginTop: 180 }}>
+            <LargeLabelButton buttonText="Send" handler={checkPhone} />
           </View>
           {activityIndicator && (
             <ActivityIndicator
@@ -185,20 +151,26 @@ const SignInScreen = ({ route, navigation }: { route: any; navigation: any }) =>
           )}
         </View>
       </ScrollView>
+
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  footerTitleBack: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   checkIconArea: {
     width: 35,
     alignItems: 'flex-end',
   },
+  backButtonBack: {
+    width: 45,
+    height: 45,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 100,
+    position: 'absolute',
+    top: -10,
+    left: 20,
+  },
 });
 
-export default SignInScreen;
+export default ForgetPasswordScreen;

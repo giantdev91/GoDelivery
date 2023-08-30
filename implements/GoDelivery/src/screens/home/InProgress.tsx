@@ -98,7 +98,7 @@ const InProgressScreen = ({ navigation }: ScreenProps): JSX.Element => {
     const handleGoToDetail = (index: number) => {
         const orderDetail = orders[index];
         if (orderDetail["status"] == 0) {
-            Alert.alert("This order didn't assign yet.", "There is no tracking info.");
+            Alert.alert("GoDelivery", "This order didn't assign yet. There is no tracking info.");
         } else {
             const senderLocation = {
                 latitude: parseFloat(orderDetail["fromX"]),

@@ -16,7 +16,7 @@ const {
     NOTIFICATION_TYPE_ORDER_FEEDBACK,
     NOTIFICATION_TYPE_ORDER_CANNOT_CREATE,
     NOTIFICATION_TYPE_ARRIVE_TO_COLLECT,
-    NOTIFICATION_TYPE_ARRIVE_TO_DELIVER
+    NOTIFICATION_TYPE_ARRIVE_TO_DELIVER,
 } = require("../common/constant");
 
 exports.create = async (req, res) => {
@@ -609,6 +609,7 @@ exports.orderList = async (req, res) => {
                     attributes: ["id", "name", "phone"], // Specify the attributes you want to retrieve from the delivery man
                 },
             ],
+            order: [["id", "DESC"]],
         });
         res.status(200).send({
             status: true,
@@ -654,6 +655,7 @@ exports.inProgressList = async (req, res) => {
                     attributes: ["id", "name", "phone"], // Specify the attributes you want to retrieve from the delivery man
                 },
             ],
+            order: [["id", "DESC"]],
         });
         res.status(200).send({
             status: true,
@@ -695,6 +697,7 @@ exports.createdOrderList = async (req, res) => {
                     required: false, // LEFT JOIN
                 },
             ],
+            order: [["id", "DESC"]],
         });
 
         res.status(200).send({
@@ -848,7 +851,7 @@ exports.arriveNotification = async (req, res) => {
             data: order,
         });
     } catch (error) {
-        console.log('error: ', error);
+        console.log("error: ", error);
         res.status(200).send({
             success: false,
             code: 500,

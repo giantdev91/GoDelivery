@@ -34,6 +34,9 @@ import { Provider } from 'react-redux';
 import store from './src/redux/store';
 import { enableLatestRenderer } from 'react-native-maps';
 import messaging from '@react-native-firebase/messaging';
+import ForgetPasswordScreen from './src/screens/authentication/ForgetPassword';
+import ForgotOTPCheckScreen from './src/screens/authentication/ForgotOTPCheck';
+import ResetPasswordScreen from './src/screens/authentication/ResetPassword';
 
 PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
@@ -73,6 +76,9 @@ function App(): JSX.Element {
             <Stack.Screen name="Main" component={DrawerNavigator} />
             <Stack.Screen name="SignIn" component={SignInScreen} />
             <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen name="ForgetPassword" component={ForgetPasswordScreen} />
+            <Stack.Screen name="ForgotOTPCheck" component={ForgotOTPCheckScreen} />
+            <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
             <Stack.Screen name="OTP" component={OTPScreen} />
           </Stack.Navigator>
         </NavigationContainer>

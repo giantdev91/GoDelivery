@@ -68,8 +68,6 @@ const calculateDeliveryTime = (pickupTime: string, dropoffTime: string) => {
     if (!pickupTime || !dropoffTime) {
         return '';
     }
-    console.log('dropoffTime ============> ', dropoffTime);
-    console.log('pickupTime ============> ', pickupTime);
     // Define the two date-time values
     const startDate = new Date(pickupTime);
     const endDate = new Date(dropoffTime);

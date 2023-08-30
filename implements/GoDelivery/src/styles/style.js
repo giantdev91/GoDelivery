@@ -8,16 +8,16 @@ const GlobalStyles = StyleSheet.create({
   },
   contentAreaPadding: {
     paddingHorizontal: 20,
-    paddingVertical: 40,
   },
   authenticationScreenLogoBack: {
-    backgroundColor: GoDeliveryColors.primary,
+    marginTop: 30,
     alignItems: 'center',
     height: 200,
     justifyContent: 'center',
+    backgroundColor: GoDeliveryColors.white,
   },
   authenticationScreenLogo: {
-    width: 250,
+    height: 200,
     resizeMode: 'contain',
   },
   shadowProp: {
@@ -116,6 +116,13 @@ const GlobalStyles = StyleSheet.create({
     height: 30,
     paddingLeft: 20,
     color: GoDeliveryColors.primary,
+  },
+  authenticationHeaderTitle: {
+    fontSize: 30,
+    fontWeight: '600',
+    color: GoDeliveryColors.primary,
+    textAlign: 'center',
+    marginVertical: 20,
   },
 });
 

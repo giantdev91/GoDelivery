@@ -1,4 +1,4 @@
-import { LoginParam, SignupParam, PhoneCheckParam } from '../type';
+import { LoginParam, SignupParam, PhoneCheckParam, ResetPasswordParam } from '../type';
 import APIService from './APIService';
 
 const login = async (param: LoginParam) => {
@@ -16,8 +16,14 @@ const phoneCheck = async (param: PhoneCheckParam) => {
     return response;
 }
 
+const resetPassword = async (param: ResetPasswordParam) => {
+    const response = await APIService.post("/client/resetPassword", param);
+    return response;
+}
+
 export default {
     login,
     signup,
-    phoneCheck
+    phoneCheck,
+    resetPassword
 }

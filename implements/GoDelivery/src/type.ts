@@ -13,6 +13,11 @@ export type PhoneCheckParam = {
     phone: string
 }
 
+export type ResetPasswordParam = {
+    phone: string,
+    password: string,
+}
+
 export type GetByIdParam = {
     id: string,
 }

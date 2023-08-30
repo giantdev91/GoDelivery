@@ -9,18 +9,13 @@ import {
 } from 'react-native';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator } from 'react-native';
 import Action from '../../service';
 import allActions from '../../redux/actions';
 
-interface SplashScreenProps {
-  navigation: any;
-}
-
-const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
+const SplashScreen = ({ navigation }: { navigation: any }): JSX.Element => {
   const [loginFlag, setLoginFlag] = useState(false);
   const [activityIndicator, setActivityIndicator] = useState(true);
   const dispatch = useDispatch();
@@ -29,6 +24,13 @@ const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
     navigation.reset({
       index: 0,
       routes: [{ name: 'SignIn' }],
+    });
+  };
+
+  const navigateToSignup = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'SignUp' }],
     });
   };
 
@@ -76,8 +78,9 @@ const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
       style={GlobalStyles.container}>
       <View style={styles.logoSection}>
         <View style={styles.logoBack}>
+          <Text style={styles.headerTitle}>Let's Go</Text>
           <Image
-            source={require('../../../assets/images/company-logo-white.png')}
+            source={require('../../../assets/images/new-logo-white.png')}
             style={styles.logo}
           />
         </View>
@@ -90,21 +93,38 @@ const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
       )}
       <View style={styles.footerButton}>
         {loginFlag && (
-          <TouchableOpacity
-            style={[
-              GlobalStyles.primaryButton,
-              styles.buttonStyle,
-              GlobalStyles.shadowProp,
-            ]}
-            onPress={navigateToSignin}>
-            <Text
+          <View style={{ gap: 30 }}>
+            <TouchableOpacity
               style={[
-                GlobalStyles.primaryLabel,
-                { color: GoDeliveryColors.primary },
-              ]}>
-              START
-            </Text>
-          </TouchableOpacity>
+                GlobalStyles.primaryButton,
+                styles.buttonStyle,
+                GlobalStyles.shadowProp,
+              ]}
+              onPress={navigateToSignin}>
+              <Text
+                style={[
+                  styles.buttonText,
+                  { color: GoDeliveryColors.primary },
+                ]}>
+                Login
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                GlobalStyles.primaryButton,
+                styles.signupButton,
+                GlobalStyles.shadowProp,
+              ]}
+              onPress={navigateToSignup}>
+              <Text
+                style={[
+                  styles.buttonText,
+                  { color: GoDeliveryColors.white },
+                ]}>
+                Sign Up
+              </Text>
+            </TouchableOpacity>
+          </View>
         )}
       </View>
     </ImageBackground>
@@ -114,6 +134,7 @@ const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
 export default SplashScreen;
 
 const styles = StyleSheet.create({
+
   logoSection: {
     flex: 1,
     alignItems: 'center',
@@ -123,6 +144,16 @@ const styles = StyleSheet.create({
     marginBottom: 100,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  headerTitle: {
+    fontSize: 48,
+    fontWeight: '700',
+    color: GoDeliveryColors.white
+  },
+  buttonText: {
+    fontSize: 24,
+    fontWeight: '700',
+
   },
   logo: {
     width: 270,
@@ -135,4 +166,9 @@ const styles = StyleSheet.create({
   buttonStyle: {
     backgroundColor: GoDeliveryColors.white,
   },
+  signupButton: {
+    backgroundColor: GoDeliveryColors.primary,
+    borderWidth: 2,
+    borderColor: GoDeliveryColors.white
+  }
 });

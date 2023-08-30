@@ -39,7 +39,7 @@ const checkVerification = async (phoneNumber: string, code: string) => {
             body: data,
         });
         const json = await response.json();
-        console.log('check sms json ===> ', json);
+        console.log('check sms json ===> ', json.success);
         return json.success;
     } catch (error) {
         return false;

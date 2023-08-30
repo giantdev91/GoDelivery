@@ -5,9 +5,10 @@ import GoDeliveryColors from '../styles/colors';
 
 interface BackButtonProps {
     navigation: any,
+    color?: string,
 }
 
-const BackButton = ({ navigation }: BackButtonProps): JSX.Element => {
+const BackButton = ({ navigation, color }: BackButtonProps): JSX.Element => {
 
     const backButtonHandler = () => {
         navigation.goBack();
@@ -20,7 +21,7 @@ const BackButton = ({ navigation }: BackButtonProps): JSX.Element => {
             <FontAwesomeIcon
                 name="chevron-left"
                 size={30}
-                color={GoDeliveryColors.white}
+                color={color ? color : GoDeliveryColors.white}
             />
         </TouchableOpacity>
     )
