@@ -202,15 +202,6 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
                             <View style={{ flex: 1, }}>
                                 <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
                             </View>
-                            <View style={styles.checkIconArea}>
-                                {phone && (
-                                    <Icons
-                                        name="checkmark-outline"
-                                        size={25}
-                                        color={GoDeliveryColors.green}
-                                    />
-                                )}
-                            </View>
                         </View>
                         <Text style={GlobalStyles.textFieldErrorMsgArea}>{phoneError}</Text>
                         <CustomizedInput icon='person-outline' placeHolder='Username' handler={setUsername} val={username} error={usernameError.length > 0} />
@@ -308,10 +299,6 @@ const styles = StyleSheet.create({
         backgroundColor: GoDeliveryColors.primary,
         padding: 10,
         borderRadius: 100,
-    },
-    checkIconArea: {
-        width: 35,
-        alignItems: 'flex-end',
     },
 });
 

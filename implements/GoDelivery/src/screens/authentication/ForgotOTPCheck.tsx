@@ -140,7 +140,7 @@ const ForgotOTPCheckScreen = ({ route, navigation }: { route: any; navigation: a
             </View>
           </View>
         </View>
-        <View style={{ flex: 1, marginBottom: 50, justifyContent: 'flex-end' }}>
+        <View style={{ flex: 1, marginBottom: 60, justifyContent: 'flex-end' }}>
           <LargeLabelButton buttonText="Confirm" handler={confirmCode} />
         </View>
         {activityIndicator && (

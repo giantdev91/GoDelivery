@@ -216,7 +216,7 @@ const DetailConfirmation = ({
                 Receiver details
               </Text>
               {/* <Text style={GlobalStyles.text}>{username}</Text> */}
-              <Text style={GlobalStyles.text}>{receiverName}</Text>
+              <Text style={[GlobalStyles.text, { marginVertical: 5 }]}>{receiverName}</Text>
               <CustomizedPhoneInput value={receiverPhone} handler={setReceiverPhone} error={receiverPhoneError.length > 0} />
               <Text style={GlobalStyles.textFieldErrorMsgArea}>{receiverPhoneError}</Text>
               {/* <Text style={GlobalStyles.text}>{receiver}</Text> */}
@@ -236,7 +236,7 @@ const DetailConfirmation = ({
               </Text>
             </View>
           </View>
-          <View style={[styles.locationStrSection, { marginTop: 5 }]}>
+          <View style={[styles.locationStrSection, { marginTop: 10 }]}>
             <Icons
               name="location-outline"
               size={30}
@@ -280,7 +280,7 @@ const DetailConfirmation = ({
             </View>
           </View>
 
-          <View style={styles.locationStrSection}>
+          <View style={[styles.locationStrSection, { marginTop: 10 }]}>
             <Image
               source={require('../../../assets/images/icons/time.png')}
               style={styles.iconImg}
@@ -308,7 +308,7 @@ const DetailConfirmation = ({
             </View>
           </View>
 
-          <View style={{ marginTop: 20 }}>
+          <View style={{ marginTop: 10 }}>
             <View style={styles.infoLabelBack}>
               <Image
                 source={require('../../../assets/images/icons/distance.png')}
@@ -360,10 +360,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
     color: GoDeliveryColors.secondary,
-  },
-  checkIconArea: {
-    width: 35,
-    alignItems: 'flex-end',
   },
   formArea: {
     paddingHorizontal: 20,

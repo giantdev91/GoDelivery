@@ -136,15 +136,6 @@ const DetailInformation = ({
           <View style={{ marginTop: 10 }}>
             <CustomizedPhoneInput value={senderPhone.slice(3)} handler={() => { }} disabled={true} placeholder='Phone to contact' />
             <Text style={GlobalStyles.textFieldErrorMsgArea}>{senderPhoneError}</Text>
-            {/* <CustomizedInput
-              icon="call-outline"
-              placeHolder="Person to contact"
-              keyboardType="number"
-              val={senderPhone}
-              handler={setSenderPhone}
-              showCheck={true}
-              error={senderPhoneError}
-            /> */}
           </View>
           <View style={{ marginTop: 10 }}>
             <CustomizedInput
@@ -278,10 +269,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
     color: GoDeliveryColors.secondary,
-  },
-  checkIconArea: {
-    width: 35,
-    alignItems: 'flex-end',
   },
   formArea: {
     paddingHorizontal: 20,

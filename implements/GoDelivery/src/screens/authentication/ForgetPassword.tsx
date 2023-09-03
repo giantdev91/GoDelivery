@@ -128,19 +128,10 @@ const ForgetPasswordScreen = ({ navigation }: { navigation: any }) => {
               <View style={{ flex: 1 }}>
                 <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
               </View>
-              <View style={styles.checkIconArea}>
-                {
-                  phone && <Icons
-                    name="checkmark-outline"
-                    size={25}
-                    color={GoDeliveryColors.green}
-                  />
-                }
-              </View>
             </View>
             <Text style={GlobalStyles.textFieldErrorMsgArea}>{phoneError}</Text>
           </View>
-          <View style={{ flex: 1, marginBottom: 50, justifyContent: 'flex-end', marginTop: 180 }}>
+          <View style={{ flex: 1, marginBottom: 50, justifyContent: 'flex-end', marginTop: 160 }}>
             <LargeLabelButton buttonText="Send" handler={checkPhone} />
           </View>
           {activityIndicator && (
@@ -157,10 +148,6 @@ const ForgetPasswordScreen = ({ navigation }: { navigation: any }) => {
 };
 
 const styles = StyleSheet.create({
-  checkIconArea: {
-    width: 35,
-    alignItems: 'flex-end',
-  },
   backButtonBack: {
     width: 45,
     height: 45,

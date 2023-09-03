@@ -10,14 +10,14 @@ const GlobalStyles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   authenticationScreenLogoBack: {
-    marginTop: 30,
+    marginTop: 50,
     alignItems: 'center',
-    height: 200,
+    height: 220,
     justifyContent: 'center',
     backgroundColor: GoDeliveryColors.white,
   },
   authenticationScreenLogo: {
-    height: 200,
+    height: 220,
     resizeMode: 'contain',
   },
   shadowProp: {
@@ -118,11 +118,12 @@ const GlobalStyles = StyleSheet.create({
     color: GoDeliveryColors.primary,
   },
   authenticationHeaderTitle: {
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: '600',
     color: GoDeliveryColors.primary,
     textAlign: 'center',
-    marginVertical: 20,
+    marginTop: 20,
+    marginBottom: 15
   },
 });
 

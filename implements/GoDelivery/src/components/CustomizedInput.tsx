@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, TextInput} from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, TextInput } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import GoDeliveryColors from '../styles/colors';
 
@@ -38,17 +38,6 @@ const CustomizedInput = (props: CustomizedInputProps): JSX.Element => {
           secureTextEntry={false}
         />
       </View>
-      {!props.showCheck && (
-        <View style={styles.checkIconArea}>
-          {value && (
-            <Icons
-              name="checkmark-outline"
-              size={25}
-              color={GoDeliveryColors.green}
-            />
-          )}
-        </View>
-      )}
     </View>
   );
 };
@@ -78,10 +67,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     flex: 1,
     paddingHorizontal: 10,
-  },
-  checkIconArea: {
-    width: 35,
-    alignItems: 'flex-end',
   },
 });
 

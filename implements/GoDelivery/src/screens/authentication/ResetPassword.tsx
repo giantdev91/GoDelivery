@@ -111,7 +111,7 @@ const ResetPasswordScreen = ({ route, navigation }: { route: any; navigation: an
               {confirmPasswordError}
             </Text>
           </View>
-          <View style={{ flex: 1, marginBottom: 50, justifyContent: 'flex-end', marginTop: 120 }}>
+          <View style={{ flex: 1, marginBottom: 50, justifyContent: 'flex-end', marginTop: 110 }}>
             <LargeLabelButton buttonText="Save" handler={handleSave} />
           </View>
           {activityIndicator && (

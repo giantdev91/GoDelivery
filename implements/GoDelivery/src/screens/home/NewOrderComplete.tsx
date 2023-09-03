@@ -41,7 +41,7 @@ const NewOrderComplete = ({ navigation }: ScreenProps): JSX.Element => {
           style={[{ width: '100%', height: 300, resizeMode: 'cover' }]}
         />
         <Image
-          source={require('../../../assets/images/company_logo.png')}
+          source={require('../../../assets/images/company-logo.png')}
           style={{ position: 'absolute', top: 200 }}
         />
       </View>

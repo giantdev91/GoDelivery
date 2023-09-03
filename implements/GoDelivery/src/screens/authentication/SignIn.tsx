@@ -136,15 +136,6 @@ const SignInScreen = ({ route, navigation }: { route: any; navigation: any }) =>
               <View style={{ flex: 1 }}>
                 <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
               </View>
-              <View style={styles.checkIconArea}>
-                {
-                  phone && <Icons
-                    name="checkmark-outline"
-                    size={25}
-                    color={GoDeliveryColors.green}
-                  />
-                }
-              </View>
             </View>
             <Text style={GlobalStyles.textFieldErrorMsgArea}>{phoneError}</Text>
             <PasswordInput
@@ -162,7 +153,7 @@ const SignInScreen = ({ route, navigation }: { route: any; navigation: any }) =>
               </TouchableOpacity>
             </View>
           </View>
-          <View style={{ flex: 1, marginBottom: 30, justifyContent: 'flex-end', marginTop: 120 }}>
+          <View style={{ flex: 1, marginBottom: 30, justifyContent: 'flex-end', marginTop: 110 }}>
             <LargeLabelButton buttonText="Login" handler={signInUser} />
             <View style={{ marginTop: 10 }}>
               <TouchableOpacity
@@ -194,10 +185,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  checkIconArea: {
-    width: 35,
-    alignItems: 'flex-end',
   },
 });
 
