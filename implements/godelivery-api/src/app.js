@@ -9,6 +9,7 @@ const notificationRoute = require("./routes/notification");
 const syslogRoute = require("./routes/sys_log");
 const sysSettingRoute = require("./routes/sys_setting");
 const motorRoute = require("./routes/motor");
+const systemNotificationRoute = require("./routes/systemNotification");
 
 const { httpLogStream } = require("./utils/logger");
 const admin = require("firebase-admin");
@@ -33,6 +34,7 @@ app.use("/notification", notificationRoute);
 app.use("/syslog", syslogRoute);
 app.use("/sysSetting", sysSettingRoute);
 app.use("/motor", motorRoute);
+app.use("/systemNotification", systemNotificationRoute);
 
 app.get("/", (req, res) => {
     res.status(200).send({
