@@ -152,19 +152,24 @@ exports.save_location = async (req, res) => {
 
 exports.searchClient = async (req, res) => {
     try {
-        const { name, phone, startDate, endDate, pageNo, pageSize } = req.body;
+        const { searchKey } = req.body;
 
         // Build the where condition based on the provided criteria
-        const whereCondition = {};
-        if (name !== undefined) {
-            whereCondition.name = name;
-        }
-        if (phone !== undefined) {
-            whereCondition.phone = phone;
-        }
-        if (startDate !== undefined && endDate !== undefined) {
-            whereCondition.createdAt = {
-                [Op.between]: [startDate, endDate],
+        let whereCondition = {};
+        if (searchKey) {
+            whereCondition = {
+                [Op.or]: [
+                    {
+                        phone: {
+                            [Op.like]: `%${searchKey}%`,
+                        },
+                    },
+                    {
+                        name: {
+                            [Op.like]: `%${searchKey}%`,
+                        },
+                    },
+                ],
             };
         }
 
@@ -222,7 +227,6 @@ exports.orderList = async (req, res) => {
 exports.totalcount = async (req, res) => {
     try {
         const { count, clients } = await Client.findAndCountAll({});
-
         res.status(200).send({
             success: true,
             code: 200,
@@ -231,7 +235,7 @@ exports.totalcount = async (req, res) => {
             },
         });
     } catch (error) {
-        console.error("Error connecting to the database:", error);
+        console.error("error:", error);
         res.status(200).send({
             success: false,
             code: 500,

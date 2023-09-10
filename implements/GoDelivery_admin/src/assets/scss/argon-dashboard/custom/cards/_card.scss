@@ -6,3 +6,23 @@
 .card-translucent {
     background-color: rgba(18, 91, 152, 0.08);
 }
+
+.card-body {
+    .valueText {
+        font-size: 2rem;
+        font-weight: 800;
+        text-align: right;
+    }
+}
+
+.status-row-card {
+    height: 450px;
+
+    .card-body {
+        overflow-y: hidden;
+    }
+
+    .card-body:hover {
+        overflow-y: scroll;
+    }
+}

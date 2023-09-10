@@ -491,13 +491,15 @@ exports.acceptRequest = async (req, res) => {
 exports.totalCount = async (req, res) => {
     try {
         const { status } = req.body;
+        const whereCondition = {};
+        if (status !== undefined) {
+            whereCondition.status = status;
+        }
         const { count, row } = await Order.findAndCountAll({
-            where: {
-                status: status,
-            },
+            where: whereCondition,
         });
         res.status(200).send({
-            status: true,
+            success: true,
             code: 200,
             message: "totalcount",
             data: count,
@@ -859,5 +861,28 @@ exports.arriveNotification = async (req, res) => {
         });
     } finally {
         // Close the database connection when done
+    }
+};
+
+exports.totalRevenue = async (req, res) => {
+    try {
+        const totalRevenue = await Order.sum("price", {
+            where: {
+                status: 3,
+            },
+        });
+        
+        res.status(200).send({
+            success: true,
+            code: 200,
+            message: "",
+            data: totalRevenue,
+        });
+    } catch (error) {
+        res.status(200).send({
+            success: false,
+            code: 500,
+            message: "Internal server error",
+        });
     }
 };

@@ -58,7 +58,6 @@ exports.sendNotification = (fcmTokens, title, body, orderId, receiverIds, type) 
                     receiverType = 0;
                     break;
             }
-            console.log('receiver type ===> ', receiverType);
             receiverIds.map((receiver) => {
                 Notification.create({
                     content: body,

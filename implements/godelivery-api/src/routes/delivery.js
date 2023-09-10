@@ -2,8 +2,8 @@ const router = require("express").Router();
 const { asyncHandler } = require("../middlewares/asyncHandler");
 // const checkEmail = require('../middlewares/checkEmail');
 const {
-  signup: signupValidator,
-  signin: signinValidator,
+    signup: signupValidator,
+    signin: signinValidator,
 } = require("../validators/auth");
 const { verifyToken } = require("../utils/token");
 
@@ -16,13 +16,21 @@ router.route("/totalcount").get(asyncHandler(deliveryController.totalcount));
 
 router.route("/orderlist").post(asyncHandler(deliveryController.orderList));
 router.route("/delete").post(asyncHandler(deliveryController.deleteClient));
-router.route("/updateFcmToken").post(asyncHandler(deliveryController.updateFcmToken));
+router
+    .route("/updateFcmToken")
+    .post(asyncHandler(deliveryController.updateFcmToken));
 router.route("/updatestate").post(asyncHandler(deliveryController.updateState));
 router
-  .route("/deliverymanlist")
-  .post(asyncHandler(deliveryController.deliverymanList));
-router.route("/updateLocation").post(asyncHandler(deliveryController.updateLocation));
+    .route("/deliverymanlist")
+    .post(asyncHandler(deliveryController.deliverymanList));
+router
+    .route("/updateLocation")
+    .post(asyncHandler(deliveryController.updateLocation));
+router.route("/unassigned").get(asyncHandler(deliveryController.unassigned));
+router.route("/motorassign").post(asyncHandler(deliveryController.motorassign));
 router.route("/:id").get(asyncHandler(deliveryController.getDeliveryManById));
-router.route("/updateProfile").post(asyncHandler(deliveryController.updateProfile));
+router
+    .route("/updateProfile")
+    .post(asyncHandler(deliveryController.updateProfile));
 
 module.exports = router;

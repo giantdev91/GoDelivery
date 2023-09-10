@@ -83,6 +83,7 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
                     if (index == 0) {
                         setFromStr(data.display_name);
                         fromRef.current?.setAddressText(data.display_name);
+                        setPosition(coordinate);
                     } else {
                         setToStr(data.display_name);
                         toRef.current?.setAddressText(data.display_name);
@@ -128,7 +129,7 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
         }
     };
 
-    const handleMapRegionChange = (region) => {
+    const handleMapRegionChange = (region: any) => {
         const { latitude, longitude } = region;
         const bounds = commonFunctions.calculateBounds(position.latitude, position.longitude, 100);
 
@@ -184,6 +185,7 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
         markersTemp[index] = crd;
         setMarkers(markersTemp);
         if (index == 0) {
+            setPosition(crd);
             setFromStr(positionStr)
         } else {
             setToStr(positionStr);
@@ -228,6 +230,9 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
                                 draggable
                                 onDragEnd={e => {
                                     const crd = e.nativeEvent.coordinate;
+                                    if (index == 0) {
+                                        setPosition(crd);
+                                    }
                                     fetch(
                                         `https://nominatim.openstreetmap.org/reverse?lat=${crd.latitude}&lon=${crd.longitude}&format=json`,
                                     )

@@ -1,109 +1,142 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.2.3
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-// reactstrap components
 import DataTable from "react-data-table-component";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import {
     Card,
     CardHeader,
-    Table,
+    CardBody,
+    CardTitle,
     Container,
+    InputGroup,
+    InputGroupAddon,
+    InputGroupText,
     Row,
     Col,
     Button,
     Input,
     Label,
+    FormGroup,
 } from "reactstrap";
 
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-// core components
-import Header from "components/Headers/Header.js";
 import APIService from "../../service/APIService";
-import {
-    NotificationContainer,
-    NotificationManager,
-} from "react-notifications";
+import TotalMotorsCard from "components/Common/TotalMotorsCard";
+import { ToastContainer, toast } from "react-toastify";
+import { formatedDate } from "utils/commonFunction";
 
 const Deliveryman = () => {
     const [modal, setModal] = useState(false);
-    const [newPhone, setNewPhone] = useState("");
-    const [newUsername, setNewUsername] = useState("");
-    const [motor, setMotor] = useState("");
+    const [confirmModal, setConfirmModal] = useState(false);
+    const [searchKey, setSearchKey] = useState("");
 
+    const confirmModalToggle = () => setConfirmModal(!confirmModal);
     const toggle = () => setModal(!modal);
 
-    const [deliverymanData, setDeliverymanData] = useState(undefined);
-    const [row, setRow] = useState(undefined);
+    const [deliverymanData, setDeliverymanData] = useState([]);
+    const [selectedDeliveryman, setSelectedDeliveryman] = useState({});
+    const [row, setRow] = useState([]);
+    const [phoneError, setPhoneError] = useState(false);
+    const [nameError, setNameError] = useState(false);
 
     const fetchDeliverymanList = () => {
-        APIService.post("/deliveryman/deliverymanlist").then((res) => {
-            console.log("response:", res);
+        APIService.post("/deliveryman/deliverymanlist", {
+            searchKey: searchKey,
+        }).then((res) => {
             if (res.status === 200) {
-                console.log("a", res.data);
                 setDeliverymanData(res.data.data);
             }
         });
     };
-    useEffect(() => {
-        fetchDeliverymanList();
-    }, []);
 
-    const registerNewUser = () => {
-        APIService.post("/deliveryman/signup", {
-            phone: newPhone,
-            name: newUsername,
-            password: "123456",
-            motor: motor,
+    const validateForm = () => {
+        let flag = true;
+        if (!selectedDeliveryman.phone) {
+            setPhoneError(true);
+            flag = false;
+        } else {
+            setPhoneError(false);
+        }
+        if (!selectedDeliveryman.name) {
+            setNameError(true);
+            flag = false;
+        } else {
+            setNameError(false);
+        }
+        return flag;
+    };
+
+    const handleSave = () => {
+        if (!validateForm()) {
+            return;
+        } else {
+            APIService.post("/deliveryman/signup", {
+                id: selectedDeliveryman.id,
+                phone: selectedDeliveryman.phone,
+                name: selectedDeliveryman.name,
+                password: "123456",
+            })
+                .then((res) => {
+                    const response = res.data;
+                    if (response.success) {
+                        toggle();
+                        toast.success("Save Success!", {
+                            position: "top-right",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        fetchDeliverymanList();
+                    }
+                })
+                .catch((err) => {
+                    console.log("error: ", err);
+                });
+        }
+    };
+
+    const handleUpdateButton = (idx) => {
+        setSelectedDeliveryman(deliverymanData[idx]);
+        toggle();
+    };
+
+    const handleDelete = () => {
+        APIService.post("/deliveryman/delete", {
+            id: selectedDeliveryman.id,
         })
             .then((res) => {
                 const response = res.data;
                 if (response.success) {
-                    setModal(false);
-                    NotificationManager.success("Save Success");
+                    confirmModalToggle();
                     fetchDeliverymanList();
                 }
             })
-            .catch((err) => {
-                console.log("error: ", err);
-            });
+            .catch((err) => console.log("error: ", err));
     };
 
     useEffect(() => {
         const rows = deliverymanData
-            ? deliverymanData.map((client) => ({
-                  phone: client.phone,
-                  name: client.name,
-                  motor: client.motor,
-                  startedAt: new Date(client.createdAt).toLocaleString(),
-                  status: client.status === 0 ? "Idle" : "Processing",
-                  completeOrder: client.orders.filter(
+            ? deliverymanData.map((data, index) => ({
+                  id: data.id,
+                  index: index,
+                  phone: data.phone,
+                  name: data.name,
+                  motor: data.motor?.plate,
+                  startedAt: formatedDate(new Date(data.createdAt)),
+                  status: data.status === 0 ? "Idle" : "Processing",
+                  completeOrder: data.orders.filter(
                       (order) => order.status === 3
                   ).length,
                   rate:
-                      client.orders.length > 0
+                      data.orders.length > 0
                           ? (
-                                client.orders.reduce(
+                                data.orders.reduce(
                                     (total, order) => total + order.rate,
                                     0
                                 ) /
-                                client.orders.filter((order) => order.rate)
-                                    .length
+                                data.orders.filter((order) => order.rate).length
                             ).toFixed(2)
                           : 0,
                   // Add more fields based on your data
@@ -111,6 +144,14 @@ const Deliveryman = () => {
             : [];
         setRow(rows);
     }, [deliverymanData]);
+
+    useEffect(() => {
+        fetchDeliverymanList();
+    }, []);
+
+    useEffect(() => {
+        fetchDeliverymanList();
+    }, [searchKey]);
 
     const columns = [
         {
@@ -141,67 +182,86 @@ const Deliveryman = () => {
             name: "Rate",
             selector: (row) => row.rate,
         },
+        {
+            name: "Control",
+            selector: (row) => (
+                <>
+                    <Button
+                        color="info"
+                        size="sm"
+                        onClick={() => {
+                            handleUpdateButton(row.index);
+                        }}
+                    >
+                        Update
+                    </Button>
+                    <Button
+                        color="danger"
+                        size="sm"
+                        onClick={() => {
+                            setSelectedDeliveryman(deliverymanData[row.index]);
+                            confirmModalToggle();
+                        }}
+                    >
+                        Delete
+                    </Button>
+                </>
+            ),
+        },
         // Add more columns based on your data
     ];
 
     return (
         <>
-            {/* <Header /> */}
-            {/* Page content */}
             <Container fluid>
-                {/* Table */}
-                <Modal isOpen={modal} toggle={toggle}>
-                    <ModalHeader toggle={toggle}>
-                        <h1>Delivery man Register</h1>
-                    </ModalHeader>
-                    <ModalBody>
-                        <Label>Phone Number</Label>
-                        <Input
-                            placeholder="Phone"
-                            value={newPhone}
-                            onChange={(e) => {
-                                setNewPhone(e.target.value);
-                            }}
-                        />
-                        <Label className="mt-2">User Name</Label>
-                        <Input
-                            placeholder="user name"
-                            value={newUsername}
-                            onChange={(e) => {
-                                setNewUsername(e.target.value);
-                            }}
-                        />
-                        <Label className="mt-2">Motorcycle</Label>
-                        <Input
-                            placeholder="motorcycle"
-                            value={motor}
-                            onChange={(e) => {
-                                setMotor(e.target.value);
-                            }}
-                        />
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="primary" onClick={registerNewUser}>
-                            REGISTER
-                        </Button>{" "}
-                        <Button color="secondary" onClick={toggle}>
-                            CANCEL
-                        </Button>
-                    </ModalFooter>
-                </Modal>
-                <Row className="mt-5">
+                <Row className="mt-3">
+                    <Col className="col-md-9 mb-2 mb-xl-2">
+                        <CardTitle
+                            tag="h1"
+                            className="text-uppercase text-dark mt-4"
+                        >
+                            Delivery man
+                        </CardTitle>
+                    </Col>
+                    <Col className="col-md-3 mb-2 mb-xl-2">
+                        <TotalMotorsCard />
+                    </Col>
+                </Row>
+                <Row className="">
                     <Col className="mb-5 mb-xl-0">
                         <Card className="shadow">
                             <CardHeader className="border-0">
                                 <Row className="align-items-center">
-                                    <div className="col">
-                                        <h3 className="mb-0">Delivery man</h3>
+                                    <div className="col-md-4">
+                                        <CardTitle
+                                            tag="h2"
+                                            className="text-uppercase text-danger mb-0"
+                                        >
+                                            Delivery man
+                                        </CardTitle>
+                                        <InputGroup className="input-group-alternative">
+                                            <InputGroupAddon addonType="prepend">
+                                                <InputGroupText>
+                                                    <i className="fa fa-search" />
+                                                </InputGroupText>
+                                            </InputGroupAddon>
+                                            <Input
+                                                placeholder="Search..."
+                                                value={searchKey}
+                                                onChange={(e) =>
+                                                    setSearchKey(e.target.value)
+                                                }
+                                            />
+                                        </InputGroup>
                                     </div>
                                     <div className="col text-right">
                                         <Button
                                             color="primary"
                                             href="#pablo"
-                                            onClick={toggle}
+                                            onClick={() => {
+                                                setSelectedDeliveryman({});
+                                                toggle();
+                                            }}
                                             size="md"
                                         >
                                             REGISTER
@@ -209,15 +269,80 @@ const Deliveryman = () => {
                                     </div>
                                 </Row>
                             </CardHeader>
-                            <DataTable
-                                columns={columns}
-                                data={row}
-                                pagination
-                            />
+                            <CardBody>
+                                <DataTable
+                                    columns={columns}
+                                    data={row}
+                                    pagination
+                                />
+                            </CardBody>
                         </Card>
                     </Col>
                 </Row>{" "}
             </Container>
+
+            <Modal isOpen={modal} toggle={toggle}>
+                <ModalHeader toggle={toggle}>
+                    <h1>Delivery man Register</h1>
+                </ModalHeader>
+                <ModalBody>
+                    <FormGroup>
+                        <Label>Phone Number</Label>
+                        <Input
+                            placeholder="Phone"
+                            className={phoneError ? "is-invalid" : ""}
+                            value={selectedDeliveryman.phone}
+                            onChange={(e) => {
+                                setSelectedDeliveryman((prevState) => ({
+                                    ...prevState,
+                                    phone: e.target.value,
+                                }));
+                            }}
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label>User Name</Label>
+                        <Input
+                            placeholder="user name"
+                            className={nameError ? "is-invalid" : ""}
+                            value={selectedDeliveryman.name}
+                            onChange={(e) => {
+                                setSelectedDeliveryman((prevState) => ({
+                                    ...prevState,
+                                    name: e.target.value,
+                                }));
+                            }}
+                        />
+                    </FormGroup>
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="primary" onClick={handleSave}>
+                        SAVE
+                    </Button>
+                    <Button color="secondary" onClick={toggle}>
+                        CANCEL
+                    </Button>
+                </ModalFooter>
+            </Modal>
+
+            {/* delete delivery man dialog */}
+            <Modal isOpen={confirmModal} toggle={confirmModalToggle}>
+                <ModalHeader toggle={confirmModalToggle}>
+                    <h1>Are you sure?</h1>
+                </ModalHeader>
+                <ModalBody>
+                    <h3>Do you want to delete this delivery man?</h3>
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="primary" onClick={handleDelete}>
+                        CONFIRM
+                    </Button>{" "}
+                    <Button color="secondary" onClick={confirmModalToggle}>
+                        CANCEL
+                    </Button>
+                </ModalFooter>
+            </Modal>
+            {/* delete delivery man dialog */}
         </>
     );
 };

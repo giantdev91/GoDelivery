@@ -14,8 +14,8 @@ router.route("/receive").post(asyncHandler(orderController.receive));
 router.route("/rate").post(asyncHandler(orderController.rate));
 
 router
-  .route("/acceptrequest")
-  .post(asyncHandler(orderController.acceptRequest));
+    .route("/acceptrequest")
+    .post(asyncHandler(orderController.acceptRequest));
 
 router.route("/totalcount").post(asyncHandler(orderController.totalCount));
 
@@ -27,12 +27,20 @@ router.route("/list").post(asyncHandler(orderController.orderList));
 
 router.route("/inprogress").post(asyncHandler(orderController.inProgressList));
 
-router.route("/createdOrderList").post(asyncHandler(orderController.createdOrderList));
+router
+    .route("/createdOrderList")
+    .post(asyncHandler(orderController.createdOrderList));
 
-router.route("/processingDetailByDeliveryman").post(asyncHandler(orderController.processingDetailByDeliveryman));
+router
+    .route("/processingDetailByDeliveryman")
+    .post(asyncHandler(orderController.processingDetailByDeliveryman));
 
 router.route("/getById").post(asyncHandler(orderController.getByID));
 
-router.route("/arriveNotification").post(asyncHandler(orderController.arriveNotification));
+router
+    .route("/arriveNotification")
+    .post(asyncHandler(orderController.arriveNotification));
+
+router.route("/totalRevenue").get(asyncHandler(orderController.totalRevenue));
 
 module.exports = router;

@@ -1,6 +1,6 @@
 import axios from 'axios';
 // import { API_URL } from "@env";
-const API_URL = 'http://34.28.220.154:4000';
+const API_URL = 'http://localhost:4000';
 // const API_URL = 'http://10.0.2.2:4000';
 
 console.log('env ===> ', process.env.NODE_ENV);

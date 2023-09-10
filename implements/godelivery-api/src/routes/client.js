@@ -9,7 +9,7 @@ const { verifyToken } = require("../utils/token");
 
 const clientController = require("../controllers/client.controller");
 
-router.route("/:id").get(asyncHandler(clientController.getClientById));
+
 
 router.route("/signup").post(asyncHandler(clientController.signup));
 
@@ -34,5 +34,7 @@ router.route("/phonecheck").post(asyncHandler(clientController.phoneCheck));
 router.route("/updateFcmToken").post(asyncHandler(clientController.updateFcmToken));
 
 router.route("/resetPassword").post(asyncHandler(clientController.resetPassword));
+
+router.route("/:id").get(asyncHandler(clientController.getClientById));
 
 module.exports = router;

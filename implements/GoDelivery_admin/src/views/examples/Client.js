@@ -7,6 +7,7 @@ import axios from "axios";
 import {
     Card,
     CardHeader,
+    CardTitle,
     Table,
     Container,
     Row,
@@ -16,18 +17,33 @@ import {
     PaginationItem,
     PaginationLink,
     CardFooter,
+    Input,
+    InputGroup,
+    InputGroupAddon,
+    InputGroupText,
+    CardBody,
 } from "reactstrap";
 import APIService from "../../service/APIService";
+import HeaderCard from "components/Headers/HeaderCard";
+import TotalUsersCard from "components/Common/TotalUsersCard";
+import { formatedDate } from "utils/commonFunction";
 
 const Client = () => {
+    const [searchKey, setSearchKey] = useState("");
     const [clientData, setClientData] = useState(undefined);
     const [row, setRow] = useState(undefined);
-    useEffect(() => {
-        APIService.post("/client/searchclient").then((res) => {
-            if (res.status === 200) {
-                setClientData(res.data.data);
+
+    const getClientList = () => {
+        APIService.post("/client/searchclient", { searchKey: searchKey }).then(
+            (res) => {
+                if (res.status === 200) {
+                    setClientData(res.data.data);
+                }
             }
-        });
+        );
+    };
+    useEffect(() => {
+        getClientList();
     }, []);
 
     useEffect(() => {
@@ -36,18 +52,22 @@ const Client = () => {
             ? clientData.map((client) => ({
                   phone: client.phone,
                   name: client.name,
-                  startedAt: new Date(client.createdAt).toLocaleString(),
+                  startedAt: formatedDate(new Date(client.createdAt)),
                   totalSpent:
                       client.orders.reduce(
                           (total, order) => total + order.price,
                           0
-                      ) + "MT",
+                      ) + " MZN",
                   totalOrders: client.orders.length,
                   // Add more fields based on your data
               }))
             : [];
         setRow(rows);
     }, [clientData]);
+
+    useEffect(() => {
+        getClientList();
+    }, [searchKey]);
 
     const columns = [
         {
@@ -78,22 +98,57 @@ const Client = () => {
             {/* <Header /> */}
             {/* Page content */}
             <Container fluid>
+                <Row className="mt-3">
+                    <Col className="col-md-9 mb-2 mb-xl-2">
+                        <CardTitle
+                            tag="h1"
+                            className="text-uppercase text-dark mt-4"
+                        >
+                            Clients
+                        </CardTitle>
+                    </Col>
+                    <Col className="col-md-3 mb-2 mb-xl-2">
+                        <TotalUsersCard />
+                    </Col>
+                </Row>
                 {/* Table */}
-                <Row className="mt-5">
+                <Row className="">
                     <Col className="mb-5 mb-xl-0">
                         <Card className="shadow">
                             <CardHeader className="border-0">
                                 <Row className="align-items-center">
-                                    <div className="col">
-                                        <h3 className="mb-0">Clients</h3>
+                                    <div className="col-md-4">
+                                        {/* <h3 className="mb-0">Clients</h3> */}
+                                        <CardTitle
+                                            tag="h2"
+                                            className="text-uppercase text-danger mb-0"
+                                        >
+                                            Clients
+                                        </CardTitle>
+                                        <InputGroup className="input-group-alternative">
+                                            <InputGroupAddon addonType="prepend">
+                                                <InputGroupText>
+                                                    <i className="fa fa-search" />
+                                                </InputGroupText>
+                                            </InputGroupAddon>
+                                            <Input
+                                                placeholder="Search..."
+                                                value={searchKey}
+                                                onChange={(e) =>
+                                                    setSearchKey(e.target.value)
+                                                }
+                                            />
+                                        </InputGroup>
                                     </div>
                                 </Row>
                             </CardHeader>
-                            <DataTable
-                                columns={columns}
-                                data={row}
-                                pagination
-                            />
+                            <CardBody>
+                                <DataTable
+                                    columns={columns}
+                                    data={row}
+                                    pagination
+                                />
+                            </CardBody>
                         </Card>
                     </Col>
                 </Row>

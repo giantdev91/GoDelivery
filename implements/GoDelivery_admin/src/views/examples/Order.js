@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import {
     Card,
     CardHeader,
+    CardTitle,
     Table,
     Container,
     Row,
@@ -33,8 +34,7 @@ import Header from "components/Headers/Header.js";
 import APIService from "../../service/APIService";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import TotalOrdersCard from "components/Common/TotalOrdersCard";
 
 function a11yProps(index) {
     return {
@@ -77,7 +77,20 @@ const Order = () => {
             {/* <Header /> */}
             {/* Page content */}
             <Container fluid>
-                <Row className="mt-5">
+                <Row className="mt-3">
+                    <Col className="col-md-9 mb-2 mb-xl-2">
+                        <CardTitle
+                            tag="h1"
+                            className="text-uppercase text-dark mt-4"
+                        >
+                            Orders
+                        </CardTitle>
+                    </Col>
+                    <Col className="col-md-3 mb-2 mb-xl-2">
+                        <TotalOrdersCard />
+                    </Col>
+                </Row>
+                <Row className="">
                     <Tabs
                         value={value}
                         onChange={handleChange}

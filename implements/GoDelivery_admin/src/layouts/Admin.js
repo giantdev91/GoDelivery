@@ -90,7 +90,7 @@ const Admin = (props) => {
                     />
                 </Routes>
                 <Container fluid>
-                    <AdminFooter />
+                    {/* <AdminFooter /> */}
                 </Container>
             </div>
         </>
