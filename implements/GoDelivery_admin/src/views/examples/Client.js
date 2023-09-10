@@ -1,30 +1,19 @@
-// import { url } from "../../utils/secrets";
-
-import DataTable from "react-data-table-component";
-
-import { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
 import {
     Card,
     CardHeader,
     CardTitle,
-    Table,
     Container,
     Row,
     Col,
-    Button,
-    Pagination,
-    PaginationItem,
-    PaginationLink,
-    CardFooter,
-    Input,
     InputGroup,
     InputGroupAddon,
     InputGroupText,
     CardBody,
+    Input,
 } from "reactstrap";
+import DataTable from "react-data-table-component";
 import APIService from "../../service/APIService";
-import HeaderCard from "components/Headers/HeaderCard";
 import TotalUsersCard from "components/Common/TotalUsersCard";
 import { formatedDate } from "utils/commonFunction";
 
@@ -47,7 +36,6 @@ const Client = () => {
     }, []);
 
     useEffect(() => {
-        console.log("clientData", clientData);
         const rows = clientData
             ? clientData.map((client) => ({
                   phone: client.phone,
@@ -147,6 +135,11 @@ const Client = () => {
                                     columns={columns}
                                     data={row}
                                     pagination
+                                    responsive="true"
+                                    striped="true"
+                                    pointerOnHover="true"
+                                    highlightOnHover="true"
+                                    fixedHeader="true"
                                 />
                             </CardBody>
                         </Card>

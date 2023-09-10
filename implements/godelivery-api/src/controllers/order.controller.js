@@ -578,7 +578,7 @@ exports.orderList = async (req, res) => {
             req.body;
 
         // Build the where condition based on the provided criteria
-        const whereCondition = {};
+        let whereCondition = {};
         if (sender !== undefined) {
             whereCondition.sender = sender;
         }
@@ -589,7 +589,16 @@ exports.orderList = async (req, res) => {
             whereCondition.deliverymanID = deliverymanID;
         }
         if (status !== undefined) {
-            whereCondition.status = status;
+            let filterCondition = [];
+            status.split(",").map((val) => {
+                filterCondition.push({
+                    status: val,
+                });
+            });
+            whereCondition = {
+                ...whereCondition,
+                [Op.or]: filterCondition,
+            };
         }
         if (startDate !== undefined && endDate !== undefined) {
             whereCondition.createdAt = {
@@ -620,6 +629,7 @@ exports.orderList = async (req, res) => {
             data: orders,
         });
     } catch (error) {
+        console.log("error: ", error);
         res.status(200).send({
             success: false,
             code: 500,
@@ -871,7 +881,7 @@ exports.totalRevenue = async (req, res) => {
                 status: 3,
             },
         });
-        
+
         res.status(200).send({
             success: true,
             code: 200,

@@ -274,6 +274,11 @@ const Deliveryman = () => {
                                     columns={columns}
                                     data={row}
                                     pagination
+                                    responsive="true"
+                                    striped="true"
+                                    pointerOnHover="true"
+                                    highlightOnHover="true"
+                                    fixedHeader="true"
                                 />
                             </CardBody>
                         </Card>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     Card,
     CardHeader,
@@ -13,7 +13,7 @@ import {
     Input,
 } from "reactstrap";
 import APIService from "../../service/APIService";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const BroadcastMessage = () => {
     const defaultNotificationData = {

@@ -254,7 +254,16 @@ const Motorcycle = () => {
                         </Row>
                     </CardHeader>
                     <CardBody>
-                        <DataTable columns={columns} data={row} pagination />
+                        <DataTable
+                            columns={columns}
+                            data={row}
+                            pagination
+                            responsive="true"
+                            striped="true"
+                            pointerOnHover="true"
+                            highlightOnHover="true"
+                            fixedHeader="true"
+                        />
                     </CardBody>
                 </Card>
             </Container>

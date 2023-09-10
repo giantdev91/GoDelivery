@@ -1,40 +1,19 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.2.3
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-// reactstrap components
-import axios from "axios";
-
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Card,
     CardHeader,
+    CardBody,
     CardTitle,
-    Table,
     Container,
     Row,
     Col,
-    Button,
 } from "reactstrap";
-// core components
-import Header from "components/Headers/Header.js";
 import APIService from "../../service/APIService";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import TotalOrdersCard from "components/Common/TotalOrdersCard";
+import { formatedDate } from "utils/commonFunction";
+import DataTable from "react-data-table-component";
 
 function a11yProps(index) {
     return {
@@ -44,38 +23,255 @@ function a11yProps(index) {
 }
 
 function CustomTabPanel(props) {
-    const { children, value, index, ...other } = props;
+    const { children, tabIndex, index, ...other } = props;
 
     return (
         <div
             role="tabpanel"
-            hidden={value !== index}
+            hidden={tabIndex !== index}
             id={`simple-tabpanel-${index}`}
             aria-labelledby={`simple-tab-${index}`}
             {...other}
         >
-            {value === index && <div>{children}</div>}
+            {tabIndex === index && <div>{children}</div>}
         </div>
     );
 }
 
 const Order = () => {
     const [orderData, setOrderData] = useState(undefined);
-    const [value, setValue] = useState(0);
+    const [tabIndex, setTabIndex] = useState(0);
+    const [row, setRow] = useState(undefined);
+    const [columns, setColumns] = useState([]);
+
+    const fetchOrderList = (tab) => {
+        let status = "0";
+        switch (tab) {
+            case 0:
+                status = "0";
+                break;
+            case 1:
+                status = "1,2";
+                break;
+            case 2:
+                status = "3";
+                break;
+            case 3:
+                status = "4";
+                break;
+            default:
+                status = "0";
+                break;
+        }
+        APIService.post("/order/list", { status: status })
+            .then((res) => {
+                setOrderData(res.data.data);
+            })
+            .catch((err) => console.log("error: ", err));
+    };
+
+    const tabChange = (event, newValue) => {
+        setTabIndex(newValue);
+        fetchOrderList(newValue);
+    };
+
     useEffect(() => {
-        APIService.post("/order/list").then((res) => {
-            setOrderData(res.data.data);
-        });
+        fetchOrderList(0);
     }, []);
 
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
+    useEffect(() => {
+        const rows = orderData
+            ? orderData.map((order, index) => ({
+                  index: index,
+                  id: order.id,
+                  sender: `${order.client.name} (${order.client.phone})`,
+                  receiver: `${order.receiverName}(${order.receiver})`,
+                  from: order.from,
+                  to: order.to,
+                  price: `${order.price} MZN`,
+                  rate: order.rate,
+                  created: formatedDate(new Date(order.createdAt)),
+                  deliveryMan: `${order.delivery_man?.name}(${order.delivery_man?.phone})`,
+                  cancelledBy: order.canceledBy,
+                  cancelReason: order.cancelReason,
+              }))
+            : [];
+        setRow(rows);
+
+        let columns = [];
+
+        switch (tabIndex) {
+            case 0:
+                columns = [
+                    {
+                        name: "Sender",
+                        selector: (row) => row.sender,
+                    },
+                    {
+                        name: "Receiver",
+                        selector: (row) => row.receiver,
+                    },
+                    {
+                        name: "From",
+                        selector: (row) => row.from,
+                    },
+                    {
+                        name: "To",
+                        selector: (row) => row.to,
+                    },
+                    {
+                        name: "Price",
+                        selector: (row) => row.price,
+                    },
+                    {
+                        name: "Created",
+                        selector: (row) => row.created,
+                    },
+                ];
+                break;
+            case 1:
+                columns = [
+                    {
+                        name: "Sender",
+                        selector: (row) => row.sender,
+                    },
+                    {
+                        name: "Receiver",
+                        selector: (row) => row.receiver,
+                    },
+                    {
+                        name: "From",
+                        selector: (row) => row.from,
+                    },
+                    {
+                        name: "To",
+                        selector: (row) => row.to,
+                    },
+                    {
+                        name: "Delivery man",
+                        selector: (row) => row.deliveryMan,
+                    },
+                    {
+                        name: "Price",
+                        selector: (row) => row.price,
+                    },
+                    {
+                        name: "Created",
+                        selector: (row) => row.created,
+                    },
+                ];
+                break;
+            case 2:
+                columns = [
+                    {
+                        name: "Sender",
+                        selector: (row) => row.sender,
+                    },
+                    {
+                        name: "Receiver",
+                        selector: (row) => row.receiver,
+                    },
+                    {
+                        name: "From",
+                        selector: (row) => row.from,
+                    },
+                    {
+                        name: "To",
+                        selector: (row) => row.to,
+                    },
+                    {
+                        name: "Delivery man",
+                        selector: (row) => row.deliveryMan,
+                    },
+                    {
+                        name: "Price",
+                        selector: (row) => row.price,
+                    },
+                    {
+                        name: "Rate",
+                        selector: (row) => row.rate,
+                    },
+                    {
+                        name: "Created",
+                        selector: (row) => row.created,
+                    },
+                ];
+                break;
+            case 3:
+                columns = [
+                    {
+                        name: "Sender",
+                        selector: (row) => row.sender,
+                    },
+                    {
+                        name: "Receiver",
+                        selector: (row) => row.receiver,
+                    },
+                    {
+                        name: "From",
+                        selector: (row) => row.from,
+                    },
+                    {
+                        name: "To",
+                        selector: (row) => row.to,
+                    },
+                    {
+                        name: "Delivery man",
+                        selector: (row) => row.deliveryMan,
+                    },
+                    {
+                        name: "Price",
+                        selector: (row) => row.price,
+                    },
+                    {
+                        name: "Created",
+                        selector: (row) => row.created,
+                    },
+                    {
+                        name: "Cancelled By",
+                        selector: (row) => row.cancelledBy,
+                    },
+                    {
+                        name: "Reason",
+                        selector: (row) => row.cancelReason,
+                    },
+                ];
+                break;
+            default:
+                columns = [
+                    {
+                        name: "Sender",
+                        selector: (row) => row.sender,
+                    },
+                    {
+                        name: "Receiver",
+                        selector: (row) => row.receiver,
+                    },
+                    {
+                        name: "From",
+                        selector: (row) => row.from,
+                    },
+                    {
+                        name: "To",
+                        selector: (row) => row.to,
+                    },
+                    {
+                        name: "Price",
+                        selector: (row) => row.price,
+                    },
+                    {
+                        name: "Created",
+                        selector: (row) => row.created,
+                    },
+                ];
+                break;
+        }
+
+        setColumns(columns);
+    }, [orderData, tabIndex]);
 
     return (
         <>
-            {/* <Header /> */}
-            {/* Page content */}
             <Container fluid>
                 <Row className="mt-3">
                     <Col className="col-md-9 mb-2 mb-xl-2">
@@ -91,20 +287,22 @@ const Order = () => {
                     </Col>
                 </Row>
                 <Row className="">
-                    <Tabs
-                        value={value}
-                        onChange={handleChange}
-                        aria-label="basic tabs example"
-                    >
-                        <Tab label="Pending" {...a11yProps(0)} />
-                        <Tab label="Processing" {...a11yProps(1)} />
-                        <Tab label="Completed" {...a11yProps(2)} />
-                        <Tab label="Canceled" {...a11yProps(3)} />
-                    </Tabs>
+                    <Col>
+                        <Tabs
+                            value={tabIndex}
+                            onChange={tabChange}
+                            aria-label="basic tabs example"
+                        >
+                            <Tab label="Pending" {...a11yProps(0)} />
+                            <Tab label="Processing" {...a11yProps(1)} />
+                            <Tab label="Completed" {...a11yProps(2)} />
+                            <Tab label="Canceled" {...a11yProps(3)} />
+                        </Tabs>
+                    </Col>
                 </Row>
-                <CustomTabPanel value={value} index={0}>
+                <CustomTabPanel tabIndex={tabIndex} index={0}>
                     {/* Pending */}
-                    <Row className="mt-5">
+                    <Row className="mt-3">
                         <Col className="mb-5 mb-xl-0">
                             <Card className="shadow">
                                 <CardHeader className="border-0">
@@ -114,63 +312,25 @@ const Order = () => {
                                         </div>
                                     </Row>
                                 </CardHeader>
-                                <Table
-                                    className="align-items-center table-flush"
-                                    responsive
-                                >
-                                    <thead className="thead-light">
-                                        <tr>
-                                            <th scope="col">Sender</th>
-                                            <th scope="col">Reciever</th>
-                                            <th scope="col">from</th>
-                                            <th scope="col">To</th>
-                                            <th scope="col">Price</th>
-                                            <th scope="col">Created</th>
-                                        </tr>
-                                    </thead>
-                                    {orderData !== undefined
-                                        ? orderData.map((object) => {
-                                              const date = new Date(
-                                                  object.createdAt
-                                              );
-                                              const dateString =
-                                                  date.toLocaleString();
-                                              const date1 = new Date(
-                                                  object.expectationTime
-                                              );
-                                              const dateString1 =
-                                                  date.toLocaleString();
-                                              return object.status === 0 ? (
-                                                  <tbody>
-                                                      <tr>
-                                                          <td>
-                                                              {
-                                                                  object.client
-                                                                      .phone
-                                                              }
-                                                          </td>
-                                                          <td>
-                                                              {object.receiver}
-                                                          </td>
-                                                          <td>{object.from}</td>
-                                                          <td>{object.to}</td>
-                                                          <td>
-                                                              {object.price} MT
-                                                          </td>
-                                                          <td>{dateString}</td>
-                                                      </tr>
-                                                  </tbody>
-                                              ) : null;
-                                          })
-                                        : null}
-                                </Table>
+                                <CardBody>
+                                    <DataTable
+                                        columns={columns}
+                                        data={row}
+                                        pagination
+                                        responsive="true"
+                                        striped="true"
+                                        pointerOnHover="true"
+                                        highlightOnHover="true"
+                                        fixedHeader="true"
+                                    />
+                                </CardBody>
                             </Card>
                         </Col>
                     </Row>
                 </CustomTabPanel>
-                <CustomTabPanel value={value} index={1}>
+                <CustomTabPanel tabIndex={tabIndex} index={1}>
                     {/* Processing */}
-                    <Row className="mt-5">
+                    <Row className="mt-3">
                         <Col className="mb-5 mb-xl-0">
                             <Card className="shadow">
                                 <CardHeader className="border-0">
@@ -180,89 +340,25 @@ const Order = () => {
                                         </div>
                                     </Row>
                                 </CardHeader>
-                                <Table
-                                    className="align-items-center table-flush"
-                                    responsive
-                                >
-                                    <thead className="thead-light">
-                                        <tr>
-                                            <th scope="col">Sender</th>
-                                            <th scope="col">Reciever</th>
-                                            <th scope="col">from</th>
-                                            <th scope="col">To</th>
-                                            <th scope="col">Delivery man</th>
-                                            <th scope="col">Price</th>
-                                        </tr>
-                                    </thead>
-                                    {orderData !== undefined
-                                        ? orderData.map((object) => {
-                                              const date = new Date(
-                                                  object.createdAt
-                                              );
-                                              const dateString =
-                                                  date.toLocaleString();
-                                              const date1 = new Date(
-                                                  object.expectationTime
-                                              );
-                                              const dateString1 =
-                                                  date1.toLocaleString();
-                                              if (
-                                                  object.status === 1 ||
-                                                  object.status === 2
-                                              )
-                                                  return (
-                                                      <tbody>
-                                                          <tr>
-                                                              <td>
-                                                                  {
-                                                                      object
-                                                                          .client
-                                                                          .phone
-                                                                  }
-                                                              </td>
-                                                              <td>
-                                                                  {
-                                                                      object.receiver
-                                                                  }
-                                                              </td>
-                                                              <td>
-                                                                  {object.from}
-                                                              </td>
-                                                              <td>
-                                                                  {object.to}
-                                                              </td>
-                                                              <td>
-                                                                  {
-                                                                      object
-                                                                          .delivery_man
-                                                                          .name
-                                                                  }
-                                                                  (
-                                                                  {
-                                                                      object
-                                                                          .delivery_man
-                                                                          .phone
-                                                                  }
-                                                                  )
-                                                              </td>
-                                                              <td>
-                                                                  {object.price}{" "}
-                                                                  MT
-                                                              </td>
-                                                          </tr>
-                                                      </tbody>
-                                                  );
-                                              else return null;
-                                          })
-                                        : null}
-                                </Table>
+                                <CardBody>
+                                    <DataTable
+                                        columns={columns}
+                                        data={row}
+                                        pagination
+                                        responsive="true"
+                                        striped="true"
+                                        pointerOnHover="true"
+                                        highlightOnHover="true"
+                                        fixedHeader="true"
+                                    />
+                                </CardBody>
                             </Card>
                         </Col>
                     </Row>
                 </CustomTabPanel>
-                <CustomTabPanel value={value} index={2}>
+                <CustomTabPanel tabIndex={tabIndex} index={2}>
                     {/* Completed */}
-                    <Row className="mt-5">
+                    <Row className="mt-3">
                         <Col className="mb-5 mb-xl-0">
                             <Card className="shadow">
                                 <CardHeader className="border-0">
@@ -272,90 +368,25 @@ const Order = () => {
                                         </div>
                                     </Row>
                                 </CardHeader>
-                                <Table
-                                    className="align-items-center table-flush"
-                                    responsive
-                                >
-                                    <thead className="thead-light">
-                                        <tr>
-                                            <th scope="col">Sender</th>
-                                            <th scope="col">Reciever</th>
-                                            <th scope="col">from</th>
-                                            <th scope="col">To</th>
-                                            <th scope="col">Delivery man</th>
-                                            <th scope="col">Price</th>
-                                            <th scope="col">Rate</th>
-                                        </tr>
-                                    </thead>
-                                    {orderData !== undefined
-                                        ? orderData.map((object) => {
-                                              const date = new Date(
-                                                  object.createdAt
-                                              );
-                                              const dateString =
-                                                  date.toLocaleString();
-                                              const date1 = new Date(
-                                                  object.expectationTime
-                                              );
-                                              const dateString1 =
-                                                  date1.toLocaleString();
-                                              if (object.status === 3)
-                                                  return (
-                                                      <tbody>
-                                                          <tr>
-                                                              <td>
-                                                                  {
-                                                                      object
-                                                                          .client
-                                                                          .phone
-                                                                  }
-                                                              </td>
-                                                              <td>
-                                                                  {
-                                                                      object.receiver
-                                                                  }
-                                                              </td>
-                                                              <td>
-                                                                  {object.from}
-                                                              </td>
-                                                              <td>
-                                                                  {object.to}
-                                                              </td>
-                                                              <td>
-                                                                  {
-                                                                      object
-                                                                          .delivery_man
-                                                                          .name
-                                                                  }
-                                                                  (
-                                                                  {
-                                                                      object
-                                                                          .delivery_man
-                                                                          .phone
-                                                                  }
-                                                                  )
-                                                              </td>
-                                                              <td>
-                                                                  {object.price}{" "}
-                                                                  MT
-                                                              </td>
-                                                              <td>
-                                                                  {object.rate}
-                                                              </td>
-                                                          </tr>
-                                                      </tbody>
-                                                  );
-                                              else return null;
-                                          })
-                                        : null}
-                                </Table>
+                                <CardBody>
+                                    <DataTable
+                                        columns={columns}
+                                        data={row}
+                                        pagination
+                                        responsive="true"
+                                        striped="true"
+                                        pointerOnHover="true"
+                                        highlightOnHover="true"
+                                        fixedHeader="true"
+                                    />
+                                </CardBody>
                             </Card>
                         </Col>
                     </Row>
                 </CustomTabPanel>
-                <CustomTabPanel value={value} index={3}>
+                <CustomTabPanel tabIndex={tabIndex} index={3}>
                     {/* Canceled */}
-                    <Row className="mt-5">
+                    <Row className="mt-3">
                         <Col className="mb-5 mb-xl-0">
                             <Card className="shadow">
                                 <CardHeader className="border-0">
@@ -365,92 +396,18 @@ const Order = () => {
                                         </div>
                                     </Row>
                                 </CardHeader>
-                                <Table
-                                    className="align-items-center table-flush"
-                                    responsive
-                                >
-                                    <thead className="thead-light">
-                                        <tr>
-                                            <th scope="col">Sender</th>
-                                            <th scope="col">Reciever</th>
-                                            <th scope="col">from</th>
-                                            <th scope="col">To</th>
-                                            <th scope="col">Delivery man</th>
-                                            <th scope="col">Price</th>
-                                            <th scope="col">Canceled By</th>
-                                            <th scope="col">Cancel Reason</th>
-                                        </tr>
-                                    </thead>
-                                    {orderData !== undefined
-                                        ? orderData.map((object) => {
-                                              const date = new Date(
-                                                  object.createdAt
-                                              );
-                                              const dateString =
-                                                  date.toLocaleString();
-                                              const date1 = new Date(
-                                                  object.expectationTime
-                                              );
-                                              const dateString1 =
-                                                  date1.toLocaleString();
-                                              if (object.status === 4)
-                                                  return (
-                                                      <tbody>
-                                                          <tr>
-                                                              <td>
-                                                                  {
-                                                                      object
-                                                                          .client
-                                                                          .phone
-                                                                  }
-                                                              </td>
-                                                              <td>
-                                                                  {
-                                                                      object.receiver
-                                                                  }
-                                                              </td>
-                                                              <td>
-                                                                  {object.from}
-                                                              </td>
-                                                              <td>
-                                                                  {object.to}
-                                                              </td>
-                                                              <td>
-                                                                  {
-                                                                      object
-                                                                          .delivery_man
-                                                                          .name
-                                                                  }
-                                                                  (
-                                                                  {
-                                                                      object
-                                                                          .delivery_man
-                                                                          .phone
-                                                                  }
-                                                                  )
-                                                              </td>
-                                                              <td>
-                                                                  {object.price}{" "}
-                                                                  MT
-                                                              </td>
-                                                              <td>
-                                                                  {object.canceledBy ==
-                                                                  0
-                                                                      ? "client"
-                                                                      : "delivery man"}
-                                                              </td>
-                                                              <td>
-                                                                  {
-                                                                      object.cancelReason
-                                                                  }
-                                                              </td>
-                                                          </tr>
-                                                      </tbody>
-                                                  );
-                                              else return null;
-                                          })
-                                        : null}
-                                </Table>
+                                <CardBody>
+                                    <DataTable
+                                        columns={columns}
+                                        data={row}
+                                        pagination
+                                        responsive="true"
+                                        striped="true"
+                                        pointerOnHover="true"
+                                        highlightOnHover="true"
+                                        fixedHeader="true"
+                                    />
+                                </CardBody>
                             </Card>
                         </Col>
                     </Row>
