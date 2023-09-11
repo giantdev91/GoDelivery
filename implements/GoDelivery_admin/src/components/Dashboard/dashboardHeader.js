@@ -1,6 +1,5 @@
 import React from "react";
 import { Row, Col } from "reactstrap";
-import HeaderCard from "components/Headers/HeaderCard";
 import TotalUsersCard from "components/Common/TotalUsersCard";
 import TotalOrdersCard from "components/Common/TotalOrdersCard";
 import TotalRevenueCard from "components/Common/TotalRevenueCard";

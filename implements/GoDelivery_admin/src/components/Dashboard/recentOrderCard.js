@@ -1,8 +1,51 @@
-import React from "react";
-import { Row, Col, Card, CardBody, CardHeader, CardTitle } from "reactstrap";
-import StatusBadge from "./statusBadge";
+import React, { useEffect, useState } from "react";
+import {
+    Row,
+    Col,
+    Card,
+    CardBody,
+    CardHeader,
+    CardTitle,
+    Badge,
+} from "reactstrap";
+import APIService from "../../service/APIService";
+import { formatDateAndTime } from "../../utils/commonFunction";
 
 const RecentOrderCard = () => {
+    const [recentOrders, setRecentOrders] = useState([]);
+
+    const fetchRecentOrders = () => {
+        APIService.post("/order/recent")
+            .then((res) => {
+                setRecentOrders(res.data.data);
+            })
+            .catch((err) => console.log("error: ", err));
+    };
+
+    useEffect(() => {
+        fetchRecentOrders();
+    }, []);
+
+    const getStatusBadge = (status) => {
+        switch (status) {
+            case 0:
+                return <Badge color="warning">Pending</Badge>;
+                break;
+            case 1:
+                return <Badge color="info">Processing</Badge>;
+                break;
+            case 2:
+                return <Badge color="info">Processing</Badge>;
+                break;
+            case 3:
+                return <Badge color="success">Completed</Badge>;
+                break;
+            case 4:
+                return <Badge color="danger">Cancelled</Badge>;
+                break;
+        }
+    };
+
     return (
         <>
             <Card className="status-row-card">
@@ -12,180 +55,45 @@ const RecentOrderCard = () => {
                     </CardTitle>
                 </CardHeader>
                 <CardBody>
-                    <div>
-                        <Row>
-                            <Col className="col-md-3">
-                                <h3 className="text-primary">#3093220</h3>
-                            </Col>
-                            <Col className="col-md-3">
-                                <StatusBadge
-                                    statusLabel="Processing"
-                                    statusClass="success"
-                                />
-                            </Col>
-                            <Col className="col-md-6">
-                                <h2 className="text-right ">MZN 2,000.00</h2>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col className="col-md-6">
-                                <h3 className="text-primary">
-                                    Armando Microsse
-                                </h3>
-                            </Col>
-                            <Col className="col-md-6 my-auto">
-                                <h6 className="text-right text-light">
-                                    1st Aug 2023 12:20 PM - 10km
-                                </h6>
-                            </Col>
-                        </Row>
-                        <hr className="mt-0 mb-3" />
-                    </div>
-                    <div>
-                        <Row>
-                            <Col className="col-md-3">
-                                <h3 className="text-primary">#3093220</h3>
-                            </Col>
-                            <Col className="col-md-3">
-                                <StatusBadge
-                                    statusLabel="Processing"
-                                    statusClass="success"
-                                />
-                            </Col>
-                            <Col className="col-md-6">
-                                <h2 className="text-right ">MZN 2,000.00</h2>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col className="col-md-6">
-                                <h3 className="text-primary">
-                                    Armando Microsse
-                                </h3>
-                            </Col>
-                            <Col className="col-md-6 my-auto">
-                                <h6 className="text-right text-light">
-                                    1st Aug 2023 12:20 PM - 10km
-                                </h6>
-                            </Col>
-                        </Row>
-                        <hr className="mt-0 mb-3" />
-                    </div>
-                    <div>
-                        <Row>
-                            <Col className="col-md-3">
-                                <h3 className="text-primary">#3093220</h3>
-                            </Col>
-                            <Col className="col-md-3">
-                                <StatusBadge
-                                    statusLabel="Processing"
-                                    statusClass="success"
-                                />
-                            </Col>
-                            <Col className="col-md-6">
-                                <h2 className="text-right ">MZN 2,000.00</h2>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col className="col-md-6">
-                                <h3 className="text-primary">
-                                    Armando Microsse
-                                </h3>
-                            </Col>
-                            <Col className="col-md-6 my-auto">
-                                <h6 className="text-right text-light">
-                                    1st Aug 2023 12:20 PM - 10km
-                                </h6>
-                            </Col>
-                        </Row>
-                        <hr className="mt-0 mb-3" />
-                    </div>
-                    <div>
-                        <Row>
-                            <Col className="col-md-3">
-                                <h3 className="text-primary">#3093220</h3>
-                            </Col>
-                            <Col className="col-md-3">
-                                <StatusBadge
-                                    statusLabel="Processing"
-                                    statusClass="success"
-                                />
-                            </Col>
-                            <Col className="col-md-6">
-                                <h2 className="text-right ">MZN 2,000.00</h2>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col className="col-md-6">
-                                <h3 className="text-primary">
-                                    Armando Microsse
-                                </h3>
-                            </Col>
-                            <Col className="col-md-6 my-auto">
-                                <h6 className="text-right text-light">
-                                    1st Aug 2023 12:20 PM - 10km
-                                </h6>
-                            </Col>
-                        </Row>
-                        <hr className="mt-0 mb-3" />
-                    </div>
-                    <div>
-                        <Row>
-                            <Col className="col-md-3">
-                                <h3 className="text-primary">#3093220</h3>
-                            </Col>
-                            <Col className="col-md-3">
-                                <StatusBadge
-                                    statusLabel="Processing"
-                                    statusClass="success"
-                                />
-                            </Col>
-                            <Col className="col-md-6">
-                                <h2 className="text-right ">MZN 2,000.00</h2>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col className="col-md-6">
-                                <h3 className="text-primary">
-                                    Armando Microsse
-                                </h3>
-                            </Col>
-                            <Col className="col-md-6 my-auto">
-                                <h6 className="text-right text-light">
-                                    1st Aug 2023 12:20 PM - 10km
-                                </h6>
-                            </Col>
-                        </Row>
-                        <hr className="mt-0 mb-3" />
-                    </div>
-                    <div>
-                        <Row>
-                            <Col className="col-md-3">
-                                <h3 className="text-primary">#3093220</h3>
-                            </Col>
-                            <Col className="col-md-3">
-                                <StatusBadge
-                                    statusLabel="Processing"
-                                    statusClass="success"
-                                />
-                            </Col>
-                            <Col className="col-md-6">
-                                <h2 className="text-right ">MZN 2,000.00</h2>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col className="col-md-6">
-                                <h3 className="text-primary">
-                                    Armando Microsse
-                                </h3>
-                            </Col>
-                            <Col className="col-md-6 my-auto">
-                                <h6 className="text-right text-light">
-                                    1st Aug 2023 12:20 PM - 10km
-                                </h6>
-                            </Col>
-                        </Row>
-                        <hr className="mt-0 mb-3" />
-                    </div>
+                    {recentOrders.map((order, index) => {
+                        if (index < 10) {
+                            return (
+                                <div key={index} className="recent-orders-row">
+                                    <Row>
+                                        <Col className="col-md-7 status-row">
+                                            <span className="text-primary">
+                                                {order.orderNo}
+                                            </span>
+                                            {getStatusBadge(order.status)}
+                                        </Col>
+                                        <Col className="col-md-5 text-right">
+                                            <span className="text-right ">
+                                                MZN{" "}
+                                                {Number(
+                                                    order.price
+                                                ).toLocaleString()}
+                                            </span>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col className="col-md-6">
+                                            <h3 className="text-primary">
+                                                {order.client.name}
+                                            </h3>
+                                        </Col>
+                                        <Col className="col-md-6 my-auto">
+                                            <h5 className="text-right text-light">
+                                                {`${formatDateAndTime(
+                                                    new Date(order.createdAt)
+                                                )} - ${order.distance} Km`}
+                                            </h5>
+                                        </Col>
+                                    </Row>
+                                    <hr className="mt-0 mb-3" />
+                                </div>
+                            );
+                        }
+                    })}
                 </CardBody>
             </Card>
         </>

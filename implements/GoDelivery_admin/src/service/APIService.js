@@ -3,8 +3,6 @@ import axios from 'axios';
 const API_URL = 'http://localhost:4000';
 // const API_URL = 'http://10.0.2.2:4000';
 
-console.log('env ===> ', process.env.NODE_ENV);
-console.log('api url ===> ', process.env.REACT_APP_API_URL);
 // const API_URL = process.env.REACT_APP_API_URL;
 
 const config = {

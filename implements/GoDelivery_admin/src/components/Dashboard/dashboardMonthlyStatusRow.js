@@ -1,10 +1,8 @@
 import React from "react";
-import { Row, Col, Card, CardBody, CardHeader, CardTitle } from "reactstrap";
-import StatusBadge from "./statusBadge";
+import { Row, Col } from "reactstrap";
 import RecentOrderCard from "./recentOrderCard";
 import MonthlyRevenue from "./monthlyRevenue";
 import MonthlyOrder from "./monthlyOrder";
-import HeaderCard from "components/Headers/HeaderCard";
 
 const DashboardMonthlyStatusRow = () => {
     return (

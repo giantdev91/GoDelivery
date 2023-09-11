@@ -896,3 +896,37 @@ exports.totalRevenue = async (req, res) => {
         });
     }
 };
+
+exports.recentList = async (req, res) => {
+    try {
+        const orders = await Order.findAll({
+            include: [
+                {
+                    model: Client,
+                    as: "client",
+                },
+                {
+                    model: Delivery_man,
+                    as: "delivery_man",
+                    attributes: ["id", "name", "phone"], // Specify the attributes you want to retrieve from the delivery man
+                },
+            ],
+            order: [["createdAt", "DESC"]],
+        });
+        res.status(200).send({
+            status: true,
+            code: 200,
+            message: "orderlist success",
+            data: orders,
+        });
+    } catch (error) {
+        console.log("error: ", error);
+        res.status(200).send({
+            success: false,
+            code: 500,
+            message: "Internal server error",
+        });
+    } finally {
+        // Close the database connection when done
+    }
+};

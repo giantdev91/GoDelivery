@@ -43,4 +43,6 @@ router
 
 router.route("/totalRevenue").get(asyncHandler(orderController.totalRevenue));
 
+router.route("/recent").post(asyncHandler(orderController.recentList));
+
 module.exports = router;

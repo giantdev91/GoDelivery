@@ -1,35 +1,19 @@
-// import { url } from "../../utils/secrets";
-
-import DataTable from "react-data-table-component";
-
-import { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
 import {
     Card,
     CardHeader,
-    Table,
     Container,
     Row,
     Col,
     Button,
-    Pagination,
-    PaginationItem,
-    PaginationLink,
-    CardFooter,
     Form,
     FormGroup,
     Input,
-    InputGroup,
-    InputGroupAddon,
-    InputGroupText,
     CardBody,
     Label,
 } from "reactstrap";
 import APIService from "../../service/APIService";
-import {
-    NotificationContainer,
-    NotificationManager,
-} from "react-notifications";
+import { NotificationManager } from "react-notifications";
 
 const SysSetting = () => {
     const [sysSetting, setSysSetting] = useState({});
@@ -40,7 +24,6 @@ const SysSetting = () => {
         APIService.get("/sysSetting/get").then((res) => {
             if (res.status === 200) {
                 const data = res.data.data;
-                console.log("data ====> ", data);
                 if (data) {
                     setSysSetting(data);
                 }

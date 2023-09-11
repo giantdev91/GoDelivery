@@ -1,16 +1,4 @@
-import {
-    Card,
-    CardHeader,
-    CardBody,
-    CardTitle,
-    Table,
-    Container,
-    Row,
-    Col,
-    Button,
-    Input,
-    Label,
-} from "reactstrap";
+import { Card, CardBody, Row, Col } from "reactstrap";
 
 const HeaderCard = ({ title, value, icon }) => {
     return (

@@ -1,15 +1,86 @@
-import React, { useState } from "react";
-import { Row, Col, Card, CardBody, CardHeader, CardTitle } from "reactstrap";
+import React, { useEffect, useState } from "react";
+import { Card, CardBody, CardHeader, CardTitle } from "reactstrap";
 import { Line, Bar } from "react-chartjs-2";
-import {
-    chartOptions,
-    parseOptions,
-    chartExample1,
-    chartExample2,
-} from "variables/charts.js";
+import APIService from "../../service/APIService";
+import { calendarLabels } from "../../utils/commonFunction";
+
+const chartOption = {
+    scales: {
+        yAxes: [
+            {
+                ticks: {
+                    callback: function (value) {
+                        if (!(value % 10)) {
+                            return "MZN " + value / 1000 + "k";
+                        }
+                    },
+                },
+            },
+        ],
+    },
+    tooltips: {
+        callbacks: {
+            label: function (item, data) {
+                var label = data.datasets[item.datasetIndex].label || "";
+                var yLabel = item.yLabel;
+                var content = "";
+
+                if (data.datasets.length > 1) {
+                    content += label;
+                }
+
+                content += "MZN " + yLabel / 1000 + "k";
+                return content;
+            },
+        },
+    },
+};
+
+let defaultChartData = {
+    labels: calendarLabels,
+    datasets: [
+        {
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        },
+    ],
+};
 
 const MonthlyRevenue = () => {
-    const [chartExample1Data, setChartExample1Data] = useState("data1");
+    const [chartData, setChartData] = useState(defaultChartData);
+    const [totalRevenue, setTotalRevenue] = useState(0);
+
+    const getChartData = () => {
+        APIService.post("/statistics/annualRevenue", {
+            year: new Date().getFullYear(),
+        })
+            .then((res) => {
+                const response = res.data;
+                if (response.success) {
+                    const sum = response.data.reduce(
+                        (accumulator, currentObject) => {
+                            return accumulator + currentObject.priceSum;
+                        },
+                        0
+                    );
+                    setTotalRevenue(sum);
+
+                    setChartData((prevState) => ({
+                        ...prevState,
+                        labels: calendarLabels.slice(0, response.data.length),
+                        datasets: [
+                            {
+                                data: response.data.map((obj) => obj.priceSum),
+                            },
+                        ],
+                    }));
+                }
+            })
+            .catch((err) => console.log("error: ", err));
+    };
+
+    useEffect(() => {
+        getChartData();
+    }, []);
 
     return (
         <>
@@ -19,17 +90,13 @@ const MonthlyRevenue = () => {
                         Revenue
                     </CardTitle>
                     <CardTitle tag="h4" className="mb-0">
-                        MZN 2,000.00
+                        MZN {Number(totalRevenue).toLocaleString()}
                     </CardTitle>
                 </CardHeader>
-                <CardBody style={{overflow: 'inherit'}}>
+                <CardBody style={{ overflow: "inherit" }}>
                     {/* Chart */}
                     <div className="chart" style={{ height: "300px" }}>
-                        <Line
-                            data={chartExample1[chartExample1Data]}
-                            options={chartExample1.options}
-                            getDatasetAtEvent={(e) => console.log(e)}
-                        />
+                        <Line data={chartData} options={chartOption} />
                     </div>
                 </CardBody>
             </Card>

@@ -1,5 +1,5 @@
 import DataTable from "react-data-table-component";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 import {
     Card,
     CardHeader,
@@ -20,7 +20,7 @@ import {
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import APIService from "../../service/APIService";
 import TotalMotorsCard from "components/Common/TotalMotorsCard";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { formatedDate } from "utils/commonFunction";
 
 const Deliveryman = () => {

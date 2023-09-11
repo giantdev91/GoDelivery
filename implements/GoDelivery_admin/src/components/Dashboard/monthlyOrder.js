@@ -1,15 +1,86 @@
-import React, { useState } from "react";
-import { Row, Col, Card, CardBody, CardHeader, CardTitle } from "reactstrap";
-import { Line, Bar } from "react-chartjs-2";
-import {
-    chartOptions,
-    parseOptions,
-    chartExample1,
-    chartExample2,
-} from "variables/charts.js";
+import React, { useEffect, useState } from "react";
+import { Card, CardBody, CardHeader, CardTitle } from "reactstrap";
+import { Line } from "react-chartjs-2";
+import APIService from "../../service/APIService";
+import { calendarLabels } from "../../utils/commonFunction";
+
+const chartOption = {
+    scales: {
+        yAxes: [
+            {
+                ticks: {
+                    callback: function (value) {
+                        if (!(value % 10)) {
+                            return value;
+                        }
+                    },
+                },
+            },
+        ],
+    },
+    tooltips: {
+        callbacks: {
+            label: function (item, data) {
+                var label = data.datasets[item.datasetIndex].label || "";
+                var yLabel = item.yLabel;
+                var content = "";
+
+                if (data.datasets.length > 1) {
+                    content += label;
+                }
+
+                content += yLabel;
+                return content;
+            },
+        },
+    },
+};
+
+let defaultChartData = {
+    labels: calendarLabels,
+    datasets: [
+        {
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        },
+    ],
+};
 
 const MonthlyOrder = () => {
-    const [chartExample1Data, setChartExample1Data] = useState("data1");
+    const [chartData, setChartData] = useState(defaultChartData);
+    const [totalOrders, setTotalOrders] = useState(0);
+
+    const getChartData = () => {
+        APIService.post("/statistics/annualOrders", {
+            year: new Date().getFullYear(),
+        })
+            .then((res) => {
+                const response = res.data;
+                if (response.success) {
+                    const sum = response.data.reduce(
+                        (accumulator, currentObject) => {
+                            return accumulator + currentObject.orderSum;
+                        },
+                        0
+                    );
+                    setTotalOrders(sum);
+
+                    setChartData((prevState) => ({
+                        ...prevState,
+                        labels: calendarLabels.slice(0, response.data.length),
+                        datasets: [
+                            {
+                                data: response.data.map((obj) => obj.orderSum),
+                            },
+                        ],
+                    }));
+                }
+            })
+            .catch((err) => console.log("error: ", err));
+    };
+
+    useEffect(() => {
+        getChartData();
+    }, []);
 
     return (
         <>
@@ -25,11 +96,7 @@ const MonthlyOrder = () => {
                 <CardBody style={{ overflow: "inherit" }}>
                     {/* Chart */}
                     <div className="chart" style={{ height: "300px" }}>
-                        <Line
-                            data={chartExample1[chartExample1Data]}
-                            options={chartExample1.options}
-                            getDatasetAtEvent={(e) => console.log(e)}
-                        />
+                        <Line data={chartData} options={chartOption} />
                     </div>
                 </CardBody>
             </Card>

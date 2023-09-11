@@ -14,7 +14,16 @@
     color: #e7ec51;
 }
 
-.status-badge.warning {
+.status-badge.danger {
     background-color: #fce4e4;
     color: #ff0000;
+}
+
+.recent-orders-row {
+    .status-row {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 10px;
+    }
 }

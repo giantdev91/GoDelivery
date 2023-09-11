@@ -1,5 +1,5 @@
+import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
-import { useEffect, useState } from "react";
 import {
     Card,
     CardHeader,
@@ -17,10 +17,9 @@ import {
     FormGroup,
 } from "reactstrap";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import { NotificationManager } from "react-notifications";
 import APIService from "../../service/APIService";
 import TotalMotorsCard from "components/Common/TotalMotorsCard";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const Motorcycle = () => {
     const [searchKey, setSearchKey] = useState("");

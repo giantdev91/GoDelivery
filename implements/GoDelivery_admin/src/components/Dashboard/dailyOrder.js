@@ -1,15 +1,81 @@
-import React, { useState } from "react";
-import { Row, Col, Card, CardBody, CardHeader, CardTitle } from "reactstrap";
-import { Line, Bar } from "react-chartjs-2";
-import {
-    chartOptions,
-    parseOptions,
-    chartExample1,
-    chartExample2,
-} from "variables/charts.js";
+import React, { useEffect, useState } from "react";
+import { Card, CardBody, CardHeader, CardTitle } from "reactstrap";
+import { Line } from "react-chartjs-2";
+import APIService from "../../service/APIService";
+
+const chartOption = {
+    scales: {
+        yAxes: [
+            {
+                ticks: {
+                    callback: function (value) {
+                        if (!(value % 10)) {
+                            return value;
+                        }
+                    },
+                },
+            },
+        ],
+    },
+    tooltips: {
+        callbacks: {
+            label: function (item, data) {
+                var label = data.datasets[item.datasetIndex].label || "";
+                var yLabel = item.yLabel;
+                var content = "";
+
+                if (data.datasets.length > 1) {
+                    content += label;
+                }
+
+                content += yLabel;
+                return content;
+            },
+        },
+    },
+};
+
+let defaultChartData = {
+    labels: [],
+    datasets: [
+        {
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        },
+    ],
+};
 
 const DailyOrder = () => {
-    const [chartExample1Data, setChartExample1Data] = useState("data1");
+    const [chartData, setChartData] = useState(defaultChartData);
+
+    const getChartData = () => {
+        APIService.post("/statistics/dailyOrders")
+            .then((res) => {
+                const response = res.data;
+                if (response.success) {
+                    setChartData((prevState) => ({
+                        ...prevState,
+                        labels: response.data.map(
+                            (obj) =>
+                                `${obj.order_date.split("-")[1]}-${
+                                    obj.order_date.split("-")[2]
+                                }`
+                        ),
+                        datasets: [
+                            {
+                                data: response.data.map(
+                                    (obj) => obj.order_count
+                                ),
+                            },
+                        ],
+                    }));
+                }
+            })
+            .catch((err) => console.log("error: ", err));
+    };
+
+    useEffect(() => {
+        getChartData();
+    }, []);
 
     return (
         <>
@@ -25,11 +91,7 @@ const DailyOrder = () => {
                 <CardBody style={{ overflow: "inherit" }}>
                     {/* Chart */}
                     <div className="chart" style={{ height: "300px" }}>
-                        <Line
-                            data={chartExample1[chartExample1Data]}
-                            options={chartExample1.options}
-                            getDatasetAtEvent={(e) => console.log(e)}
-                        />
+                        <Line data={chartData} options={chartOption} />
                     </div>
                 </CardBody>
             </Card>

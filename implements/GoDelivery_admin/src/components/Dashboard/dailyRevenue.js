@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Row,
     Col,
@@ -7,17 +7,63 @@ import {
     CardHeader,
     CardTitle,
     Table,
+    Badge,
 } from "reactstrap";
-import { Line, Bar } from "react-chartjs-2";
-import {
-    chartOptions,
-    parseOptions,
-    chartExample1,
-    chartExample2,
-} from "variables/charts.js";
-
+import APIService from "../../service/APIService";
+import { strFormatedDate, formatedDate } from "../../utils/commonFunction";
 const DailyRevenue = () => {
-    const [chartExample1Data, setChartExample1Data] = useState("data1");
+    const [data, setData] = useState([]);
+    const [total, setTotal] = useState(0);
+
+    const getStatusBadge = (status) => {
+        switch (status) {
+            case 0:
+                return <Badge color="warning">Pending</Badge>;
+                break;
+            case 1:
+                return <Badge color="info">Processing</Badge>;
+                break;
+            case 2:
+                return <Badge color="info">Processing</Badge>;
+                break;
+            case 3:
+                return <Badge color="success">Completed</Badge>;
+                break;
+            case 4:
+                return <Badge color="danger">Cancelled</Badge>;
+                break;
+        }
+    };
+
+    const fetchData = () => {
+        APIService.post("/statistics/dailyRevenue", {
+            date: formatedDate(new Date()),
+        })
+            .then((res) => {
+                const response = res.data;
+                if (response.success) {
+                    setData(response.data);
+                    const sum = response.data.reduce(
+                        (accumulator, currentObject) => {
+                            return (
+                                accumulator +
+                                (currentObject.status == 3
+                                    ? currentObject.price
+                                    : 0)
+                            );
+                        },
+                        0
+                    );
+                    console.log("sum ========> ", sum);
+                    setTotal(sum);
+                }
+            })
+            .catch((err) => console.log("error: ", err));
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     return (
         <>
@@ -29,7 +75,7 @@ const DailyRevenue = () => {
                                 Daily Revenue
                             </CardTitle>
                             <CardTitle tag="h4" className="mb-0">
-                                &nbsp;
+                                {strFormatedDate(new Date())}
                             </CardTitle>
                         </Col>
                         <Col>
@@ -37,7 +83,7 @@ const DailyRevenue = () => {
                                 tag="h1"
                                 className="mb-0 my-auto text-right"
                             >
-                                MZN 1,000
+                                MZN {Number(total).toLocaleString()}
                             </CardTitle>
                         </Col>
                     </Row>
@@ -49,130 +95,31 @@ const DailyRevenue = () => {
                     >
                         <thead className="thead-light">
                             <tr>
-                                <th scope="col">Page name</th>
-                                <th scope="col">Visitors</th>
-                                <th scope="col">Unique users</th>
-                                <th scope="col">Bounce rate</th>
+                                <th scope="col">Delivery man</th>
+                                <th scope="col">Bike Plate</th>
+                                <th scope="col">Order Completed</th>
+                                <th scope="col">Order Cancelled</th>
+                                <th scope="col">Revenue</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row">/argon/</th>
-                                <td>4,569</td>
-                                <td>340</td>
-                                <td>
-                                    <i className="fas fa-arrow-up text-success mr-3" />{" "}
-                                    46,53%
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">/argon/index.html</th>
-                                <td>3,985</td>
-                                <td>319</td>
-                                <td>
-                                    <i className="fas fa-arrow-down text-warning mr-3" />{" "}
-                                    46,53%
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">/argon/charts.html</th>
-                                <td>3,513</td>
-                                <td>294</td>
-                                <td>
-                                    <i className="fas fa-arrow-down text-warning mr-3" />{" "}
-                                    36,49%
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">/argon/tables.html</th>
-                                <td>2,050</td>
-                                <td>147</td>
-                                <td>
-                                    <i className="fas fa-arrow-up text-success mr-3" />{" "}
-                                    50,87%
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">/argon/profile.html</th>
-                                <td>1,795</td>
-                                <td>190</td>
-                                <td>
-                                    <i className="fas fa-arrow-down text-danger mr-3" />{" "}
-                                    46,53%
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">/argon/profile.html</th>
-                                <td>1,795</td>
-                                <td>190</td>
-                                <td>
-                                    <i className="fas fa-arrow-down text-danger mr-3" />{" "}
-                                    46,53%
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">/argon/profile.html</th>
-                                <td>1,795</td>
-                                <td>190</td>
-                                <td>
-                                    <i className="fas fa-arrow-down text-danger mr-3" />{" "}
-                                    46,53%
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">/argon/profile.html</th>
-                                <td>1,795</td>
-                                <td>190</td>
-                                <td>
-                                    <i className="fas fa-arrow-down text-danger mr-3" />{" "}
-                                    46,53%
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">/argon/profile.html</th>
-                                <td>1,795</td>
-                                <td>190</td>
-                                <td>
-                                    <i className="fas fa-arrow-down text-danger mr-3" />{" "}
-                                    46,53%
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">/argon/profile.html</th>
-                                <td>1,795</td>
-                                <td>190</td>
-                                <td>
-                                    <i className="fas fa-arrow-down text-danger mr-3" />{" "}
-                                    46,53%
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">/argon/profile.html</th>
-                                <td>1,795</td>
-                                <td>190</td>
-                                <td>
-                                    <i className="fas fa-arrow-down text-danger mr-3" />{" "}
-                                    46,53%
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">/argon/profile.html</th>
-                                <td>1,795</td>
-                                <td>190</td>
-                                <td>
-                                    <i className="fas fa-arrow-down text-danger mr-3" />{" "}
-                                    46,53%
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">/argon/profile.html</th>
-                                <td>1,795</td>
-                                <td>190</td>
-                                <td>
-                                    <i className="fas fa-arrow-down text-danger mr-3" />{" "}
-                                    46,53%
-                                </td>
-                            </tr>
+                            {data.map((item, index) => (
+                                <tr key={index}>
+                                    <th scope="row">
+                                        {item.delivery_man?.name}
+                                    </th>
+                                    <td>{item.delivery_man?.motor?.plate}</td>
+                                    <td>
+                                        {item.status == 3 &&
+                                            getStatusBadge(item.status)}
+                                    </td>
+                                    <td>
+                                        {item.status == 4 &&
+                                            getStatusBadge(item.status)}
+                                    </td>
+                                    <td>{`MZN ${item.price}`}</td>
+                                </tr>
+                            ))}
                         </tbody>
                     </Table>
                 </CardBody>
