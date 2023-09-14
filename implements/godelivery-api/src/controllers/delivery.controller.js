@@ -11,7 +11,10 @@ const Motor = require("../models/motor");
 exports.signup = async (req, res) => {
     try {
         const { id, name, phone, password } = req.body;
-        const hashedPassword = hashPassword(password.trim());
+        let hashedPassword = "";
+        if (password) {
+            hashedPassword = hashPassword(password.trim());
+        }
 
         if (!id) {
             await Delivery_man.create({
@@ -519,6 +522,44 @@ exports.motorassign = async (req, res) => {
         });
     } catch (error) {
         console.log("error: ", error);
+        res.status(200).send({
+            success: false,
+            code: 500,
+            message: "Internal server error",
+        });
+    }
+};
+
+exports.updateUserStatus = async (req, res) => {
+    try {
+        const { deliverymanId, userStatus } = req.body;
+        const deliveryman = await Delivery_man.findOne({
+            where: {
+                id: deliverymanId,
+            },
+        });
+
+        if (deliveryman) {
+            // If the client is found, update it from the database
+            await Delivery_man.update(
+                { userStatus: userStatus },
+                {
+                    where: { id: deliverymanId },
+                }
+            );
+            res.status(200).send({
+                success: true,
+                code: 200,
+                message: "Update success",
+            });
+        } else {
+            res.status(200).send({
+                success: false,
+                code: 200,
+                message: "Deliveryman not found",
+            });
+        }
+    } catch (error) {
         res.status(200).send({
             success: false,
             code: 500,

@@ -21,6 +21,8 @@ const RecentOrderCard = ({ deliverymanId }) => {
                     setRecentOrders(res.data.data);
                 })
                 .catch((err) => console.log("error: ", err));
+        } else {
+            setRecentOrders([]);
         }
     };
 

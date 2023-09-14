@@ -33,7 +33,6 @@ const dateTimeFormat = (date) => {
     // Create the formatted string
     const formattedString = `${year}-${month}-${day} ${hours}:${minutes}`;
 
-    console.log(formattedString);
     return formattedString;
 };
 

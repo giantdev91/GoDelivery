@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Badge } from "reactstrap";
 import HeaderCard from "components/Headers/HeaderCard";
+import { Link } from "react-router-dom";
 
 const DeliverymanDetailHeader = ({ deliverymanDetail }) => {
     const [totalOrders, setTotalOrders] = useState("");
@@ -33,12 +34,22 @@ const DeliverymanDetailHeader = ({ deliverymanDetail }) => {
             <Row className="mt-3">
                 <Col className="col-md-8">
                     <h1 className="text-uppercase text-dark mt-4">
-                        {deliverymanDetail.name}
-                        <Badge className="ml-5" color="success">
-                            Active
-                        </Badge>
-                        {/* <Badge className="ml-5" color="warning">Inactive</Badge>
-                        <Badge className="ml-5" color="default">Suspended</Badge> */}
+                        {deliverymanDetail.name} / {deliverymanDetail.phone}
+                        {deliverymanDetail.userStatus == 0 && (
+                            <Badge className="ml-5" color="success">
+                                Active
+                            </Badge>
+                        )}
+                        {deliverymanDetail.userStatus == 1 && (
+                            <Badge className="ml-5" color="warning">
+                                Inactive
+                            </Badge>
+                        )}
+                        {deliverymanDetail.userStatus == 2 && (
+                            <Badge className="ml-5" color="default">
+                                Suspended
+                            </Badge>
+                        )}
                     </h1>
                     <div
                         style={{
@@ -48,7 +59,7 @@ const DeliverymanDetailHeader = ({ deliverymanDetail }) => {
                             gap: "0.5em",
                         }}
                     >
-                        <a href="/admin/deliveryman">Delivery man</a>
+                        <Link to="/admin/deliveryman">Delivery man</Link>
                         <span style={{ color: "#5e72e4", fontSize: "1.5em" }}>
                             {" "}
                             {" > "}{" "}

@@ -42,7 +42,7 @@ const DailyRevenue = ({ deliverymanId }) => {
 
     const fetchData = () => {
         APIService.post("/statistics/dailyRevenue", {
-            date: formatedDate(new Date("2023-09-11")),
+            date: formatedDate(new Date()),
             deliverymanId: deliverymanId,
         })
             .then((res) => {

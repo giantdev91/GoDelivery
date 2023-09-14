@@ -60,6 +60,9 @@ const MonthlyRevenue = ({ deliverymanId }) => {
                 .then((res) => {
                     const response = res.data;
                     if (response.success) {
+                        const defaultPriceValue = [
+                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        ];
                         const sum = response.data.reduce(
                             (accumulator, currentObject) => {
                                 return accumulator + currentObject.priceSum;

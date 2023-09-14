@@ -30,7 +30,11 @@ router.route("/unassigned").get(asyncHandler(deliveryController.unassigned));
 router.route("/motorassign").post(asyncHandler(deliveryController.motorassign));
 router.route("/:id").get(asyncHandler(deliveryController.getDeliveryManById));
 router
-.route("/updateProfile")
-.post(asyncHandler(deliveryController.updateProfile));
+    .route("/updateProfile")
+    .post(asyncHandler(deliveryController.updateProfile));
+
+router
+    .route("/updateUserStatus")
+    .post(asyncHandler(deliveryController.updateUserStatus));
 
 module.exports = router;
