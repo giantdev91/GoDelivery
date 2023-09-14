@@ -10,8 +10,13 @@ import {
     Badge,
 } from "reactstrap";
 import APIService from "../../service/APIService";
-import { strFormatedDate, formatedDate } from "../../utils/commonFunction";
-const DailyRevenue = () => {
+import {
+    strFormatedDate,
+    formatedDate,
+    formatDateAndTime,
+    dateTimeFormat,
+} from "../../utils/commonFunction";
+const DailyRevenue = ({ deliverymanId }) => {
     const [data, setData] = useState([]);
     const [total, setTotal] = useState(0);
 
@@ -37,7 +42,8 @@ const DailyRevenue = () => {
 
     const fetchData = () => {
         APIService.post("/statistics/dailyRevenue", {
-            date: formatedDate(new Date()),
+            date: formatedDate(new Date("2023-09-11")),
+            deliverymanId: deliverymanId,
         })
             .then((res) => {
                 const response = res.data;
@@ -62,7 +68,7 @@ const DailyRevenue = () => {
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [deliverymanId]);
 
     return (
         <>
@@ -94,28 +100,30 @@ const DailyRevenue = () => {
                     >
                         <thead className="thead-light">
                             <tr>
-                                <th scope="col">Delivery man</th>
-                                <th scope="col">Bike Plate</th>
-                                <th scope="col">Order Completed</th>
-                                <th scope="col">Order Cancelled</th>
+                                <th scope="col">Order no</th>
+                                <th scope="col">Pick up</th>
+                                <th scope="col">Drop Off</th>
+                                <th scope="col">Order Status</th>
                                 <th scope="col">Revenue</th>
                             </tr>
                         </thead>
                         <tbody>
                             {data.map((item, index) => (
                                 <tr key={index}>
-                                    <th scope="row">
-                                        {item.delivery_man?.name}
+                                    <th scope="row">{item.orderNo}</th>
+                                    <th>
+                                        {item.pickupTime &&
+                                            dateTimeFormat(
+                                                new Date(item.pickupTime)
+                                            )}
                                     </th>
-                                    <td>{item.delivery_man?.motor?.plate}</td>
                                     <td>
-                                        {item.status == 3 &&
-                                            getStatusBadge(item.status)}
+                                        {item.dropoffTime &&
+                                            dateTimeFormat(
+                                                new Date(item.dropoffTime)
+                                            )}
                                     </td>
-                                    <td>
-                                        {item.status == 4 &&
-                                            getStatusBadge(item.status)}
-                                    </td>
+                                    <td>{getStatusBadge(item.status)}</td>
                                     <td>{`MZN ${item.price}`}</td>
                                 </tr>
                             ))}

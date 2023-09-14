@@ -23,7 +23,6 @@ const broadcastMessage = async (title, content) => {
             fcmTokens.push(val.fcmToken);
         }
     });
-    console.log("fcmTokens ===> ", fcmTokens);
 
     const message = {
         notification: {

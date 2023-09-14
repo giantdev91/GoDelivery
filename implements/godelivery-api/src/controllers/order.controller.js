@@ -899,7 +899,14 @@ exports.totalRevenue = async (req, res) => {
 
 exports.recentList = async (req, res) => {
     try {
+        const { deliverymanId } = req.body;
+        const whereCondition = {};
+        if (deliverymanId !== undefined) {
+            whereCondition.deliverymanID = deliverymanId;
+        }
+
         const orders = await Order.findAll({
+            where: whereCondition,
             include: [
                 {
                     model: Client,

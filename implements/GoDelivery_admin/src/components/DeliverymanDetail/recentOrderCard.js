@@ -11,20 +11,22 @@ import {
 import APIService from "../../service/APIService";
 import { formatDateAndTime } from "../../utils/commonFunction";
 
-const RecentOrderCard = () => {
+const RecentOrderCard = ({ deliverymanId }) => {
     const [recentOrders, setRecentOrders] = useState([]);
 
     const fetchRecentOrders = () => {
-        APIService.post("/order/recent")
-            .then((res) => {
-                setRecentOrders(res.data.data);
-            })
-            .catch((err) => console.log("error: ", err));
+        if (deliverymanId) {
+            APIService.post("/order/recent", { deliverymanId: deliverymanId })
+                .then((res) => {
+                    setRecentOrders(res.data.data);
+                })
+                .catch((err) => console.log("error: ", err));
+        }
     };
 
     useEffect(() => {
         fetchRecentOrders();
-    }, []);
+    }, [deliverymanId]);
 
     const getStatusBadge = (status) => {
         switch (status) {

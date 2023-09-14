@@ -16,6 +16,7 @@ import {
     Label,
     FormGroup,
 } from "reactstrap";
+import { useNavigate } from "react-router-dom";
 
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import APIService from "../../service/APIService";
@@ -24,6 +25,7 @@ import { toast } from "react-toastify";
 import { formatedDate } from "utils/commonFunction";
 
 const Deliveryman = () => {
+    const navigate = useNavigate();
     const [modal, setModal] = useState(false);
     const [confirmModal, setConfirmModal] = useState(false);
     const [searchKey, setSearchKey] = useState("");
@@ -279,6 +281,11 @@ const Deliveryman = () => {
                                     pointerOnHover="true"
                                     highlightOnHover="true"
                                     fixedHeader="true"
+                                    onRowClicked={(row) => {
+                                        navigate(
+                                            `/admin/deliveryman/detail/${row.id}`
+                                        );
+                                    }}
                                 />
                             </CardBody>
                         </Card>

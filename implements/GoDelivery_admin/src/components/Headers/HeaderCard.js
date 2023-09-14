@@ -2,7 +2,7 @@ import { Card, CardBody, Row, Col } from "reactstrap";
 
 const HeaderCard = ({ title, value, icon }) => {
     return (
-        <Card>
+        <Card className="shadow">
             <CardBody className="py-2">
                 <Row className="mt-2">
                     <Col className="md-6">{icon}</Col>

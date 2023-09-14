@@ -12,7 +12,6 @@ exports.signup = async (req, res) => {
     try {
         const { id, name, phone, password } = req.body;
         const hashedPassword = hashPassword(password.trim());
-        console.log("id ", id, name, phone, password);
 
         if (!id) {
             await Delivery_man.create({
@@ -318,12 +317,6 @@ exports.deliverymanList = async (req, res) => {
                     model: Motor,
                     required: false,
                     as: "motor",
-                    // where: {
-                    //     plate: {
-                    //         [Op.like]: `%${searchKey}%`,
-                    //     },
-                    // },
-                    required: false,
                 },
             ],
             where: whereCondition,
@@ -397,6 +390,11 @@ exports.getDeliveryManById = async (req, res) => {
                 {
                     model: Order,
                     as: "orders",
+                },
+                {
+                    model: Motor,
+                    required: false,
+                    as: "motor",
                 },
             ],
         });
@@ -498,8 +496,6 @@ exports.unassigned = async (req, res) => {
 exports.motorassign = async (req, res) => {
     try {
         const { motorId, deliverymanId } = req.body;
-        console.log("motorId ===> ", motorId);
-        console.log("delivery man Id ===> ", deliverymanId);
         await Delivery_man.update(
             {
                 motorID: null,

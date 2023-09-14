@@ -211,7 +211,7 @@ const Motorcycle = () => {
                     </Col>
                 </Row>
 
-                <Card>
+                <Card className="shadow">
                     <CardHeader className="border-0">
                         <Row>
                             <div className="col-md-4">

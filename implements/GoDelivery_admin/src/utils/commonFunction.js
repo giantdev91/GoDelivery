@@ -20,6 +20,23 @@ const formatDateAndTime = (date) => {
     return date.toLocaleString("en-US", options);
 };
 
+const dateTimeFormat = (date) => {
+    // Get the date components
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed, so add 1
+    const day = String(date.getDate()).padStart(2, "0");
+
+    // Get the time components
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+
+    // Create the formatted string
+    const formattedString = `${year}-${month}-${day} ${hours}:${minutes}`;
+
+    console.log(formattedString);
+    return formattedString;
+};
+
 const calendarLabels = [
     "Jan",
     "Feb",
@@ -75,4 +92,10 @@ const getDaySuffix = (day) => {
     }
 };
 
-export { formatedDate, formatDateAndTime, calendarLabels, strFormatedDate };
+export {
+    formatedDate,
+    formatDateAndTime,
+    calendarLabels,
+    strFormatedDate,
+    dateTimeFormat,
+};

@@ -1,6 +1,7 @@
 import Dashboard from "views/dashboard";
 import Client from "views/examples/Client";
 import Deliveryman from "views/examples/Deliveryman";
+import DeliverymanDetail from "views/examples/DeliverymanDetail";
 import Order from "views/examples/Order";
 import SysSetting from "views/examples/SysSetting";
 import Motorcycle from "views/examples/Motorcycle";
@@ -8,6 +9,7 @@ import BroadcastMessage from "views/examples/BroadcastMessage";
 
 var routes = [
     {
+        showSide: true,
         path: "/index",
         name: "Dashboard",
         icon: "ni ni-tv-2 text-primary",
@@ -15,6 +17,7 @@ var routes = [
         layout: "/admin",
     },
     {
+        showSide: true,
         path: "/deliveryman",
         name: "Delivery man",
         icon: "ni ni-single-02 text-red",
@@ -22,6 +25,15 @@ var routes = [
         layout: "/admin",
     },
     {
+        showSide: false,
+        path: "/deliveryman/detail/:id",
+        name: "Delivery man",
+        icon: "ni ni-single-02 text-red",
+        component: <DeliverymanDetail />,
+        layout: "/admin",
+    },
+    {
+        showSide: true,
         path: "/client",
         name: "Clients",
         icon: "ni ni-single-02 text-red",
@@ -36,6 +48,7 @@ var routes = [
         layout: "/admin",
     },
     {
+        showSide: true,
         path: "/liveTracking",
         name: "Live Tracking",
         icon: "ni ni-square-pin text-danger",
@@ -43,6 +56,7 @@ var routes = [
         layout: "/admin",
     },
     {
+        showSide: true,
         path: "/motorcycle",
         name: "Motorcycle",
         icon: "ni ni-delivery-fast text-danger",
@@ -50,6 +64,7 @@ var routes = [
         layout: "/admin",
     },
     {
+        showSide: true,
         path: "/broadcastMessage",
         name: "Broadcast Message",
         icon: "ni ni-email-83 text-dark",
@@ -57,6 +72,7 @@ var routes = [
         layout: "/admin",
     },
     {
+        showSide: true,
         path: "/setting",
         name: "Setting",
         icon: "ni ni-settings text-light",

@@ -44,38 +44,42 @@ let defaultChartData = {
     ],
 };
 
-const DailyOrder = () => {
+const DailyOrder = ({ deliverymanId }) => {
     const [chartData, setChartData] = useState(defaultChartData);
 
     const getChartData = () => {
-        APIService.post("/statistics/dailyOrders")
-            .then((res) => {
-                const response = res.data;
-                if (response.success) {
-                    setChartData((prevState) => ({
-                        ...prevState,
-                        labels: response.data.map(
-                            (obj) =>
-                                `${obj.order_date.split("-")[1]}-${
-                                    obj.order_date.split("-")[2]
-                                }`
-                        ),
-                        datasets: [
-                            {
-                                data: response.data.map(
-                                    (obj) => obj.order_count
-                                ),
-                            },
-                        ],
-                    }));
-                }
+        if (deliverymanId) {
+            APIService.post("/statistics/dailyOrders", {
+                deliverymanId: deliverymanId,
             })
-            .catch((err) => console.log("error: ", err));
+                .then((res) => {
+                    const response = res.data;
+                    if (response.success) {
+                        setChartData((prevState) => ({
+                            ...prevState,
+                            labels: response.data.map(
+                                (obj) =>
+                                    `${obj.order_date.split("-")[1]}-${
+                                        obj.order_date.split("-")[2]
+                                    }`
+                            ),
+                            datasets: [
+                                {
+                                    data: response.data.map(
+                                        (obj) => obj.order_count
+                                    ),
+                                },
+                            ],
+                        }));
+                    }
+                })
+                .catch((err) => console.log("error: ", err));
+        }
     };
 
     useEffect(() => {
         getChartData();
-    }, []);
+    }, [deliverymanId]);
 
     return (
         <>

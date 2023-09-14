@@ -47,48 +47,51 @@ let defaultChartData = {
     ],
 };
 
-const MonthlyRevenue = () => {
+const MonthlyRevenue = ({ deliverymanId }) => {
     const [chartData, setChartData] = useState(defaultChartData);
     const [totalRevenue, setTotalRevenue] = useState(0);
 
     const getChartData = () => {
-        APIService.post("/statistics/annualRevenue", {
-            year: new Date().getFullYear(),
-        })
-            .then((res) => {
-                const response = res.data;
-                if (response.success) {
-                    const sum = response.data.reduce(
-                        (accumulator, currentObject) => {
-                            return accumulator + currentObject.priceSum;
-                        },
-                        0
-                    );
-                    setTotalRevenue(sum);
-                    const month = new Date().getMonth() + 1;
-                    const labels = calendarLabels.slice(0, month);
-                    let priceValue = defaultPriceValue.slice(0, month);
-                    response.data.filter((obj) => {
-                        priceValue[obj.month - 1] = obj.priceSum;
-                    });
-
-                    setChartData((prevState) => ({
-                        ...prevState,
-                        labels: labels,
-                        datasets: [
-                            {
-                                data: priceValue,
-                            },
-                        ],
-                    }));
-                }
+        if (deliverymanId) {
+            APIService.post("/statistics/annualRevenue", {
+                year: new Date().getFullYear(),
+                deliverymanId: deliverymanId,
             })
-            .catch((err) => console.log("error: ", err));
+                .then((res) => {
+                    const response = res.data;
+                    if (response.success) {
+                        const sum = response.data.reduce(
+                            (accumulator, currentObject) => {
+                                return accumulator + currentObject.priceSum;
+                            },
+                            0
+                        );
+                        setTotalRevenue(sum);
+                        const month = new Date().getMonth() + 1;
+                        const labels = calendarLabels.slice(0, month);
+                        let priceValue = defaultPriceValue.slice(0, month);
+                        response.data.filter((obj) => {
+                            priceValue[obj.month - 1] = obj.priceSum;
+                        });
+
+                        setChartData((prevState) => ({
+                            ...prevState,
+                            labels: labels,
+                            datasets: [
+                                {
+                                    data: priceValue,
+                                },
+                            ],
+                        }));
+                    }
+                })
+                .catch((err) => console.log("error: ", err));
+        }
     };
 
     useEffect(() => {
         getChartData();
-    }, []);
+    }, [deliverymanId]);
 
     return (
         <>

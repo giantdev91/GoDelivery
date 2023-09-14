@@ -6,7 +6,7 @@ class Header extends React.Component {
         return (
             <>
                 <div className="card-deck">
-                    <Card>
+                    <Card className="shadow">
                         <CardImg
                             alt="..."
                             src={
@@ -29,7 +29,7 @@ class Header extends React.Component {
                             </CardText>
                         </CardBody>
                     </Card>
-                    <Card>
+                    <Card className="shadow">
                         <CardImg
                             alt="..."
                             src={

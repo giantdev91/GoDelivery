@@ -19,21 +19,27 @@ async function createLog(level, logType, logContent) {
 
 exports.annualRevenue = async (req, res) => {
     try {
-        const { year } = req.body;
+        const { year, deliverymanId } = req.body;
+        let whereCondition = {
+            status: 3,
+            createdAt: {
+                [Op.between]: [
+                    new Date(`${year}-01-01`), // Start date for 2023
+                    new Date(`${year}-12-31`), // End date for 2023
+                ],
+            },
+        };
+
+        if (deliverymanId) {
+            whereCondition.deliverymanID = deliverymanId;
+        }
 
         const results = await Order.findAll({
             attributes: [
                 [Sequelize.fn("SUM", Sequelize.col("price")), "priceSum"],
+                [Sequelize.fn("MONTH", Sequelize.col("createdAt")), "month"],
             ],
-            where: {
-                status: 3,
-                createdAt: {
-                    [Op.between]: [
-                        new Date(`${year}-01-01`), // Start date for 2023
-                        new Date(`${year}-12-31`), // End date for 2023
-                    ],
-                },
-            },
+            where: whereCondition,
             group: [Sequelize.fn("MONTH", Sequelize.col("createdAt"))],
         });
 
@@ -54,20 +60,27 @@ exports.annualRevenue = async (req, res) => {
 
 exports.annualOrders = async (req, res) => {
     try {
-        const { year } = req.body;
+        const { year, deliverymanId } = req.body;
+
+        let whereCondition = {
+            createdAt: {
+                [Op.between]: [
+                    new Date(`${year}-01-01`), // Start date for 2023
+                    new Date(`${year}-12-31`), // End date for 2023
+                ],
+            },
+        };
+
+        if (deliverymanId) {
+            whereCondition.deliverymanID = deliverymanId;
+        }
 
         const results = await Order.findAll({
             attributes: [
                 [Sequelize.fn("COUNT", Sequelize.col("*")), "orderSum"],
+                [Sequelize.fn("MONTH", Sequelize.col("createdAt")), "month"],
             ],
-            where: {
-                createdAt: {
-                    [Op.between]: [
-                        new Date(`${year}-01-01`), // Start date for 2023
-                        new Date(`${year}-12-31`), // End date for 2023
-                    ],
-                },
-            },
+            where: whereCondition,
             group: [Sequelize.fn("MONTH", Sequelize.col("createdAt"))],
         });
 
@@ -88,6 +101,12 @@ exports.annualOrders = async (req, res) => {
 
 exports.dailyOrders = async (req, res) => {
     try {
+        const { deliverymanId } = req.body;
+        let deliverymanWhereQuery = "";
+        if (deliverymanId) {
+            deliverymanWhereQuery = ` AND o.deliverymanID = ${deliverymanId} `;
+        }
+
         const sqlQuery = `WITH DateList AS (
             SELECT
             CURDATE() - INTERVAL (n - 1) DAY AS date
@@ -112,7 +131,7 @@ exports.dailyOrders = async (req, res) => {
         LEFT JOIN
             orders o
         ON
-            DATE(dl.date) = DATE(o.createdAt)
+            DATE(dl.date) = DATE(o.createdAt) ${deliverymanWhereQuery}
         GROUP BY
             dl.date
         ORDER BY
@@ -139,17 +158,22 @@ exports.dailyOrders = async (req, res) => {
     }
 };
 
-const getOrdersForToday = async (date) => {
+const getOrdersForToday = async (date, deliverymanId) => {
     try {
         const today = new Date(date);
         today.setHours(0, 0, 0, 0); // Set the time to the beginning of the day
+        let whereCondition = {
+            createdAt: {
+                [Op.gte]: today, // Greater than or equal to the beginning of today
+                [Op.lt]: new Date(today.getTime() + 24 * 60 * 60 * 1000), // Less than the beginning of the next day
+            },
+        };
 
-        const orders = await Order.findAll({
-            where: {
-                createdAt: {
-                    [Op.gte]: today, // Greater than or equal to the beginning of today
-                    [Op.lt]: new Date(today.getTime() + 24 * 60 * 60 * 1000), // Less than the beginning of the next day
-                },
+        if (deliverymanId) {
+            whereCondition.deliverymanID = deliverymanId;
+        } else {
+            whereCondition = {
+                ...whereCondition,
                 [Op.or]: [
                     {
                         status: 3,
@@ -158,7 +182,11 @@ const getOrdersForToday = async (date) => {
                         status: 4,
                     },
                 ],
-            },
+            };
+        }
+
+        const orders = await Order.findAll({
+            where: whereCondition,
             include: [
                 {
                     model: Delivery_man,
@@ -189,8 +217,8 @@ const getOrdersForToday = async (date) => {
 
 exports.dailyRevenue = async (req, res) => {
     try {
-        const { date } = req.body;
-        const results = await getOrdersForToday(date);
+        const { date, deliverymanId } = req.body;
+        const results = await getOrdersForToday(date, deliverymanId);
         res.status(200).send({
             success: true,
             code: 200,

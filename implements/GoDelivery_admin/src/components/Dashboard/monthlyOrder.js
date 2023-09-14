@@ -4,6 +4,8 @@ import { Line } from "react-chartjs-2";
 import APIService from "../../service/APIService";
 import { calendarLabels } from "../../utils/commonFunction";
 
+const defaultValue = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
 const chartOption = {
     scales: {
         yAxes: [
@@ -40,7 +42,7 @@ let defaultChartData = {
     labels: calendarLabels,
     datasets: [
         {
-            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            data: defaultValue,
         },
     ],
 };
@@ -63,13 +65,18 @@ const MonthlyOrder = () => {
                         0
                     );
                     setTotalOrders(sum);
-
+                    const month = new Date().getMonth() + 1;
+                    const labels = calendarLabels.slice(0, month);
+                    let orderCounts = defaultValue.slice(0, month);
+                    response.data.filter((obj) => {
+                        orderCounts[obj.month - 1] = obj.orderSum;
+                    });
                     setChartData((prevState) => ({
                         ...prevState,
-                        labels: calendarLabels.slice(0, response.data.length),
+                        labels: labels,
                         datasets: [
                             {
-                                data: response.data.map((obj) => obj.orderSum),
+                                data: orderCounts,
                             },
                         ],
                     }));
@@ -84,7 +91,7 @@ const MonthlyOrder = () => {
 
     return (
         <>
-            <Card className="status-row-card">
+            <Card className="status-row-card shadow">
                 <CardHeader className="border-bottom-0">
                     <CardTitle tag="h2" className="text-danger mb-0">
                         Orders per month
