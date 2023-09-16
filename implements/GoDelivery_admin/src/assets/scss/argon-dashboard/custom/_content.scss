@@ -35,13 +35,36 @@
             @include media-breakpoint-up(#{$breakpoint}) {
 
                 // Left
-                &.fixed-left + .main-content {
+                &.fixed-left+.main-content {
                     margin-left: $navbar-vertical-width;
-                } // Right
-                &.fixed-right + .main-content {
+                }
+
+                // Right
+                &.fixed-right+.main-content {
                     margin-right: $navbar-vertical-width;
                 }
             }
         }
+    }
+}
+
+.order-detail {
+    .location-block {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 1em;
+
+        .avatar-area {
+            img {
+                width: 7em;
+                border-radius: 7em;
+            }
+        }
+    }
+
+    strong {
+        font-weight: 600;
     }
 }

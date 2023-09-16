@@ -14,6 +14,7 @@ import Tab from "@mui/material/Tab";
 import TotalOrdersCard from "components/Common/TotalOrdersCard";
 import { formatedDate } from "utils/commonFunction";
 import DataTable from "react-data-table-component";
+import { useNavigate } from "react-router-dom";
 
 function a11yProps(index) {
     return {
@@ -39,6 +40,7 @@ function CustomTabPanel(props) {
 }
 
 const Order = () => {
+    const navigate = useNavigate();
     const [orderData, setOrderData] = useState(undefined);
     const [tabIndex, setTabIndex] = useState(0);
     const [row, setRow] = useState(undefined);
@@ -322,6 +324,11 @@ const Order = () => {
                                         pointerOnHover="true"
                                         highlightOnHover="true"
                                         fixedHeader="true"
+                                        onRowClicked={(row) => {
+                                            navigate(
+                                                `/admin/order/detail/${row.id}`
+                                            );
+                                        }}
                                     />
                                 </CardBody>
                             </Card>
@@ -350,6 +357,11 @@ const Order = () => {
                                         pointerOnHover="true"
                                         highlightOnHover="true"
                                         fixedHeader="true"
+                                        onRowClicked={(row) => {
+                                            navigate(
+                                                `/admin/order/detail/${row.id}`
+                                            );
+                                        }}
                                     />
                                 </CardBody>
                             </Card>
@@ -378,6 +390,11 @@ const Order = () => {
                                         pointerOnHover="true"
                                         highlightOnHover="true"
                                         fixedHeader="true"
+                                        onRowClicked={(row) => {
+                                            navigate(
+                                                `/admin/order/detail/${row.id}`
+                                            );
+                                        }}
                                     />
                                 </CardBody>
                             </Card>
@@ -406,6 +423,11 @@ const Order = () => {
                                         pointerOnHover="true"
                                         highlightOnHover="true"
                                         fixedHeader="true"
+                                        onRowClicked={(row) => {
+                                            navigate(
+                                                `/admin/order/detail/${row.id}`
+                                            );
+                                        }}
                                     />
                                 </CardBody>
                             </Card>

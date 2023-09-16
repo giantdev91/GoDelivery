@@ -1,6 +1,7 @@
 const Order = require("../models/order");
 const Notification = require("../models/notification");
 const Delivery_man = require("../models/delivery_man");
+const Motor = require("../models/motor");
 const { Sequelize, sequelize } = require("../database/connection");
 const { Op } = require("sequelize");
 const Client = require("../models/client");
@@ -785,6 +786,17 @@ exports.getByID = async (req, res) => {
                     model: Client,
                     as: "client",
                 },
+                {
+                    model: Delivery_man,
+                    as: "delivery_man",
+                    include: [
+                        {
+                            model: Motor,
+                            required: false,
+                            as: "motor",
+                        },
+                    ],
+                },
             ],
         });
         res.status(200).send({
@@ -794,6 +806,7 @@ exports.getByID = async (req, res) => {
             data: orders,
         });
     } catch (error) {
+        console.log("error: ", error);
         res.status(200).send({
             success: false,
             code: 500,

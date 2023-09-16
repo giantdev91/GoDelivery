@@ -3,6 +3,7 @@ import Client from "views/examples/Client";
 import Deliveryman from "views/examples/Deliveryman";
 import DeliverymanDetail from "views/examples/DeliverymanDetail";
 import Order from "views/examples/Order";
+import OrderDetail from "views/examples/OrderDetail";
 import SysSetting from "views/examples/SysSetting";
 import Motorcycle from "views/examples/Motorcycle";
 import BroadcastMessage from "views/examples/BroadcastMessage";
@@ -41,10 +42,19 @@ var routes = [
         layout: "/admin",
     },
     {
+        showSide: true,
         path: "/order",
         name: "Order",
         icon: "ni ni-box-2 text-primary",
         component: <Order />,
+        layout: "/admin",
+    },
+    {
+        showSide: false,
+        path: "/order/detail/:id",
+        name: "Order",
+        icon: "ni ni-box-2 text-primary",
+        component: <OrderDetail />,
         layout: "/admin",
     },
     {
