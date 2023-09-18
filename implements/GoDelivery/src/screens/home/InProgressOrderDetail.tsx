@@ -219,7 +219,7 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
                 {orderStatus == 1 && (<MapViewDirections
                     origin={deliverymanPosition}
                     destination={senderLocation}
-                    apikey={"AIzaSyCNl5jl7Zk09SMHDPHQI4j-6mfu3Jg0bdg"} // insert your API Key here
+                    apikey={"AIzaSyDByOV0xhuQWU9YrS4MFSU1JHncduLfyW8"} // insert your API Key here
                     strokeWidth={4}
                     strokeColor={GoDeliveryColors.primary}
                     onReady={result => {
@@ -229,7 +229,7 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
                 {orderStatus == 2 && (<MapViewDirections
                     origin={deliverymanPosition}
                     destination={receiverLocation}
-                    apikey={"AIzaSyCNl5jl7Zk09SMHDPHQI4j-6mfu3Jg0bdg"} // insert your API Key here
+                    apikey={"AIzaSyDByOV0xhuQWU9YrS4MFSU1JHncduLfyW8"} // insert your API Key here
                     strokeWidth={4}
                     strokeColor={GoDeliveryColors.primary}
                     onReady={result => {

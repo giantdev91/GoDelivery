@@ -252,7 +252,7 @@ const LocationSet = ({ navigation }: { navigation: any }) => {
               <MapViewDirections
                 origin={markers[0]}
                 destination={markers[1]}
-                apikey={'AIzaSyCNl5jl7Zk09SMHDPHQI4j-6mfu3Jg0bdg'} // insert your API Key here
+                apikey={'AIzaSyDByOV0xhuQWU9YrS4MFSU1JHncduLfyW8'} // insert your API Key here
                 strokeWidth={4}
                 strokeColor={GoDeliveryColors.primary}
                 onReady={result => {
@@ -296,7 +296,7 @@ const LocationSet = ({ navigation }: { navigation: any }) => {
                   },
                 }}
                 query={{
-                  key: 'AIzaSyCNl5jl7Zk09SMHDPHQI4j-6mfu3Jg0bdg',
+                  key: 'AIzaSyDByOV0xhuQWU9YrS4MFSU1JHncduLfyW8',
                   language: 'en',
                   components: 'country:mz'
                 }}
@@ -332,7 +332,7 @@ const LocationSet = ({ navigation }: { navigation: any }) => {
                   },
                 }}
                 query={{
-                  key: 'AIzaSyCNl5jl7Zk09SMHDPHQI4j-6mfu3Jg0bdg',
+                  key: 'AIzaSyDByOV0xhuQWU9YrS4MFSU1JHncduLfyW8',
                   language: 'en',
                   components: 'country:mz'
                 }}
