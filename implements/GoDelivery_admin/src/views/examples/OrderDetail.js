@@ -25,83 +25,145 @@ import DeliverymanDetailMonthlyStatus from "components/DeliverymanDetail/Deliver
 import DeliverymanDetailDailyStatus from "components/DeliverymanDetail/DeliverymanDetailDailyStatus";
 import { useNavigate } from "react-router-dom";
 
-const MapWrapper = () => {
+const MapWrapper = ({ orderDetail }) => {
     const mapRef = React.useRef(null);
     React.useEffect(() => {
         let google = window.google;
         let map = mapRef.current;
-        let lat = "40.748817";
-        let lng = "-73.985428";
-        const myLatlng = new google.maps.LatLng(lat, lng);
+        var myLatlng;
+        if (orderDetail.status != 0) {
+            let lat = orderDetail.delivery_man.locationLatitude;
+            let lng = orderDetail.delivery_man.locationLongitude;
+            myLatlng = new google.maps.LatLng(lat, lng);
+        }
+
+        const fromLatlng = new google.maps.LatLng(
+            orderDetail.fromX,
+            orderDetail.fromY
+        );
+        const toLatlng = new google.maps.LatLng(
+            orderDetail.toX,
+            orderDetail.toY
+        );
         const mapOptions = {
-            zoom: 12,
-            center: myLatlng,
+            zoom: 15,
+            center: orderDetail.status == 0 ? fromLatlng : myLatlng,
             scrollwheel: false,
             zoomControl: true,
-            styles: [
-                {
-                    featureType: "administrative",
-                    elementType: "labels.text.fill",
-                    stylers: [{ color: "#444444" }],
-                },
-                {
-                    featureType: "landscape",
-                    elementType: "all",
-                    stylers: [{ color: "#f2f2f2" }],
-                },
-                {
-                    featureType: "poi",
-                    elementType: "all",
-                    stylers: [{ visibility: "off" }],
-                },
-                {
-                    featureType: "road",
-                    elementType: "all",
-                    stylers: [{ saturation: -100 }, { lightness: 45 }],
-                },
-                {
-                    featureType: "road.highway",
-                    elementType: "all",
-                    stylers: [{ visibility: "simplified" }],
-                },
-                {
-                    featureType: "road.arterial",
-                    elementType: "labels.icon",
-                    stylers: [{ visibility: "off" }],
-                },
-                {
-                    featureType: "transit",
-                    elementType: "all",
-                    stylers: [{ visibility: "off" }],
-                },
-                {
-                    featureType: "water",
-                    elementType: "all",
-                    stylers: [{ color: "#5e72e4" }, { visibility: "on" }],
-                },
-            ],
+            // styles: [
+            //     {
+            //         featureType: "administrative",
+            //         elementType: "labels.text.fill",
+            //         stylers: [{ color: "#444444" }],
+            //     },
+            //     {
+            //         featureType: "landscape",
+            //         elementType: "all",
+            //         stylers: [{ color: "#f2f2f2" }],
+            //     },
+            //     {
+            //         featureType: "poi",
+            //         elementType: "all",
+            //         stylers: [{ visibility: "off" }],
+            //     },
+            //     {
+            //         featureType: "road",
+            //         elementType: "all",
+            //         stylers: [{ saturation: -100 }, { lightness: 45 }],
+            //     },
+            //     {
+            //         featureType: "road.highway",
+            //         elementType: "all",
+            //         stylers: [{ visibility: "simplified" }],
+            //     },
+            //     {
+            //         featureType: "road.arterial",
+            //         elementType: "labels.icon",
+            //         stylers: [{ visibility: "off" }],
+            //     },
+            //     {
+            //         featureType: "transit",
+            //         elementType: "all",
+            //         stylers: [{ visibility: "off" }],
+            //     },
+            //     {
+            //         featureType: "water",
+            //         elementType: "all",
+            //         stylers: [{ color: "#5e72e4" }, { visibility: "on" }],
+            //     },
+            // ],
         };
 
         map = new google.maps.Map(map, mapOptions);
+        const deliveryManWindow = new google.maps.InfoWindow({
+            content:
+                '<div class="info-window-content"><h2>Delivery man</h2></div>',
+        });
+        const fromWindow = new google.maps.InfoWindow({
+            content:
+                '<div class="info-window-content"><h2>Pick up location</h2></div>',
+        });
+        const toWindow = new google.maps.InfoWindow({
+            content:
+                '<div class="info-window-content"><h2>Drop off location</h2></div>',
+        });
 
-        const marker = new google.maps.Marker({
-            position: myLatlng,
-            map: map,
+        if (orderDetail.status != 0) {
+            const marker = new google.maps.Marker({
+                position: myLatlng,
+                map: map,
+                animation: google.maps.Animation.DROP,
+                title: "Delivery man",
+            });
+            google.maps.event.addListener(marker, "click", function () {
+                deliveryManWindow.open(map, marker);
+            });
+        }
+
+        const fromMarker = new google.maps.Marker({
+            position: fromLatlng,
+            map,
             animation: google.maps.Animation.DROP,
-            title: "Light Bootstrap Dashboard PRO React!",
+            title: "Pick up location",
+        });
+        const toMarker = new google.maps.Marker({
+            position: toLatlng,
+            map,
+            animation: google.maps.Animation.DROP,
+            title: "Drop off location",
         });
 
-        const contentString =
-            '<div class="info-window-content"><h2>Light Bootstrap Dashboard PRO React</h2>' +
-            "<p>A premium Admin for React-Bootstrap, Bootstrap, React, and React Hooks.</p></div>";
-
-        const infowindow = new google.maps.InfoWindow({
-            content: contentString,
+        google.maps.event.addListener(fromMarker, "click", function () {
+            fromWindow.open(map, fromMarker);
+        });
+        google.maps.event.addListener(toMarker, "click", function () {
+            toWindow.open(map, toMarker);
         });
 
-        google.maps.event.addListener(marker, "click", function () {
-            infowindow.open(map, marker);
+        //render route
+        // Create a DirectionsRenderer object to display the route on the map
+        const directionsService = new google.maps.DirectionsService();
+        const directionsRenderer = new google.maps.DirectionsRenderer({
+            map: map,
+            suppressMarkers: true,
         });
+        const fromToRouteRequest = {
+            origin: fromLatlng,
+            destination: toLatlng,
+            travelMode: google.maps.TravelMode.DRIVING, // You can change this to other modes like 'WALKING' or 'BICYCLING'
+        };
+
+        directionsService.route(
+            fromToRouteRequest,
+            function (response, status) {
+                if (status === google.maps.DirectionsStatus.OK) {
+                    // Display the route on the map
+                    directionsRenderer.setDirections(response);
+                } else {
+                    console.error("Directions request failed:", status);
+                }
+            }
+        );
     }, []);
     return (
         <>
@@ -163,7 +225,9 @@ const OrderDetail = () => {
                     <Col>
                         <Card>
                             <CardBody>
-                                <MapWrapper />
+                                {data.delivery_man && (
+                                    <MapWrapper orderDetail={data} />
+                                )}
                             </CardBody>
                         </Card>
                     </Col>

@@ -31,7 +31,14 @@ interface DeliveryManDetailDialogProps {
     avartar: string,
     rating: number,
     phone: string,
-    motor: string,
+    motor: {
+        plate: string,
+        chassis: string,
+        brand: string,
+        model: string,
+        engine: string,
+        color: string,
+    },
     estimationTime: string,
     status: number,
 }
@@ -87,7 +94,7 @@ const DeliveryManDetailDialog = (props: DeliveryManDetailDialogProps) => {
                         <Text style={[GlobalStyles.text, { marginLeft: 10, }]}>{props.rating}</Text>
                     </View> */}
                     <Text style={GlobalStyles.subTitle}>{props.name}</Text>
-                    <Text style={GlobalStyles.text}>{props.motor}</Text>
+                    <Text style={GlobalStyles.text}>{props.motor?.plate}</Text>
                     <Text style={GlobalStyles.text}>Est. time: {Math.ceil(parseFloat(props.estimationTime))} min</Text>
                 </View>
             </View>
