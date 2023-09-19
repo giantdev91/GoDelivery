@@ -591,11 +591,14 @@ exports.orderList = async (req, res) => {
         }
         if (status !== undefined) {
             let filterCondition = [];
-            status.split(",").map((val) => {
-                filterCondition.push({
-                    status: val,
+            status
+                .toString()
+                .split(",")
+                .map((val) => {
+                    filterCondition.push({
+                        status: val,
+                    });
                 });
-            });
             whereCondition = {
                 ...whereCondition,
                 [Op.or]: filterCondition,
@@ -624,7 +627,7 @@ exports.orderList = async (req, res) => {
             order: [["id", "DESC"]],
         });
         res.status(200).send({
-            status: true,
+            success: true,
             code: 200,
             message: "orderlist success",
             data: orders,

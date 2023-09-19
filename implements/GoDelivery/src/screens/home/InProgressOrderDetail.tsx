@@ -41,6 +41,9 @@ const MAP_HEIGHT = 350;
 const ASPECT_RATIO = MAP_WIDTH / MAP_HEIGHT;
 const LATITUDE_DELTA = 0.01; //Very high zoom level
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+console.log("GOOGLE_API_KEY: ", GOOGLE_API_KEY);
+
 
 const DistanceComponent = (props: DistanceComponentProps) => (
     <View style={[styles.distanceComponent, GlobalStyles.shadowProp]}>
@@ -219,7 +222,7 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
                 {orderStatus == 1 && (<MapViewDirections
                     origin={deliverymanPosition}
                     destination={senderLocation}
-                    apikey={"AIzaSyDByOV0xhuQWU9YrS4MFSU1JHncduLfyW8"} // insert your API Key here
+                    apikey={GOOGLE_API_KEY} // insert your API Key here
                     strokeWidth={4}
                     strokeColor={GoDeliveryColors.primary}
                     onReady={result => {
@@ -229,7 +232,7 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
                 {orderStatus == 2 && (<MapViewDirections
                     origin={deliverymanPosition}
                     destination={receiverLocation}
-                    apikey={"AIzaSyDByOV0xhuQWU9YrS4MFSU1JHncduLfyW8"} // insert your API Key here
+                    apikey={GOOGLE_API_KEY} // insert your API Key here
                     strokeWidth={4}
                     strokeColor={GoDeliveryColors.primary}
                     onReady={result => {

@@ -1,7 +1,5 @@
-import axio from 'axios';
-
-// import { TWILLIO_URL } from "@env";
-const TWILLIO_URL = 'https://verify-4723-skmzqg.twil.io';
+const TWILLIO_URL = process.env.TWILLIO_URL;
+console.log("TWILLIO_URL: ", TWILLIO_URL);
 
 const sendSMSVerfication = async (phoneNumber: string) => {
     try {

@@ -32,6 +32,9 @@ const ASPECT_RATIO = MAP_WIDTH / MAP_HEIGHT;
 const LATITUDE_DELTA = 0.005; //Very high zoom level
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+console.log("GOOGLE_API_KEY: ", GOOGLE_API_KEY);
+
 // const LocationStr = ({ icon, text }: { icon: string; text: string }) => {
 //     return (
 //         <View style={styles.locationStrBack}>
@@ -164,9 +167,9 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
         var returnVal = '';
         var dis = Number.parseFloat(distance);
         if (dis < 4) {
-            returnVal = (setting ? setting.basePrice : 89).toString();
+            returnVal = (setting && setting?.basePrice ? setting?.basePrice : 89).toString();
         } else {
-            returnVal = (Number.parseFloat(setting.basePrice) * dis / 4).toFixed(2);
+            returnVal = (Number.parseFloat(setting?.basePrice ? setting?.basePrice : 0) * dis / 4).toFixed(2);
         }
         return returnVal;
     };
@@ -261,7 +264,7 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
                             <MapViewDirections
                                 origin={markers[0]}
                                 destination={markers[1]}
-                                apikey={'AIzaSyCNl5jl7Zk09SMHDPHQI4j-6mfu3Jg0bdg'} // insert your API Key here
+                                apikey={GOOGLE_API_KEY} // insert your API Key here
                                 strokeWidth={4}
                                 strokeColor={GoDeliveryColors.primary}
                                 onReady={result => {
@@ -305,7 +308,7 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
                                     },
                                 }}
                                 query={{
-                                    key: 'AIzaSyCNl5jl7Zk09SMHDPHQI4j-6mfu3Jg0bdg',
+                                    key: GOOGLE_API_KEY,
                                     language: 'en',
                                     components: 'country:mz'
                                 }}
@@ -341,7 +344,7 @@ const PriceEstimate = ({ navigation }: { navigation: any }) => {
                                     },
                                 }}
                                 query={{
-                                    key: 'AIzaSyCNl5jl7Zk09SMHDPHQI4j-6mfu3Jg0bdg',
+                                    key: GOOGLE_API_KEY,
                                     language: 'en',
                                     components: 'country:mz'
                                 }}

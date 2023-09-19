@@ -52,7 +52,9 @@ const CompleteRoute = (props: SceneProps) => {
         Action.order.completeOrders({ status: 3, deliverymanID: store.getState().CurrentUser.user.id })
             .then((res) => {
                 const response = res.data;
-                setOrders(response.data);
+                if (response.success) {
+                    setOrders(response.data);
+                }
             }).catch((err) => {
                 console.log("error: ", err);
             })
@@ -68,7 +70,7 @@ const CompleteRoute = (props: SceneProps) => {
         <View style={[GlobalStyles.container]}>
             <ScrollView style={styles.scrollArea}>
                 {
-                    orders.map((order, index) => (
+                    orders && orders.map((order, index) => (
                         <View style={styles.dataCard} key={index}>
                             <View style={{ alignSelf: 'flex-end', flexDirection: 'row', gap: 20 }}>
                                 {
@@ -106,7 +108,7 @@ const CompleteRoute = (props: SceneProps) => {
                     ))
                 }
                 {
-                    orders.length == 0 && (
+                    (!orders || orders.length) && (
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: 40, marginTop: 60, paddingVertical: 20 }}>
                             <Icons name="document-text-outline" size={120} color={'#c7c7c7'} />
                             <Text style={{ textAlign: 'center', fontSize: 20, color: GoDeliveryColors.secondary, marginTop: 50 }}>No history yet</Text>
@@ -125,7 +127,9 @@ const CanceledRoute = (props: SceneProps) => {
         Action.order.completeOrders({ status: 4, deliverymanID: store.getState().CurrentUser.user.id })
             .then((res) => {
                 const response = res.data;
-                setOrders(response.data);
+                if (response.success) {
+                    setOrders(response.data);
+                }
             }).catch((err) => {
                 console.log("error: ", err);
             })

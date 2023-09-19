@@ -21,6 +21,9 @@ const ASPECT_RATIO = MAP_WIDTH / MAP_HEIGHT;
 const LATITUDE_DELTA = 0.01; //Very high zoom level
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+console.log("GOOGLE_API_KEY: ", GOOGLE_API_KEY);
+
 const CallButton = (props: ControlButtonProps) => (
     <TouchableOpacity
         style={[GlobalStyles.primaryButton, GlobalStyles.shadowProp, styles.callButton]}
@@ -229,7 +232,7 @@ const OrderDetail = ({ refreshHandler, navigation }: {
                                     {orderStatus == 1 && (<MapViewDirections
                                         origin={deliverymanPosition}
                                         destination={senderLocation}
-                                        apikey={"AIzaSyCNl5jl7Zk09SMHDPHQI4j-6mfu3Jg0bdg"} // insert your API Key here
+                                        apikey={GOOGLE_API_KEY} // insert your API Key here
                                         strokeWidth={4}
                                         strokeColor={GoDeliveryColors.primary}
                                         onReady={result => {
@@ -239,7 +242,7 @@ const OrderDetail = ({ refreshHandler, navigation }: {
                                     {orderStatus == 1 && (<MapViewDirections
                                         origin={senderLocation}
                                         destination={receiverLocation}
-                                        apikey={"AIzaSyCNl5jl7Zk09SMHDPHQI4j-6mfu3Jg0bdg"} // insert your API Key here
+                                        apikey={GOOGLE_API_KEY} // insert your API Key here
                                         strokeWidth={4}
                                         strokeColor={GoDeliveryColors.primary}
                                         onReady={result => {
@@ -249,7 +252,7 @@ const OrderDetail = ({ refreshHandler, navigation }: {
                                     {orderStatus == 2 && (<MapViewDirections
                                         origin={deliverymanPosition}
                                         destination={receiverLocation}
-                                        apikey={"AIzaSyCNl5jl7Zk09SMHDPHQI4j-6mfu3Jg0bdg"} // insert your API Key here
+                                        apikey={GOOGLE_API_KEY} // insert your API Key here
                                         strokeWidth={4}
                                         strokeColor={GoDeliveryColors.primary}
                                         onReady={result => {

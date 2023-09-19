@@ -65,7 +65,9 @@ const SentRoute = (props: SceneProps) => {
         Action.order.completeOrders({ status: 3, sender: store.getState().CurrentUser.user.id })
             .then((res) => {
                 const response = res.data;
-                setOrders(response.data);
+                if (response.success) {
+                    setOrders(response.data);
+                }
             }).catch((err) => {
                 console.log("error: ", err);
             })
@@ -200,7 +202,9 @@ const ReceivedRoute = (props: SceneProps) => {
         Action.order.completeOrders({ status: 3, receiver: store.getState().CurrentUser.user.phone })
             .then((res) => {
                 const response = res.data;
-                setOrders(response.data);
+                if (response.success) {
+                    setOrders(response.data);
+                }
             }).catch((err) => {
                 console.log("error: ", err);
             })
@@ -265,7 +269,9 @@ const CancelledRoute = (props: SceneProps) => {
         Action.order.completeOrders({ status: 4, sender: store.getState().CurrentUser.user.id })
             .then((res) => {
                 const response = res.data;
-                setOrders(response.data);
+                if (response.success) {
+                    setOrders(response.data);
+                }
             }).catch((err) => {
                 console.log("error: ", err);
             })

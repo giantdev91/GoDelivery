@@ -1,8 +1,5 @@
 import axios from 'axios';
-// import { API_URL } from "@env";
 const API_URL = 'http://34.172.13.182:4000';
-
-// const API_URL = process.env.REACT_APP_API_URL;
 
 const config = {
     baseURL: API_URL,
