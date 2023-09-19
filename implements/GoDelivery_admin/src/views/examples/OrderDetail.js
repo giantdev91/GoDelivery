@@ -5,24 +5,12 @@ import {
     Container,
     Row,
     Col,
-    Button,
-    Input,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    FormGroup,
-    Label,
     CardHeader,
     CardTitle,
 } from "reactstrap";
 
 import APIService from "../../service/APIService";
-import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
-import DeliverymanDetailHeader from "components/DeliverymanDetail/DeliverymanDetailHeader";
-import DeliverymanDetailMonthlyStatus from "components/DeliverymanDetail/DeliverymanDetailMonthlyStatus";
-import DeliverymanDetailDailyStatus from "components/DeliverymanDetail/DeliverymanDetailDailyStatus";
 import { useNavigate } from "react-router-dom";
 
 const MapWrapper = ({ orderDetail }) => {
@@ -50,62 +38,20 @@ const MapWrapper = ({ orderDetail }) => {
             center: orderDetail.status == 0 ? fromLatlng : myLatlng,
             scrollwheel: false,
             zoomControl: true,
-            // styles: [
-            //     {
-            //         featureType: "administrative",
-            //         elementType: "labels.text.fill",
-            //         stylers: [{ color: "#444444" }],
-            //     },
-            //     {
-            //         featureType: "landscape",
-            //         elementType: "all",
-            //         stylers: [{ color: "#f2f2f2" }],
-            //     },
-            //     {
-            //         featureType: "poi",
-            //         elementType: "all",
-            //         stylers: [{ visibility: "off" }],
-            //     },
-            //     {
-            //         featureType: "road",
-            //         elementType: "all",
-            //         stylers: [{ saturation: -100 }, { lightness: 45 }],
-            //     },
-            //     {
-            //         featureType: "road.highway",
-            //         elementType: "all",
-            //         stylers: [{ visibility: "simplified" }],
-            //     },
-            //     {
-            //         featureType: "road.arterial",
-            //         elementType: "labels.icon",
-            //         stylers: [{ visibility: "off" }],
-            //     },
-            //     {
-            //         featureType: "transit",
-            //         elementType: "all",
-            //         stylers: [{ visibility: "off" }],
-            //     },
-            //     {
-            //         featureType: "water",
-            //         elementType: "all",
-            //         stylers: [{ color: "#5e72e4" }, { visibility: "on" }],
-            //     },
-            // ],
         };
 
         map = new google.maps.Map(map, mapOptions);
         const deliveryManWindow = new google.maps.InfoWindow({
             content:
-                '<div class="info-window-content"><h2>Delivery man</h2></div>',
+                '<div class="info-window-content"><h4>Delivery man</h4></div>',
         });
         const fromWindow = new google.maps.InfoWindow({
             content:
-                '<div class="info-window-content"><h2>Pick up location</h2></div>',
+                '<div class="info-window-content"><h4>Pick up location</h4></div>',
         });
         const toWindow = new google.maps.InfoWindow({
             content:
-                '<div class="info-window-content"><h2>Drop off location</h2></div>',
+                '<div class="info-window-content"><h4>Drop off location</h4></div>',
         });
 
         if (orderDetail.status != 0) {

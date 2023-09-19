@@ -7,6 +7,7 @@ import OrderDetail from "views/examples/OrderDetail";
 import SysSetting from "views/examples/SysSetting";
 import Motorcycle from "views/examples/Motorcycle";
 import BroadcastMessage from "views/examples/BroadcastMessage";
+import LiveTracking from "views/examples/LiveTracking";
 
 var routes = [
     {
@@ -62,7 +63,7 @@ var routes = [
         path: "/liveTracking",
         name: "Live Tracking",
         icon: "ni ni-square-pin text-danger",
-        component: <Order />,
+        component: <LiveTracking />,
         layout: "/admin",
     },
     {
