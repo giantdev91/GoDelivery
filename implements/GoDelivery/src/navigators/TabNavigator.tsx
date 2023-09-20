@@ -37,7 +37,7 @@ function TabNavigator(): JSX.Element {
                             style={{
                                 color: color,
                                 marginBottom: 5,
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontWeight: "400"
                             }}>Home</Text>
                     )
@@ -60,7 +60,7 @@ function TabNavigator(): JSX.Element {
                             style={{
                                 color: color,
                                 marginBottom: 5,
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontWeight: "400"
                             }}>In Progress</Text>
                     )
@@ -83,7 +83,7 @@ function TabNavigator(): JSX.Element {
                             style={{
                                 color: color,
                                 marginBottom: 5,
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontWeight: "400"
                             }}>Order</Text>
                     )
@@ -106,7 +106,7 @@ function TabNavigator(): JSX.Element {
                             style={{
                                 color: color,
                                 marginBottom: 5,
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontWeight: "400"
                             }}>Notification</Text>
                     )

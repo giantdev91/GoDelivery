@@ -169,7 +169,7 @@ const SentRoute = (props: SceneProps) => {
                     orders.length == 0 && (
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: 40, marginTop: 60, paddingVertical: 20 }}>
                             <Icons name="document-text-outline" size={120} color={'#c7c7c7'} />
-                            <Text style={{ textAlign: 'center', fontSize: 20, color: GoDeliveryColors.secondary, marginTop: 50 }}>No history yet</Text>
+                            <Text style={{ textAlign: 'center', fontSize: 18, color: GoDeliveryColors.secondary, marginTop: 50 }}>No history yet</Text>
                         </View>
                     )
                 }
@@ -183,7 +183,7 @@ const SentRoute = (props: SceneProps) => {
                         <TextInput style={styles.titleInputBack} placeholder='title' onChangeText={(val) => { setFeedbackTitle(val) }} value={feedbackTitle} />
                         <TextInput style={styles.descriptionBack} multiline={true} placeholder='please leave your feeback here.' value={feedbackContent} onChangeText={(val) => { setFeedbackContent(val) }} />
                         <TouchableOpacity style={styles.rateUsBtn} onPress={handleRateUs}>
-                            <Text style={{ fontSize: 20, color: GoDeliveryColors.white }}>Rate us</Text>
+                            <Text style={{ fontSize: 18, color: GoDeliveryColors.white }}>Rate us</Text>
                         </TouchableOpacity>
                     </View>
                     {
@@ -253,7 +253,7 @@ const ReceivedRoute = (props: SceneProps) => {
                     orders.length == 0 && (
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: 40, marginTop: 60, paddingVertical: 20 }}>
                             <Icons name="document-text-outline" size={120} color={'#c7c7c7'} />
-                            <Text style={{ textAlign: 'center', fontSize: 20, color: GoDeliveryColors.secondary, marginTop: 50 }}>No history yet</Text>
+                            <Text style={{ textAlign: 'center', fontSize: 18, color: GoDeliveryColors.secondary, marginTop: 50 }}>No history yet</Text>
                         </View>
                     )
                 }
@@ -319,7 +319,7 @@ const CancelledRoute = (props: SceneProps) => {
                     orders.length == 0 && (
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: 40, marginTop: 60, paddingVertical: 20 }}>
                             <Icons name="document-text-outline" size={120} color={'#c7c7c7'} />
-                            <Text style={{ textAlign: 'center', fontSize: 20, color: GoDeliveryColors.secondary, marginTop: 50 }}>No history yet</Text>
+                            <Text style={{ textAlign: 'center', fontSize: 18, color: GoDeliveryColors.secondary, marginTop: 50 }}>No history yet</Text>
                         </View>
                     )
                 }
@@ -380,12 +380,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     headerTitle: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: "600",
         color: GoDeliveryColors.primary,
     },
     tabLabelStyle: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: "500",
     },
     scrollArea: {
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
     dataCard: {
         marginVertical: 10,
         marginHorizontal: 10,
-        paddingHorizontal: 20,
+        paddingHorizontal: 15,
         paddingVertical: 10,
         flexDirection: 'column',
         justifyContent: 'center',
@@ -423,7 +423,8 @@ const styles = StyleSheet.create({
         backgroundColor: GoDeliveryColors.primary,
         paddingHorizontal: 20,
         paddingVertical: 5,
-        borderRadius: 5
+        borderRadius: 5,
+        marginTop: 10,
     },
     feedbackModalback: {
         position: 'absolute',
@@ -436,7 +437,7 @@ const styles = StyleSheet.create({
     },
     feedbackModalTitle: {
         marginBottom: 15,
-        fontSize: 48,
+        fontSize: 46,
         color: GoDeliveryColors.primary,
         fontWeight: 'bold',
         textShadowColor: 'rgba(0, 0, 0, 0.4)', // Shadow color
@@ -450,7 +451,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         paddingHorizontal: 20,
         paddingVertical: 3,
-        fontSize: 16,
+        fontSize: 14,
         marginTop: 15,
     },
     descriptionBack: {
@@ -461,7 +462,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         paddingHorizontal: 15,
         paddingVertical: 5,
-        fontSize: 14,
+        fontSize: 12,
         marginTop: 10,
         verticalAlign: 'top',
         textAlignVertical: 'top'
@@ -477,7 +478,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     priceTitle: {
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: '600',
         color: GoDeliveryColors.secondary,
     },

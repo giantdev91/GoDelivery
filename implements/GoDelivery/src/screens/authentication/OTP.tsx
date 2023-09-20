@@ -178,16 +178,16 @@ const styles = StyleSheet.create({
         left: 20,
     },
     titleLabelStyle: {
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: "700",
     },
     labelStyle: {
-        fontSize: 15,
+        fontSize: 13,
         fontWeight: "500",
         textAlign: 'center'
     },
     smallLabelStyle: {
-        fontSize: 12,
+        fontSize: 11,
         fontWeight: "400",
         color: GoDeliveryColors.disabled
     },

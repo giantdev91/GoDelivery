@@ -60,33 +60,6 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
     }
   };
 
-  const updateCurrentLocation = () => {
-    Geolocation.getCurrentPosition(position => {
-      const crd = position.coords;
-      const locationLatitude = crd.latitude.toString();
-      const locationLongitude = crd.longitude.toString();
-      const deliverymanID = store.getState().CurrentUser.user.id;
-      Action.deliveryman
-        .updateLocation({
-          deliverymanID: deliverymanID,
-          locationLatitude: locationLatitude,
-          locationLongitude: locationLongitude,
-        })
-        .then(res => {
-          const response = res.data;
-        })
-        .catch(err => {
-          console.error('error: ', err);
-        });
-    },
-      error => {
-        // See error code charts below.
-        console.log(error.code, error.message);
-      },
-      { enableHighAccuracy: true, timeout: 5000, maximumAge: 5000 },
-    );
-  };
-
   const signInUser = async () => {
     try {
       if (!(phone && password)) {
@@ -119,7 +92,6 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
                   const response = res.data;
                   const result = requestLocationPermission();
                   result.then(res => {
-                    updateCurrentLocation();
                     startBackgroundServiceScheduler();
                     if (res) {
                       navigation.reset({

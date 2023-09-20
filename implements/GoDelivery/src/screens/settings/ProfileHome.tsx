@@ -54,11 +54,11 @@ const ProfileHomeScreen = ({ navigation }: ScreenProps): JSX.Element => {
                 </TouchableOpacity>
                 <View style={[styles.cardBack, { flexDirection: 'column', justifyContent: 'space-around', alignItems: 'flex-start' }, GlobalStyles.shadowProp]}>
                     <TouchableOpacity onPress={navigateToSelectLanguage}>
-                        <Text style={[styles.content, { fontSize: 18, }]}>Change Language</Text>
+                        <Text style={[styles.content, { fontSize: 16, }]}>Change Language</Text>
                     </TouchableOpacity>
                     <Divider style={{ borderColor: GoDeliveryColors.place, borderWidth: 0.25, width: '100%' }} />
                     <TouchableOpacity>
-                        <Text style={[styles.content, { fontSize: 18, }]}>My Saved Locations</Text>
+                        <Text style={[styles.content, { fontSize: 16, }]}>My Saved Locations</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -84,12 +84,12 @@ const styles = StyleSheet.create({
         marginVertical: 15,
     },
     title: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
         color: GoDeliveryColors.labelColor,
     },
     content: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: '500',
         color: GoDeliveryColors.labelColor,
     }

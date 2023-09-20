@@ -45,6 +45,9 @@ function App(): JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+
+
+
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       Alert.alert(remoteMessage?.notification?.title ?? "", remoteMessage?.notification?.body);

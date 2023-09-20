@@ -42,7 +42,7 @@ const NewOrderComplete = ({ navigation }: ScreenProps): JSX.Element => {
         />
         <Image
           source={require('../../../assets/images/company-logo.png')}
-          style={{ position: 'absolute', top: 200 }}
+          style={{ position: 'absolute', top: 200, height: 150, width: 240, resizeMode: 'contain', alignSelf: 'center' }}
         />
       </View>
       <View style={{ marginTop: 80, marginHorizontal: 40 }}>
@@ -59,7 +59,7 @@ const NewOrderComplete = ({ navigation }: ScreenProps): JSX.Element => {
 
 const styles = StyleSheet.create({
   labelText: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '600',
     color: GoDeliveryColors.secondary,
   },
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   markLabel: {
-    fontSize: 32,
+    fontSize: 30,
     fontWeight: '800',
     color: GoDeliveryColors.primary,
     textAlign: 'center',

@@ -48,17 +48,17 @@ const GlobalStyles = StyleSheet.create({
   },
   primaryLabel: {
     color: GoDeliveryColors.white,
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
   },
   primaryEmphasizeLabel: {
     color: GoDeliveryColors.primary,
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '400',
   },
   primaryEmphasizeLabelHigher: {
     color: GoDeliveryColors.primary,
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: '700',
   },
   indicator: {
@@ -66,17 +66,17 @@ const GlobalStyles = StyleSheet.create({
     borderColor: 'red',
   },
   text: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '400',
     color: GoDeliveryColors.secondary,
   },
   textBold: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
     color: GoDeliveryColors.secondary,
   },
   textDisable: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '400',
     color: GoDeliveryColors.disabled,
   },
@@ -90,12 +90,12 @@ const GlobalStyles = StyleSheet.create({
     color: '#FA4A0C',
   },
   textMedium: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '500',
     color: GoDeliveryColors.secondary,
   },
   subTitleText: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '400',
     alignSelf: 'center',
     textAlign: 'center',
@@ -104,11 +104,11 @@ const GlobalStyles = StyleSheet.create({
   },
   headerTitle: {
     color: GoDeliveryColors.secondary,
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
   },
   subTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     color: GoDeliveryColors.secondary,
   },
@@ -118,7 +118,7 @@ const GlobalStyles = StyleSheet.create({
     color: GoDeliveryColors.primary,
   },
   authenticationHeaderTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '600',
     color: GoDeliveryColors.primary,
     textAlign: 'center',

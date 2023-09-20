@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
         backgroundColor: GoDeliveryColors.primary
     },
     headerTitle: {
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: "bold",
         color: GoDeliveryColors.white,
         marginLeft: 80,

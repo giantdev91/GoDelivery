@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -9,18 +9,19 @@ import {
 } from 'react-native';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useSelector, useDispatch} from 'react-redux';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector, useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ActivityIndicator} from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import Action from '../../service';
 import allActions from '../../redux/actions';
+import { startBackgroundServiceScheduler } from '../../common/SchedulerService';
 
 interface SplashScreenProps {
   navigation: any;
 }
 
-const SplashScreen = ({navigation}: SplashScreenProps): JSX.Element => {
+const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
   const [loginFlag, setLoginFlag] = useState(false);
   const [activityIndicator, setActivityIndicator] = useState(true);
   const dispatch = useDispatch();
@@ -28,7 +29,7 @@ const SplashScreen = ({navigation}: SplashScreenProps): JSX.Element => {
   const navigateToSignin = () => {
     navigation.reset({
       index: 0,
-      routes: [{name: 'SignIn'}],
+      routes: [{ name: 'SignIn' }],
     });
   };
 
@@ -43,9 +44,10 @@ const SplashScreen = ({navigation}: SplashScreenProps): JSX.Element => {
           dispatch(allActions.UserAction.setUser(responseData.data));
           storeData(responseData.data);
           setActivityIndicator(false);
+          startBackgroundServiceScheduler();
           navigation.reset({
             index: 0,
-            routes: [{name: 'Main'}],
+            routes: [{ name: 'Main' }],
           });
         })
         .catch(err => {
@@ -67,7 +69,7 @@ const SplashScreen = ({navigation}: SplashScreenProps): JSX.Element => {
 
   useEffect(() => {
     checkUserLoginStatus();
-  });
+  }, []);
 
   return (
     <ImageBackground
@@ -84,7 +86,7 @@ const SplashScreen = ({navigation}: SplashScreenProps): JSX.Element => {
       {activityIndicator && (
         <ActivityIndicator
           size={'large'}
-          style={{position: 'absolute', alignSelf: 'center', bottom: 150}}
+          style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
         />
       )}
       <View style={styles.footerButton}>
@@ -99,7 +101,7 @@ const SplashScreen = ({navigation}: SplashScreenProps): JSX.Element => {
             <Text
               style={[
                 GlobalStyles.primaryLabel,
-                {color: GoDeliveryColors.primary},
+                { color: GoDeliveryColors.primary },
               ]}>
               START
             </Text>

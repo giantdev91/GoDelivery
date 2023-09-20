@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     left: 20,
   },
   smallLabelStyle: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "400",
     color: GoDeliveryColors.disabled
   },

@@ -127,7 +127,7 @@ const DrawerMenu = ({ navigation }: DrawerMenuProps): JSX.Element => {
                     <Text
                         style={[
                             styles.menuText,
-                            { color: GoDeliveryColors.primary, fontSize: 22 },
+                            { color: GoDeliveryColors.primary, fontSize: 20 },
                         ]}>
                         Sign out
                     </Text>
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
     },
     usernameLabel: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
         color: GoDeliveryColors.white,
         marginTop: 15,
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     },
     menuText: {
         color: GoDeliveryColors.disabled,
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: '600',
         marginLeft: 20,
     },

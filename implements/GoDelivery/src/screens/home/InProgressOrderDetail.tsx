@@ -131,6 +131,7 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
             .then((res) => {
                 const response = res.data;
                 setDeliveryman(response.data);
+                console.log("delivery man info =======> ", response.data.locationLatitude, response.data.locationLongitude);
                 const latitude = parseFloat(response.data.locationLatitude);
                 const longitude = parseFloat(response.data.locationLongitude);
                 setDeliverymanPosition({
@@ -282,7 +283,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     headerTitle: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: "600",
         color: GoDeliveryColors.primary,
     },

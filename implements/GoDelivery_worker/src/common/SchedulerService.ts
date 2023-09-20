@@ -6,20 +6,21 @@ import { UPDATE_INTERVAL } from './Constant';
 import { requestLocationPermission } from './RequestPermission';
 
 const backgroundOptions = {
-    taskName: 'MyBackgroundTask', // A unique name for your background task.
-    taskTitle: 'My Background Task Title', // A title shown in the notification (optional).
-    taskDesc: 'My Background Task Description', // A description shown in the notification (optional).
+    taskName: 'GoDelivery location show', // A unique name for your background task.
+    taskTitle: 'Location Synchronize', // A title shown in the notification (optional).
+    taskDesc: 'Reporting your location to the server.', // A description shown in the notification (optional).
     taskIcon: {
         name: 'ic_launcher',
         type: 'mipmap',
     }, // The icon to be shown in the notification (optional).
-    color: '#ff00ff', // The background color of the notification (optional).
+    color: '#ff0000', // The background color of the notification (optional).
     linkingURI: 'example://', // The URI to open when the user taps the notification (optional).
 };
 
-const updateCurrentLocation = () => {
+const sleep = (time: number) => new Promise<void>((resolve) => setTimeout(() => resolve(), time));
 
-    Geolocation.getCurrentPosition(
+const locationSynchronizeTask = async () => {
+    Geolocation.watchPosition(
         position => {
             const crd = position.coords;
             const locationLatitude = crd.latitude.toString();
@@ -32,29 +33,23 @@ const updateCurrentLocation = () => {
                 locationLongitude: locationLongitude,
             }).then((res) => {
                 const response = res.data;
+                console.log("update location response: ", response);
             }).catch((err) => {
-                console.error('error: 5', err);
+                console.error('error: ', err);
             })
         },
         error => {
-            // See error code charts below.
             console.log(error.code, error.message);
+            BackgroundActions.stop();
         },
-        { enableHighAccuracy: true, timeout: 5000, maximumAge: 5000 },
-    );
-
-
-}
-
-const myBackgroundTask = async () => {
-    setInterval(() => {
-        const result = requestLocationPermission();
-        result.then(res => {
-            updateCurrentLocation();
-        })
-    }, UPDATE_INTERVAL);
+        { enableHighAccuracy: true, showsBackgroundLocationIndicator: true, fastestInterval: UPDATE_INTERVAL });
+    while (true) {
+        await sleep(UPDATE_INTERVAL);
+    }
 };
 
-export const startBackgroundServiceScheduler = () => {
-    BackgroundActions.start(myBackgroundTask, backgroundOptions);
+export const startBackgroundServiceScheduler = async () => {
+    await BackgroundActions.stop();
+    await BackgroundActions.start(locationSynchronizeTask, backgroundOptions);
+    await BackgroundActions.updateNotification({ taskDesc: 'Reporting your location to the server.' }); // Only Android, iOS will ignore this call
 }

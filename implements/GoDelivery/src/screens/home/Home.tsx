@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     headerTitle: {
-        fontSize: 28,
+        fontSize: 26,
         fontWeight: "bold",
         color: GoDeliveryColors.labelColor,
         textAlign: 'left',
@@ -141,12 +141,12 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
     },
     pickupTitle: {
-        fontSize: 48,
+        fontSize: 46,
         fontWeight: '600',
         color: GoDeliveryColors.white,
     },
     comment: {
-        fontSize: 14,
+        fontSize: 12,
         color: GoDeliveryColors.disabled,
         fontWeight: "600",
         alignSelf: 'center',

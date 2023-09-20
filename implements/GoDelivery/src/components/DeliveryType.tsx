@@ -34,13 +34,13 @@ const styles = StyleSheet.create({
         height: 125,
     },
     cardTitle: {
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: 'bold',
         color: GoDeliveryColors.labelColor,
         marginBottom: 10,
     },
     content: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: '400',
         color: GoDeliveryColors.labelColor
     },

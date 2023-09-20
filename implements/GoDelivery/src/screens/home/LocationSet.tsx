@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
   },
   informationStr: {
     color: GoDeliveryColors.secondary,
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
     marginLeft: 10,
   },
