@@ -108,7 +108,7 @@ const CompleteRoute = (props: SceneProps) => {
                     ))
                 }
                 {
-                    (!orders || orders.length) && (
+                    (orders.length == 0) && (
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: 40, marginTop: 60, paddingVertical: 20 }}>
                             <Icons name="document-text-outline" size={120} color={'#c7c7c7'} />
                             <Text style={{ textAlign: 'center', fontSize: 20, color: GoDeliveryColors.secondary, marginTop: 50 }}>No history yet</Text>
