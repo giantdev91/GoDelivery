@@ -60,6 +60,7 @@ const MonthlyOrder = () => {
             year: date.getFullYear(),
         })
             .then((res) => {
+                const defaultValue = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                 const response = res.data;
                 if (response.success) {
                     const sum = response.data.reduce(
