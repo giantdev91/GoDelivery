@@ -67,7 +67,7 @@ const DeliverymanDetailHeader = ({ deliverymanDetail }) => {
                         <a href="#">{deliverymanDetail.name}</a>
                     </div>
                     <Row className="mt-3">
-                        <Col className="col-md-4">
+                        <Col className="col-md-5">
                             <HeaderCard
                                 title="TOTAL ORDERS"
                                 value={totalOrders}
@@ -79,7 +79,7 @@ const DeliverymanDetailHeader = ({ deliverymanDetail }) => {
                                 }
                             />
                         </Col>
-                        <Col className="col-md-4">
+                        <Col className="col-md-5">
                             <HeaderCard
                                 title="REVENUE"
                                 value={totalRevenue}

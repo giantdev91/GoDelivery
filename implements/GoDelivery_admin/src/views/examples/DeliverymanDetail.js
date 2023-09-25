@@ -22,8 +22,14 @@ import DeliverymanDetailHeader from "components/DeliverymanDetail/DeliverymanDet
 import DeliverymanDetailMonthlyStatus from "components/DeliverymanDetail/DeliverymanDetailMonthlyStatus";
 import DeliverymanDetailDailyStatus from "components/DeliverymanDetail/DeliverymanDetailDailyStatus";
 import { useNavigate } from "react-router-dom";
+import Chart from "chart.js";
+import { chartOptions, parseOptions } from "variables/charts.js";
 
 const DeliverymanDetail = () => {
+    if (window.Chart) {
+        parseOptions(Chart, chartOptions());
+    }
+
     const navigate = useNavigate();
 
     const { id } = useParams();

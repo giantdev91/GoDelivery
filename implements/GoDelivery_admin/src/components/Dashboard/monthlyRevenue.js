@@ -31,7 +31,7 @@ const chartOption = {
                     content += label;
                 }
 
-                content += "MZN " + yLabel / 1000 + "k";
+                content += "MZN " + Number(yLabel / 1000).toFixed(2) + "k";
                 return content;
             },
         },
@@ -98,7 +98,10 @@ const MonthlyRevenue = () => {
                         Revenue
                     </CardTitle>
                     <CardTitle tag="h4" className="mb-0">
-                        MZN {Number(totalRevenue).toLocaleString()}
+                        MZN{" "}
+                        {Number(
+                            Number(totalRevenue).toFixed(2)
+                        ).toLocaleString()}
                     </CardTitle>
                 </CardHeader>
                 <CardBody style={{ overflow: "inherit" }}>

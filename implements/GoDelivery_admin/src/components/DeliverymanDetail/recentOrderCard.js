@@ -74,7 +74,9 @@ const RecentOrderCard = ({ deliverymanId }) => {
                                             <span className="text-right ">
                                                 MZN{" "}
                                                 {Number(
-                                                    order.price
+                                                    Number(order.price).toFixed(
+                                                        2
+                                                    )
                                                 ).toLocaleString()}
                                             </span>
                                         </Col>

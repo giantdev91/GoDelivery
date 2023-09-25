@@ -16,9 +16,14 @@ import {
     formatDateAndTime,
     dateTimeFormat,
 } from "../../utils/commonFunction";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 const DailyRevenue = ({ deliverymanId }) => {
     const [data, setData] = useState([]);
     const [total, setTotal] = useState(0);
+    const [calendarView, setCalendarView] = useState(false);
+    const [value, onChange] = useState(new Date());
 
     const getStatusBadge = (status) => {
         switch (status) {
@@ -40,9 +45,9 @@ const DailyRevenue = ({ deliverymanId }) => {
         }
     };
 
-    const fetchData = () => {
+    const fetchData = (date) => {
         APIService.post("/statistics/dailyRevenue", {
-            date: formatedDate(new Date()),
+            date: formatedDate(date),
             deliverymanId: deliverymanId,
         })
             .then((res) => {
@@ -67,7 +72,7 @@ const DailyRevenue = ({ deliverymanId }) => {
     };
 
     useEffect(() => {
-        fetchData();
+        fetchData(new Date());
     }, [deliverymanId]);
 
     return (
@@ -80,7 +85,35 @@ const DailyRevenue = ({ deliverymanId }) => {
                                 Daily Revenue
                             </CardTitle>
                             <CardTitle tag="h4" className="mb-0">
-                                {strFormatedDate(new Date())}
+                                {strFormatedDate(value)}
+                                <a
+                                    className="ml-5"
+                                    style={{ cursor: "pointer" }}
+                                    onClick={() => {
+                                        setCalendarView(!calendarView);
+                                    }}
+                                >
+                                    Change Date
+                                </a>
+                                <div
+                                    style={{
+                                        position: "absolute",
+                                        zIndex: "100",
+                                        display: calendarView
+                                            ? "block"
+                                            : "none",
+                                    }}
+                                >
+                                    <DatePicker
+                                        selected={value}
+                                        onChange={(val) => {
+                                            onChange(val);
+                                            fetchData(val);
+                                            setCalendarView(!calendarView);
+                                        }}
+                                        inline
+                                    />
+                                </div>
                             </CardTitle>
                         </Col>
                         <Col>
@@ -124,7 +157,9 @@ const DailyRevenue = ({ deliverymanId }) => {
                                             )}
                                     </td>
                                     <td>{getStatusBadge(item.status)}</td>
-                                    <td>{`MZN ${item.price}`}</td>
+                                    <td>{`MZN ${Number(
+                                        Number(item.price).toFixed(2)
+                                    ).toLocaleString()}`}</td>
                                 </tr>
                             ))}
                         </tbody>

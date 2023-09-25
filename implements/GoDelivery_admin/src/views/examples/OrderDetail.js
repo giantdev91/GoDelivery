@@ -219,7 +219,9 @@ const OrderDetail = () => {
                                     </p>
                                     <p>
                                         <strong>Price: </strong> MZN{" "}
-                                        {data.price}
+                                        {Number(
+                                            Number(data.price).toFixed(2)
+                                        ).toLocaleString()}
                                     </p>
                                     <p>
                                         <strong>Duration: </strong>

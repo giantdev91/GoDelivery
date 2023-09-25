@@ -132,10 +132,12 @@ const Deliveryman = () => {
                       (order) => order.status === 3
                   ).length,
                   rate:
-                      data.orders.length > 0
+                      data.orders.filter((order) => order.rate).length > 0
                           ? (
                                 data.orders.reduce(
-                                    (total, order) => total + order.rate,
+                                    (total, order) =>
+                                        total +
+                                        (order.rate != "null" ? order.rate : 0),
                                     0
                                 ) /
                                 data.orders.filter((order) => order.rate).length

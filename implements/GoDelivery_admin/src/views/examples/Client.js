@@ -42,10 +42,14 @@ const Client = () => {
                   name: client.name,
                   startedAt: formatedDate(new Date(client.createdAt)),
                   totalSpent:
-                      client.orders.reduce(
-                          (total, order) => total + order.price,
-                          0
-                      ) + " MZN",
+                      Number(
+                          Number(
+                              client.orders.reduce(
+                                  (total, order) => total + order.price,
+                                  0
+                              )
+                          ).toFixed(2)
+                      ).toLocaleString() + " MZN",
                   totalOrders: client.orders.length,
                   // Add more fields based on your data
               }))

@@ -90,7 +90,9 @@ const Order = () => {
                   receiver: `${order.receiverName}(${order.receiver})`,
                   from: order.from,
                   to: order.to,
-                  price: `${order.price} MZN`,
+                  price: `${Number(
+                      Number(order.price).toFixed(2)
+                  ).toLocaleString()} MZN`,
                   rate: order.rate,
                   created: formatedDate(new Date(order.createdAt)),
                   deliveryMan: `${order.delivery_man?.name}(${order.delivery_man?.phone})`,

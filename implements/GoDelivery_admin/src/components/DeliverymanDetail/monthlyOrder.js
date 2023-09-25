@@ -3,6 +3,8 @@ import { Card, CardBody, CardHeader, CardTitle } from "reactstrap";
 import { Line } from "react-chartjs-2";
 import APIService from "../../service/APIService";
 import { calendarLabels } from "../../utils/commonFunction";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const defaultValue = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
@@ -50,11 +52,13 @@ let defaultChartData = {
 const MonthlyOrder = ({ deliverymanId }) => {
     const [chartData, setChartData] = useState(defaultChartData);
     const [totalOrders, setTotalOrders] = useState(0);
+    const [calendarView, setCalendarView] = useState(false);
+    const [value, onChange] = useState(new Date());
 
-    const getChartData = () => {
+    const getChartData = (date) => {
         if (deliverymanId) {
             APIService.post("/statistics/annualOrders", {
-                year: new Date().getFullYear(),
+                year: date.getFullYear(),
                 deliverymanId: deliverymanId,
             })
                 .then((res) => {
@@ -68,7 +72,10 @@ const MonthlyOrder = ({ deliverymanId }) => {
                             0
                         );
                         setTotalOrders(sum);
-                        const month = new Date().getMonth() + 1;
+                        const month =
+                            date.getFullYear() == new Date().getFullYear()
+                                ? new Date().getMonth() + 1
+                                : 12;
                         const labels = calendarLabels.slice(0, month);
                         let orderCounts = defaultValue.slice(0, month);
                         response.data.filter((obj) => {
@@ -90,7 +97,7 @@ const MonthlyOrder = ({ deliverymanId }) => {
     };
 
     useEffect(() => {
-        getChartData();
+        getChartData(new Date());
     }, [deliverymanId]);
 
     return (
@@ -101,7 +108,35 @@ const MonthlyOrder = ({ deliverymanId }) => {
                         Orders per month
                     </CardTitle>
                     <CardTitle tag="h4" className="mb-0">
-                        &nbsp;
+                        <span>{value.getFullYear()}</span>
+                        <a
+                            className="ml-5"
+                            style={{ cursor: "pointer" }}
+                            onClick={() => {
+                                setCalendarView(!calendarView);
+                            }}
+                        >
+                            Change Year
+                        </a>
+                        <div
+                            style={{
+                                position: "absolute",
+                                zIndex: "100",
+                                display: calendarView ? "block" : "none",
+                            }}
+                        >
+                            <DatePicker
+                                selected={value}
+                                showYearPicker
+                                dateFormat="yyyy"
+                                onChange={(val) => {
+                                    onChange(val);
+                                    getChartData(val);
+                                    setCalendarView(!calendarView);
+                                }}
+                                inline
+                            />
+                        </div>
                     </CardTitle>
                 </CardHeader>
                 <CardBody style={{ overflow: "inherit" }}>

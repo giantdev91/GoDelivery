@@ -9,7 +9,9 @@ const TotalRevenueCard = () => {
         APIService.get("/order/totalRevenue").then((res) => {
             const response = res.data;
             if (response.success) {
-                setValue(Number(response.data).toLocaleString());
+                setValue(
+                    Number(Number(response.data).toFixed(2)).toLocaleString()
+                );
             }
         });
     };
