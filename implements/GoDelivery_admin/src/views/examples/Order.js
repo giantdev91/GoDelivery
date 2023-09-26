@@ -86,7 +86,7 @@ const Order = () => {
             ? orderData.map((order, index) => ({
                   index: index,
                   id: order.id,
-                  sender: `${order.client.name} (${order.client.phone})`,
+                  sender: `${order.client?.name} (${order.client?.phone})`,
                   receiver: `${order.receiverName}(${order.receiver})`,
                   from: order.from,
                   to: order.to,

@@ -23,7 +23,7 @@ const LargeLabelButton = (props: PrimaryButtonProps): JSX.Element => {
 
 const styles = StyleSheet.create({
     buttonText: {
-        fontSize: 22,
+        fontSize: 18,
         fontWeight: '600',
         color: GoDeliveryColors.white
     }

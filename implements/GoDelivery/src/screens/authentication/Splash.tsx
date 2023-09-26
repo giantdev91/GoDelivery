@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     color: GoDeliveryColors.white
   },
   buttonText: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: '700',
 
   },

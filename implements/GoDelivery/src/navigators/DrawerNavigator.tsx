@@ -26,7 +26,7 @@ function DrawerNavigator(): JSX.Element {
             }}
             drawerContent={props => <DrawerMenu {...props} />}
         >
-            <Drawer.Screen name="Home" component={TabNavigator} />
+            <Drawer.Screen name="TabHome" component={TabNavigator} />
             <Drawer.Screen name="ProfileHome" component={ProfileHomeScreen} />
             <Drawer.Screen name="MyProfile" component={ProfileScreen} />
             <Drawer.Screen name="SelectLanguage" component={SelectLanguageScreen} />

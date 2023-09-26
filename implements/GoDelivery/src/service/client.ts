@@ -16,8 +16,20 @@ const updateProfile = async (param: any) => {
     return response;
 }
 
+const updatePassword = async (param: any) => {
+    const response = await APIService.post('/client/changePassword', param);
+    return response;
+}
+
+const deleteAccount = async (param: any) => {
+    const response = await APIService.post('/client/delete', param);
+    return response;
+}
+
 export default {
     getById,
     updateFcmToken,
-    updateProfile
+    updateProfile,
+    updatePassword,
+    deleteAccount
 }

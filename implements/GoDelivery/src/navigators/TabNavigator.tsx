@@ -9,6 +9,7 @@ import NotificationsScreen from '../screens/home/Notifications'
 import OrdersScreen from '../screens/home/Orders'
 import GoDeliveryColors from '../styles/colors';
 import NewOrderNavigator from './NewOrderNavigation';
+import ProfileStackNavigator from './ProfileStackNavigator'
 
 const Tab = createBottomTabNavigator();
 
@@ -21,7 +22,7 @@ function TabNavigator(): JSX.Element {
             tabBarInactiveTintColor: GoDeliveryColors.disabled
         }}>
             <Tab.Screen
-                name="Main"
+                name="Home"
                 component={NewOrderNavigator}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
@@ -90,12 +91,12 @@ function TabNavigator(): JSX.Element {
                 }}
             />
             <Tab.Screen
-                name="Notifications"
-                component={NotificationsScreen}
+                name="ProfileHome"
+                component={ProfileStackNavigator}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         <Icons
-                            name="notifications-outline"
+                            name="person-outline"
                             color={color}
                             size={32}
                             style={styles.bottomMenuIcon}
@@ -108,7 +109,7 @@ function TabNavigator(): JSX.Element {
                                 marginBottom: 5,
                                 fontSize: 12,
                                 fontWeight: "400"
-                            }}>Notification</Text>
+                            }}>Profile</Text>
                     )
                 }}
             />

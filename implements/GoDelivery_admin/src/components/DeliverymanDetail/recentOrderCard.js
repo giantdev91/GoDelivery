@@ -84,7 +84,7 @@ const RecentOrderCard = ({ deliverymanId }) => {
                                     <Row>
                                         <Col className="col-md-6">
                                             <h3 className="text-primary">
-                                                {order.client.name}
+                                                {order.client?.name}
                                             </h3>
                                         </Col>
                                         <Col className="col-md-6 my-auto">

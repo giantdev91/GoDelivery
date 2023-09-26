@@ -35,6 +35,8 @@ router.route("/updateFcmToken").post(asyncHandler(clientController.updateFcmToke
 
 router.route("/resetPassword").post(asyncHandler(clientController.resetPassword));
 
+router.route("/changePassword").post(asyncHandler(clientController.changePassword));
+
 router.route("/:id").get(asyncHandler(clientController.getClientById));
 
 module.exports = router;

@@ -123,7 +123,71 @@ const GlobalStyles = StyleSheet.create({
     color: GoDeliveryColors.primary,
     textAlign: 'center',
     marginTop: 20,
-    marginBottom: 15
+    marginBottom: 15,
+  },
+  headerSection: {
+    alignItems: 'center',
+    height: 50,
+    width: '100%',
+    justifyContent: 'center',
+    backgroundColor: GoDeliveryColors.white,
+    ...Platform.select({
+      ios: {
+        shadowColor: GoDeliveryColors.secondary,
+        shadowOffset: {
+          width: 0,
+          height: 8,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+      },
+      android: {
+        elevation: 8,
+        shadowOffset: {
+          width: 0,
+          height: 8,
+        },
+        shadowColor: GoDeliveryColors.secondary,
+      },
+    }),
+  },
+  whiteHeaderTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: GoDeliveryColors.secondary,
+  },
+  headerBackButton: {
+    position: 'absolute',
+    left: 20,
+    padding: 10,
+  },
+  headerCheckButton: {
+    position: 'absolute',
+    right: 20,
+    padding: 10,
+  },
+  errorTooltip: {
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    position: 'absolute',
+    right: 0,
+    top: 50,
+    zIndex: 100,
+  },
+  errorIcon: {
+    backgroundColor: GoDeliveryColors.primary,
+    padding: 3,
+    borderRadius: 100,
+    width: 25,
+    height: 25,
+  },
+  errorMessageBack: {
+    backgroundColor: GoDeliveryColors.secondary,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderTopWidth: 2,
+    marginTop: 3,
+    borderColor: GoDeliveryColors.primary,
   },
 });
 

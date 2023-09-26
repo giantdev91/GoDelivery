@@ -1,6 +1,7 @@
 import axios from 'axios';
 import store from '../redux/store';
-const API_URL = process.env.API_URL;
+// const API_URL = process.env.API_URL;
+const API_URL = "http://10.0.2.2:4000";
 console.log("API_URL: ", API_URL);
 
 const config = {

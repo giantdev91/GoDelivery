@@ -266,8 +266,8 @@ exports.deleteClient = async (req, res) => {
             });
         } else {
             res.status(200).send({
-                status: "error",
-                code: 400,
+                success: false,
+                code: 200,
                 message: "User not found",
             });
         }
@@ -431,6 +431,45 @@ exports.resetPassword = async (req, res) => {
                 success: false,
                 code: 200,
                 message: "Client not found",
+            });
+        }
+    } catch (error) {
+        res.status(200).send({
+            success: false,
+            code: 500,
+            message: "Internal server error",
+        });
+    }
+};
+
+exports.changePassword = async (req, res) => {
+    try {
+        const { id, password, oldPassword } = req.body;
+        const client = await Client.findOne({
+            where: {
+                id: id,
+            },
+        });
+
+        if (comparePassword(oldPassword.trim(), client.password)) {
+            const hashedPassword = hashPassword(password.trim());
+            await Client.update(
+                { password: hashedPassword },
+                {
+                    where: { id: id },
+                }
+            );
+            res.status(200).send({
+                success: true,
+                code: 200,
+                message: "Update success",
+                data: client,
+            });
+        } else {
+            res.status(200).send({
+                success: false,
+                code: 200,
+                message: "Old password is incorrect!",
             });
         }
     } catch (error) {

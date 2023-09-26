@@ -279,10 +279,10 @@ const OrderDetail = () => {
                                     <div>
                                         <h2>Sender: </h2>
                                         <h4>
-                                            {data.client && data?.client.name}
+                                            {data.client && data?.client?.name}
                                         </h4>
                                         <h4>
-                                            {data.client && data?.client.phone}
+                                            {data.client && data?.client?.phone}
                                         </h4>
                                     </div>
                                     <div>

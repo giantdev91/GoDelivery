@@ -14,7 +14,7 @@ const HeaderBar = (props: HeaderBarProps): JSX.Element => {
     }
     return (
         <View style={styles.headerSection}>
-            <TouchableOpacity style={styles.headerBackButton} onPress={handleBack}>
+            <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
                 <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.white} />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>{props.title}</Text>
