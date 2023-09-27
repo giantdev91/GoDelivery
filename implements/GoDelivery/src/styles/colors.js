@@ -4,7 +4,7 @@ const GoDeliveryColors = {
     secondary: '#384152',
     disabled: '#9A9A9D',
     place: '#C4C4C4',
-    green: '#45D6A8',
+    green: '#00ac50',
     white: '#FFFFFF',
     background: '#F2F2F2',
     labelColor: '#384152',

@@ -7,9 +7,11 @@ import InProgressScreen from '../screens/home/InProgress'
 import InprogressOrderNavigator from './InprogressOrderNavigation';
 import NotificationsScreen from '../screens/home/Notifications'
 import OrdersScreen from '../screens/home/Orders'
+import OrderHistory from '../screens/Orders/OrderHistory';
 import GoDeliveryColors from '../styles/colors';
 import NewOrderNavigator from './NewOrderNavigation';
-import ProfileStackNavigator from './ProfileStackNavigator'
+import ProfileStackNavigator from './ProfileStackNavigator';
+import OrderHistoryNavigator from './OrderHistoryNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -68,8 +70,8 @@ function TabNavigator(): JSX.Element {
                 }}
             />
             <Tab.Screen
-                name="Orders"
-                component={OrdersScreen}
+                name="OrderHistory"
+                component={OrderHistoryNavigator}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         <Icons

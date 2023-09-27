@@ -36,7 +36,9 @@ const cancelOrder = async (param: CancelOrderParam) => {
     return response;
 }
 
-const getByID = async (param: CancelOrderParam) => {
+const getByID = async (param: {
+    orderID: any
+}) => {
     const response = await APIService.post('/order/getByID', param);
     return response;
 }
