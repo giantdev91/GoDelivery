@@ -2,12 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet, Text } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
 
-import HomeScreen from '../screens/home/Home'
-import InProgressScreen from '../screens/home/InProgress'
 import InprogressOrderNavigator from './InprogressOrderNavigation';
-import NotificationsScreen from '../screens/home/Notifications'
-import OrdersScreen from '../screens/home/Orders'
-import OrderHistory from '../screens/Orders/OrderHistory';
 import GoDeliveryColors from '../styles/colors';
 import NewOrderNavigator from './NewOrderNavigation';
 import ProfileStackNavigator from './ProfileStackNavigator';
@@ -122,9 +117,9 @@ function TabNavigator(): JSX.Element {
 const styles = StyleSheet.create({
     tabBarBackground: {
         backgroundColor: GoDeliveryColors.white,
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        height: 75
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        height: 65
     },
     bottomMenuIcon: {
         marginTop: 10,

@@ -1,6 +1,4 @@
 const EARTH_RADIUS = 6371; // Earth's radius in kilometers
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Action from '../service';
 
 const calculateBounds = (latitude: number, longitude: number, radius: number) => {
     const radianLatitude = (latitude * Math.PI) / 180;

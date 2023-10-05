@@ -1,11 +1,10 @@
 import React, { useState, useCallback } from 'react';
-import { ActivityIndicator, Image, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import Modal from 'react-native-modal';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
-import HeaderBar from '../../components/HeaderBar';
 import GoDeliveryColors from '../../styles/colors';
 import GlobalStyles from '../../styles/style';
 import store from '../../redux/store';

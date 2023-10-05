@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Alert, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { View } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
-import FeatherIcon from 'react-native-vector-icons/Feather';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useFocusEffect } from '@react-navigation/native';
 import { Image } from 'react-native';
 import Action from '../../service';
 import store from '../../redux/store';
@@ -24,11 +22,37 @@ const OrderDetail = ({ route, navigation }: {
         navigation.goBack();
     }
 
+    const handleGoToDetail = () => {
+        if (order["status"] == 0) {
+            Alert.alert("GoDelivery", "This order didn't assign yet. There is no tracking info.");
+        } else {
+            if (order["status"] == 1 || order["status"] == 2) {
+                const senderLocation = {
+                    latitude: parseFloat(order["fromX"]),
+                    longitude: parseFloat(order["fromY"]),
+                };
+
+                const receiverLocation = {
+                    latitude: parseFloat(order["toX"]),
+                    longitude: parseFloat(order["toY"]),
+                }
+                const param = {
+                    senderLocation: senderLocation,
+                    receiverLocation: receiverLocation,
+                    deliverymanID: order["deliverymanID"],
+                    orderStatus: order["status"],
+                    orderID: order["id"],
+                };
+                navigation.navigate('LiveTracking', param);
+            }
+        }
+    }
+
+
     const getOrderDetail = () => {
         Action.order.getByID({ orderID: orderID })
             .then((res) => {
                 const response = res.data;
-                console.log("response ===> ", response);
                 setOrder(response.data);
 
             }).catch(err => console.log("error: ", err));
@@ -49,7 +73,16 @@ const OrderDetail = ({ route, navigation }: {
             </View>
             <ScrollView>
                 <View style={{ padding: 10 }}>
-                    <Image source={require("../../../assets/images/sample_map.png")} style={styles.mapThumbnail} />
+                    <TouchableOpacity onPress={handleGoToDetail}>
+                        {
+                            order["screenShot"] ? (
+                                <Image source={{ uri: order["screenShot"] }} style={styles.mapThumbnail} />
+                            ) : (
+                                <Image source={require("../../../assets/images/sample_map.png")} style={styles.mapThumbnail} />
+                            )
+                        }
+
+                    </TouchableOpacity>
                     <View style={{ justifyContent: 'space-between', flexDirection: 'row', marginTop: 10, }}>
                         <Text style={GlobalStyles.subTitle}>{CommonFunctions.formatDateToString(new Date(order["expectationTime"]))}</Text>
                         <Text style={GlobalStyles.subTitle}>MZN {Number(Number(order["price"]).toFixed(2)).toLocaleString()}</Text>
@@ -107,7 +140,7 @@ const styles = StyleSheet.create({
     mapThumbnail: {
         width: '100%',
         height: 150,
-        borderRadius: 20,
+        borderRadius: 5,
     },
     locationStringRow: {
         flexDirection: 'row',

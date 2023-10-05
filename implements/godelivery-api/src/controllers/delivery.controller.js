@@ -146,7 +146,7 @@ exports.orderList = async (req, res) => {
     }
 };
 
-exports.deleteClient = async (req, res) => {
+exports.deleteDeliveryMan = async (req, res) => {
     try {
         const { id } = req.body;
         const deliveryman = await Delivery_man.findOne({

@@ -1,10 +1,9 @@
-import React, { useState, useCallback } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, } from 'react-native';
 import GoDeliveryColors from '../../styles/colors';
 import GlobalStyles from '../../styles/style';
 import store from '../../redux/store';
 import Icons from 'react-native-vector-icons/Ionicons';
-import { Checkbox, Divider } from 'react-native-paper';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import PasswordInput from '../../components/PasswordInput';
 import Action from '../../service';
@@ -21,6 +20,7 @@ const ProfileChangePassword = ({ navigation }: {
     const [passwordError, setPasswordError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
     const [oldPasswordError, setOldPasswordError] = useState('');
+    const [activityIndicator, setActivityIndicator] = useState(false);
 
     const handleBack = () => {
         navigation.goBack();
@@ -56,13 +56,14 @@ const ProfileChangePassword = ({ navigation }: {
     }
 
     const changePassword = () => {
+        setActivityIndicator(true);
         Action.client.updatePassword({
             id: currentUser.id,
             password: password,
             oldPassword: oldPassword
         }).then((res) => {
+            
             const response = res.data;
-            console.log("response ===> ", response);
             if (response.success) {
                 Dialog.show({
                     type: ALERT_TYPE.SUCCESS,
@@ -78,6 +79,7 @@ const ProfileChangePassword = ({ navigation }: {
                     button: 'close',
                 })
             }
+            setActivityIndicator(false);
         }).catch(err => console.log("error: ", err));
     }
 
@@ -147,6 +149,12 @@ const ProfileChangePassword = ({ navigation }: {
                             <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{oldPasswordError}</Text></View>
                         </View>)}
                     </View>
+                    {activityIndicator && (
+                        <ActivityIndicator
+                            size={'large'}
+                            style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
+                        />
+                    )}
                 </View>
             </AlertNotificationRoot>
         </View>

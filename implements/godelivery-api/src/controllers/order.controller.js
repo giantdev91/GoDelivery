@@ -37,9 +37,12 @@ exports.create = async (req, res) => {
             expectationTime,
             goodsVolumn,
             goodsWeight,
+            goodsType,
             description,
             price,
             distance,
+            payOption,
+            screenShot,
         } = req.body;
 
         const client = await Client.findOne({ where: { id: sender } });
@@ -76,8 +79,11 @@ exports.create = async (req, res) => {
                 expectationTime: expectationTime,
                 goodsVolumn: goodsVolumn,
                 goodsWeight: goodsWeight,
+                goodsType: goodsType,
                 description: description,
                 price: price,
+                payOption: payOption,
+                screenShot: screenShot,
                 distance: distance,
                 orderNo: new Date().valueOf().toString(),
             });

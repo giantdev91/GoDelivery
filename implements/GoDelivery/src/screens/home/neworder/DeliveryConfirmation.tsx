@@ -5,24 +5,20 @@ import {
   View,
   Text,
   ScrollView,
-  TextInput,
   Alert,
   ActivityIndicator,
-  Image,
 } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import DateTimePicker, {
   DateTimePickerAndroid,
 } from '@react-native-community/datetimepicker';
-import GlobalStyles from '../../styles/style';
-import CustomizedInput from '../../components/CustomizedInput';
-import GoDeliveryColors from '../../styles/colors';
-import Action from '../../service';
-import store from '../../redux/store';
-import HeaderBar from '../../components/HeaderBar';
+import { Checkbox } from "react-native-paper";
+import GlobalStyles from '../../../styles/style';
+import GoDeliveryColors from '../../../styles/colors';
+import Action from '../../../service';
+import store from '../../../redux/store';
 import { Divider } from 'react-native-paper';
-import PrimaryButton from '../../components/PrimaryButton';
-import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
+import PrimaryButton from '../../../components/PrimaryButton';
 
 // Function to get the day suffix (e.g., 1st, 2nd, 3rd, etc.)
 function getDaySuffix(day: number) {
@@ -46,7 +42,7 @@ const formatDate = () => {
   return formattedDate;
 }
 
-const DetailConfirmation = ({
+const DeliveryConfirmation = ({
   route,
   navigation,
 }: {
@@ -67,9 +63,13 @@ const DetailConfirmation = ({
     toLocationReferBuilding,
     goodsVolumn,
     goodsWeight,
+    goodsType,
     distance,
     price,
-    estimationTime
+    estimationTime,
+    payOption,
+    description,
+    screenShot
   } = route.params;
   const username = store.getState().CurrentUser.user.name;
   const [receiverPhone, setReceiverPhone] = useState(receiver.slice(3));
@@ -151,6 +151,10 @@ const DetailConfirmation = ({
     return validFlag;
   }
 
+  const handleBack = () => {
+    navigation.goBack();
+  }
+
   const handleNext = () => {
     if (validateForm()) {
       setActivityIndicator(true);
@@ -172,8 +176,12 @@ const DetailConfirmation = ({
         expectationTime: expectDateTime,
         goodsVolumn: goodsVolumn,
         goodsWeight: goodsWeight,
+        goodsType: goodsType,
         price: price,
         distance: distance,
+        payOption: payOption,
+        description: description,
+        screenShot: screenShot
       };
       Action.order
         .createOrder(param)
@@ -195,138 +203,150 @@ const DetailConfirmation = ({
 
   };
 
+  console.log("payoption ===> ", payOption);
+
   return (
     <View style={GlobalStyles.container}>
-      <HeaderBar navigation={navigation} title={'DELIVERY CONFIRMATION'} />
+      <View style={GlobalStyles.headerSection}>
+        <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
+          <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
+        </TouchableOpacity>
+        <Text style={GlobalStyles.whiteHeaderTitle}>DELIVERY CONFIRMATION</Text>
+      </View>
       <ScrollView>
         <View style={styles.formArea}>
-          <Text style={GlobalStyles.headerTitle}>Pick-up details</Text>
-          <View style={styles.locationStrSection}>
+          {/* Sender info section start */}
+          <Text style={GlobalStyles.subTitle}>Sender</Text>
+          <View style={styles.textWithIcon}>
             <Icons
-              name="person-circle-outline"
-              size={30}
+              name="person-outline"
+              size={20}
               color={GoDeliveryColors.secondary}
             />
-            <View style={{ flex: 1, marginLeft: 5 }}>
-              <Text style={GlobalStyles.subTitle}>Sender details</Text>
-              <Text style={GlobalStyles.text}>{username}</Text>
-              <Text style={GlobalStyles.text}>{senderPhone}</Text>
-
-              <Text style={[GlobalStyles.subTitle, { marginTop: 10 }]}>
-                Receiver details
-              </Text>
-              {/* <Text style={GlobalStyles.text}>{username}</Text> */}
-              <Text style={[GlobalStyles.text, { marginVertical: 5 }]}>{receiverName}</Text>
-              <CustomizedPhoneInput value={receiverPhone} handler={setReceiverPhone} error={receiverPhoneError.length > 0} />
-              <Text style={GlobalStyles.textFieldErrorMsgArea}>{receiverPhoneError}</Text>
-              {/* <Text style={GlobalStyles.text}>{receiver}</Text> */}
-            </View>
+            <Text style={GlobalStyles.textDisable}>{username}</Text>
           </View>
-
-          <View style={[styles.locationStrSection, { marginTop: 10 }]}>
+          <View style={styles.textWithIcon}>
+            <Icons
+              name="call-outline"
+              size={20}
+              color={GoDeliveryColors.secondary}
+            />
+            <Text style={GlobalStyles.textDisable}>{senderPhone}</Text>
+          </View>
+          <View style={styles.textWithIcon}>
+            <Icons
+              name="home-outline"
+              size={20}
+              color={GoDeliveryColors.secondary}
+            />
+            <Text style={GlobalStyles.textDisable}>{fromLocationReferBuilding}</Text>
+          </View>
+          <View style={styles.textWithIcon}>
             <Icons
               name="locate-outline"
-              size={30}
+              size={20}
               color={GoDeliveryColors.green}
             />
-            <View style={{ flex: 1, marginLeft: 5 }}>
-              <Text style={GlobalStyles.subTitle}>Pick-up location</Text>
-              <Text style={GlobalStyles.text} numberOfLines={2}>
-                {from}
-              </Text>
-            </View>
+            <Text style={GlobalStyles.textDisable}>{from}</Text>
           </View>
-          <View style={[styles.locationStrSection, { marginTop: 10 }]}>
+          <Divider style={styles.divider} />
+          {/* Sender info section end */}
+
+          {/* Receiver info section start */}
+          <Text style={GlobalStyles.subTitle}>Receiver</Text>
+          <View style={styles.textWithIcon}>
+            <Icons
+              name="person-outline"
+              size={20}
+              color={GoDeliveryColors.secondary}
+            />
+            <Text style={GlobalStyles.textDisable}>{receiverName}</Text>
+          </View>
+          <View style={styles.textWithIcon}>
+            <Icons
+              name="call-outline"
+              size={20}
+              color={GoDeliveryColors.secondary}
+            />
+            <Text style={GlobalStyles.textDisable}>{receiver}</Text>
+          </View>
+          <View style={styles.textWithIcon}>
+            <Icons
+              name="home-outline"
+              size={20}
+              color={GoDeliveryColors.secondary}
+            />
+            <Text style={GlobalStyles.textDisable}>{toLocationReferBuilding}</Text>
+          </View>
+          <View style={styles.textWithIcon}>
             <Icons
               name="location-outline"
-              size={30}
+              size={20}
               color={GoDeliveryColors.primary}
             />
-            <View style={{ flex: 1, marginLeft: 5 }}>
-              <Text style={[GlobalStyles.subTitle]}>
-                Delivery location
-              </Text>
-              <Text style={GlobalStyles.text}>{to}</Text>
-            </View>
+            <Text style={GlobalStyles.textDisable}>{to}</Text>
           </View>
+          <Divider style={styles.divider} />
+          {/* Receiver info section end */}
 
-          <View style={styles.locationStrSection}>
-            <Image
-              source={require('../../../assets/images/icons/date.png')}
-              style={styles.iconImg}
+          {/* Item Details info section start */}
+          <Text style={GlobalStyles.subTitle}>Item Details</Text>
+          <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
+            <Text style={GlobalStyles.textDisable}>Weight</Text>
+            <Text style={GlobalStyles.textDisable}>{goodsWeight}</Text>
+          </View>
+          <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
+            <Text style={GlobalStyles.textDisable}>Volume</Text>
+            <Text style={GlobalStyles.textDisable}>{goodsVolumn}</Text>
+          </View>
+          <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
+            <Text style={GlobalStyles.textDisable}>Type of Goods</Text>
+            <Text style={GlobalStyles.textDisable}>{goodsType}</Text>
+          </View>
+          <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
+            <Text style={GlobalStyles.textDisable}>Delivery Charges</Text>
+            <Text style={GlobalStyles.textDisable}>{`MZN ${price}`}</Text>
+          </View>
+          <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
+            <Text style={GlobalStyles.textDisable}>Discount</Text>
+            <Text style={GlobalStyles.textDisable}>{'0 %'}</Text>
+          </View>
+          <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
+            <Text style={GlobalStyles.textDisable}>Total Payment</Text>
+            <Text style={GlobalStyles.textDisable}>{`MZN ${price}`}</Text>
+          </View>
+          <Divider style={styles.divider} />
+          {/* Item Details info section end */}
+
+          {/* Payment Option section start */}
+          <Text style={GlobalStyles.subTitle}>Payment Option</Text>
+          <View style={[styles.textWithIcon]}>
+            <Checkbox
+              status={'checked'}
             />
-            <View style={{ flex: 1, marginLeft: 5 }}>
-              <Text style={GlobalStyles.subTitle}>Pick-up date</Text>
-              {/* {!expectationDate && (
-                <TouchableOpacity
-                  onPress={showDatePicker}
-                  style={styles.dateTimePicker}>
-                  <Text style={GlobalStyles.text}>Set Date</Text>
-                </TouchableOpacity>
-              )} */}
-              {expectationDate && (
-                <View
-                  style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
-                  <Text style={GlobalStyles.text} numberOfLines={2}>
-                    {expectationDate}
-                  </Text>
-                  {/* <TouchableOpacity
-                    onPress={showDatePicker}
-                    style={styles.dateTimePickerReset}>
-                    <Text style={GlobalStyles.text}>Reset</Text>
-                  </TouchableOpacity> */}
-                </View>
-              )}
-            </View>
+            <Text style={GlobalStyles.textDisable}>{payOption == 1 ? "Paid by Receiver" : "Paid by Sender"}</Text>
           </View>
+          {/* Payment Option section end */}
 
-          <View style={[styles.locationStrSection, { marginTop: 10 }]}>
-            <Image
-              source={require('../../../assets/images/icons/time.png')}
-              style={styles.iconImg}
-            />
-            <View style={{ flex: 1, marginLeft: 5 }}>
-              <Text style={GlobalStyles.subTitle}>Pick-up time</Text>
-              {/* {!expectationTime && (
-                <TouchableOpacity
-                  onPress={showTimePicker}
-                  style={styles.dateTimePicker}>
-                  <Text style={GlobalStyles.text}>Set Time</Text>
-                </TouchableOpacity>
-              )} */}
-              {expectationTime && (
-                <View
-                  style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
-                  <Text style={GlobalStyles.text}>{expectationTime}min</Text>
-                  {/* <TouchableOpacity
-                    onPress={showTimePicker}
-                    style={styles.dateTimePickerReset}>
-                    <Text style={GlobalStyles.text}>Reset</Text>
-                  </TouchableOpacity> */}
-                </View>
-              )}
-            </View>
-          </View>
-
-          <View style={{ marginTop: 10 }}>
+          {/* <View style={{ marginTop: 10 }}>
             <View style={styles.infoLabelBack}>
               <Image
-                source={require('../../../assets/images/icons/distance.png')}
+                source={require('../../../../assets/images/icons/distance.png')}
                 style={styles.iconImg}
               />
               <Text style={GlobalStyles.subTitle}>Distance: {distance}Km</Text>
             </View>
             <View style={styles.infoLabelBack}>
               <Image
-                source={require('../../../assets/images/icons/price.png')}
+                source={require('../../../../assets/images/icons/price.png')}
                 style={styles.iconImg}
               />
               <Text style={GlobalStyles.subTitle}>Price: MZN {price}</Text>
             </View>
-          </View>
+          </View> */}
         </View>
-        <View style={styles.buttonRow}>
-          <PrimaryButton buttonText="CONFIRM" handler={handleNext} />
+        <View style={[styles.buttonRow, { marginTop: 50 }]}>
+          <PrimaryButton buttonText="PROCEED" handler={handleNext} />
         </View>
       </ScrollView>
       {activityIndicator && (
@@ -347,7 +367,7 @@ const styles = StyleSheet.create({
   },
   inputBack: {
     backgroundColor: GoDeliveryColors.white,
-    borderRadius: 25,
+    borderRadius: 5,
     paddingHorizontal: 20,
     paddingVertical: 0,
     flex: 1,
@@ -366,6 +386,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     flex: 1,
   },
+  textWithIcon: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    gap: 10,
+    marginVertical: 5
+  },
   textFieldErrorMsgArea: {
     height: 20,
     paddingLeft: 20,
@@ -380,7 +407,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   submitButton: {
-    borderRadius: 30,
+    borderRadius: 5,
     backgroundColor: GoDeliveryColors.primary,
     width: 150,
     height: 50,
@@ -415,13 +442,13 @@ const styles = StyleSheet.create({
     borderColor: GoDeliveryColors.disabled,
     borderWidth: 0.5,
     width: '100%',
-    marginVertical: 30,
+    marginVertical: 20,
   },
   dateTimePicker: {
     backgroundColor: GoDeliveryColors.white,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 10,
+    borderRadius: 5,
     width: 120,
     marginVertical: 5,
     borderColor: GoDeliveryColors.secondary,
@@ -431,11 +458,11 @@ const styles = StyleSheet.create({
     backgroundColor: GoDeliveryColors.white,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 10,
+    borderRadius: 5,
     width: 60,
     borderColor: GoDeliveryColors.secondary,
     borderWidth: 1,
   },
 });
 
-export default DetailConfirmation;
+export default DeliveryConfirmation;

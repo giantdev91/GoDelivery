@@ -1,10 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import GoDeliveryColors from '../../styles/colors';
 import GlobalStyles from '../../styles/style';
 import store from '../../redux/store';
 import Icons from 'react-native-vector-icons/Ionicons';
-import { Checkbox, Divider } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 
 const ProfileSelectLanguage = ({ navigation }: {

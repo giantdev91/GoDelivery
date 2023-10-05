@@ -1,6 +1,9 @@
 import {StyleSheet, Dimensions, Platform} from 'react-native';
 import GoDeliveryColors from './colors';
 
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+
 const GlobalStyles = StyleSheet.create({
   container: {
     flex: 1,
@@ -40,9 +43,9 @@ const GlobalStyles = StyleSheet.create({
   primaryButton: {
     alignSelf: 'center',
     width: '100%',
-    height: 50,
+    height: 45,
     backgroundColor: GoDeliveryColors.primary,
-    borderRadius: 10,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -170,24 +173,61 @@ const GlobalStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-end',
     position: 'absolute',
-    right: 0,
+    right: -10,
     top: 50,
     zIndex: 100,
   },
   errorIcon: {
     backgroundColor: GoDeliveryColors.primary,
-    padding: 3,
+    padding: 1,
     borderRadius: 100,
-    width: 25,
-    height: 25,
+    width: 22,
+    height: 22,
   },
   errorMessageBack: {
     backgroundColor: GoDeliveryColors.secondary,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
     borderTopWidth: 2,
     marginTop: 3,
     borderColor: GoDeliveryColors.primary,
+    borderRadius: 5
+  },
+  locationStrContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    backgroundColor: GoDeliveryColors.white,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    paddingVertical: 7,
+    gap: 10,
+  },
+  locationStr: {
+    flex: 1,
+    fontSize: 12,
+    fontWeight: '400',
+    color: GoDeliveryColors.disabled,
+  },
+  markerContainer: {
+    position: 'absolute',
+    width: 50,
+    height: 60,
+    left: SCREEN_WIDTH / 2 - 25,
+    bottom: (SCREEN_HEIGHT - 50 - 65) / 2 + 20,
+  },
+  mapMarker: {
+    width: 50,
+    height: 60,
+  },
+  markerLabel: {
+    width: '100%',
+    textAlign: 'center',
+    marginTop: -45,
+    color: GoDeliveryColors.primary,
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
 

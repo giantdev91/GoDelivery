@@ -4,7 +4,6 @@ import OTPInputView from '@twotalltotems/react-native-otp-input'
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import PrimaryButton from '../../components/PrimaryButton';
 import TwillioService from '../../service/TwillioService';
 import { ActivityIndicator } from 'react-native';
 import Action from '../../service';

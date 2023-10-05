@@ -1,27 +1,25 @@
 import React from 'react';
 import {
   StyleSheet,
-  TouchableOpacity,
   View,
   Text,
   Image,
-  ScrollView,
 } from 'react-native';
-import Icons from 'react-native-vector-icons/Ionicons';
-
-import { RadioButton } from 'react-native-paper';
-import GlobalStyles from '../../styles/style';
-import HeaderBar from '../../components/HeaderBar';
-import CustomizedInput from '../../components/CustomizedInput';
-import PrimaryButton from '../../components/PrimaryButton';
-import GoDeliveryColors from '../../styles/colors';
+import { useDispatch } from 'react-redux';
+import GlobalStyles from '../../../styles/style';
+import PrimaryButton from '../../../components/PrimaryButton';
+import GoDeliveryColors from '../../../styles/colors';
+import allActions from '../../../redux/actions';
 
 interface ScreenProps {
   navigation: any;
 }
 
 const NewOrderComplete = ({ navigation }: ScreenProps): JSX.Element => {
+  const dispatch = useDispatch();
+
   const handleToHome = () => {
+    dispatch(allActions.OrderAction.setNewOrder({}));
     navigation.reset({
       index: 0,
       routes: [{ name: 'InProgress' }],

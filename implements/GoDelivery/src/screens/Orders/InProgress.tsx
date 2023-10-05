@@ -12,7 +12,7 @@ import Action from '../../service';
 import store from '../../redux/store';
 import CommonFunctions from '../../common/CommonFunctions';
 
-const OrderHistory = ({ navigation }: {
+const InProgress = ({ navigation }: {
     navigation: any;
 }) => {
     const currentUser = store.getState().CurrentUser.user;
@@ -31,37 +31,21 @@ const OrderHistory = ({ navigation }: {
 
     const fetchOrders = async () => {
         setActivityIndicator(true);
-        const sendOrdersResponse = await Action.order.completeOrders({ status: 3, sender: currentUser.id });
-        const sendOrders = sendOrdersResponse.data.data;
-        const receivedOrdersResponse = await Action.order.completeOrders({ status: 3, receiver: currentUser.phone });
-        const receivedOrders = receivedOrdersResponse.data.data;
-        const cancelledOrdersResponse = await Action.order.completeOrders({ status: 4, sender: currentUser.id });
-        const cancelledOrders = cancelledOrdersResponse.data.data;
-        let orders: any[] = [];
-        if (orderStatus == 0) {
-            orders = [
-                ...sendOrders,
-                ...receivedOrders,
-                ...cancelledOrders
-            ]
-        }
-        if (orderStatus == 1) {
-            orders = [
-                ...sendOrders,
-            ]
-        }
-        if (orderStatus == 2) {
-            orders = [
-                ...receivedOrders,
-            ]
-        }
-        if (orderStatus == 3) {
-            orders = [
-                ...cancelledOrders,
-            ]
-        }
-        setOrders(orders);
-        setActivityIndicator(false);
+        Action.order.inprogressOrders({ sender: currentUser.id, receiver: currentUser.phone })
+            .then((res) => {
+                const response = res.data;
+
+                console.log("data ====> ", response.data);
+                if (orderStatus == 0) {
+                    setOrders(response.data);
+                } else {
+                    setOrders(response.data.filter((item: any) => item.status == orderStatus))
+                }
+                setActivityIndicator(false);
+            }).catch(err => {
+                setActivityIndicator(false);
+                console.log("error: ", err);
+            })
     }
 
     useEffect(() => {
@@ -78,7 +62,7 @@ const OrderHistory = ({ navigation }: {
     return (
         <View style={[GlobalStyles.container, { backgroundColor: GoDeliveryColors.white }]}>
             <View style={[GlobalStyles.headerSection, { zIndex: 100 }]}>
-                <Text style={GlobalStyles.whiteHeaderTitle}>{orderStatus == 0 ? 'ORDER HISTORY' : orderStatus == 1 ? 'SENT' : orderStatus == 2 ? 'RECEIVED' : 'CANCELLED'}</Text>
+                <Text style={GlobalStyles.whiteHeaderTitle}>{orderStatus == 0 ? 'IN PROGRESS' : orderStatus == 1 ? 'PICK UP' : 'DROP OFF'}</Text>
                 <TouchableOpacity style={GlobalStyles.headerCheckButton} onPress={toggleSwitch}>
                     <FeatherIcon name='more-vertical' size={25} color={GoDeliveryColors.secondary} />
                 </TouchableOpacity>
@@ -86,9 +70,8 @@ const OrderHistory = ({ navigation }: {
                     switchShow && (
                         <View style={[styles.switchDialog, GlobalStyles.shadowProp]}>
                             <TouchableOpacity onPress={() => { setOrderStatus(0); toggleSwitch(); }} style={{ paddingVertical: 7 }}><Text style={GlobalStyles.textMedium}>ALL</Text></TouchableOpacity>
-                            <TouchableOpacity onPress={() => { setOrderStatus(1); toggleSwitch(); }} style={{ paddingVertical: 7 }}><Text style={GlobalStyles.textMedium}>SENT</Text></TouchableOpacity>
-                            <TouchableOpacity onPress={() => { setOrderStatus(2); toggleSwitch(); }} style={{ paddingVertical: 7 }}><Text style={GlobalStyles.textMedium}>RECEIVED</Text></TouchableOpacity>
-                            <TouchableOpacity onPress={() => { setOrderStatus(3); toggleSwitch(); }} style={{ paddingVertical: 7 }}><Text style={GlobalStyles.textMedium}>CANCELLED</Text></TouchableOpacity>
+                            <TouchableOpacity onPress={() => { setOrderStatus(1); toggleSwitch(); }} style={{ paddingVertical: 7 }}><Text style={GlobalStyles.textMedium}>PICK UP</Text></TouchableOpacity>
+                            <TouchableOpacity onPress={() => { setOrderStatus(2); toggleSwitch(); }} style={{ paddingVertical: 7 }}><Text style={GlobalStyles.textMedium}>DROP OFF</Text></TouchableOpacity>
                         </View>
                     )
                 }
@@ -97,7 +80,7 @@ const OrderHistory = ({ navigation }: {
                 {
                     orders.map((order, key) => (
                         <TouchableOpacity key={key} onPress={() => {
-                            navigation.navigate("OrderDetail", { orderID: order["id"] })
+                            navigation.navigate("InProgressOrderDetail", { orderID: order["id"] })
                         }}>
                             <View style={[styles.orderCard, { borderTopWidth: key === 0 ? 0.5 : 0 }]}>
                                 <View style={styles.textSection}>
@@ -127,7 +110,7 @@ const OrderHistory = ({ navigation }: {
                                             )
                                     }
                                     <View style={[styles.statusBar, { backgroundColor: order["status"] == 3 ? GoDeliveryColors.green : GoDeliveryColors.primary }]}>
-                                        <Text style={[GlobalStyles.text, { color: GoDeliveryColors.white }]}>{order["status"] == 3 ? 'Completed' : 'Cancelled'}</Text>
+                                        <Text style={[GlobalStyles.text, { color: GoDeliveryColors.white }]}>{order["status"] == 0 ? 'Pending' : 'Processing'}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -168,6 +151,7 @@ const styles = StyleSheet.create({
         width: 120,
         height: 120,
         borderRadius: 5,
+        resizeMode: 'stretch'
     },
     statusBar: {
         position: 'absolute',
@@ -203,4 +187,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default OrderHistory;
+export default InProgress;

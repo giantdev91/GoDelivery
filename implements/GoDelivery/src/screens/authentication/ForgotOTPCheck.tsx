@@ -4,16 +4,13 @@ import {
   Image,
   StyleSheet,
   Text,
-  ScrollView,
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import Icons from 'react-native-vector-icons/Ionicons';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
 import { TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
 import LargeLabelButton from '../../components/LargeLabelButton';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import TwillioService from '../../service/TwillioService';

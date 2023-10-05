@@ -1,8 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, Platform, ScrollView } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import GlobalStyles from '../../styles/style';
-import MenuButton from '../../components/MenuButton';
 import GoDeliveryColors from '../../styles/colors';
 import { useFocusEffect } from '@react-navigation/native';
 import Action from '../../service';
@@ -29,13 +28,20 @@ const renderCreatedAtTime = (timestamp: string) => {
 const NotificationsScreen = ({ navigation }: ScreenProps): JSX.Element => {
     const [notifications, setNotifications] = useState([]);
     const clientID = store.getState().CurrentUser.user.id;
+    const [activityIndicator, setActivityIndicator] = useState(false);
 
     const fetchNotifications = () => {
+        setActivityIndicator(true);
         Action.notification.list({ clientID: clientID })
             .then((res) => {
                 const response = res.data;
                 setNotifications(response.data);
+                setActivityIndicator(false);
             }).catch((err) => console.log("error: ", err));
+    }
+
+    const handleBack = () => {
+        navigation.goBack();
     }
 
     useFocusEffect(
@@ -46,9 +52,11 @@ const NotificationsScreen = ({ navigation }: ScreenProps): JSX.Element => {
 
     return (
         <View style={[GlobalStyles.container]}>
-            <MenuButton navigation={navigation} />
-            <View style={styles.headerSection}>
-                <Text style={styles.headerTitle}>NOTIFICATIONS</Text>
+            <View style={[GlobalStyles.headerSection]}>
+                <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
+                    <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
+                </TouchableOpacity>
+                <Text style={GlobalStyles.whiteHeaderTitle}>NOTIFICATIONS</Text>
             </View>
             <ScrollView style={styles.scrollArea}>
                 {
@@ -58,7 +66,7 @@ const NotificationsScreen = ({ navigation }: ScreenProps): JSX.Element => {
                                 <Text style={GlobalStyles.text} numberOfLines={2}>{notif["content"]}</Text>
                             </View>
                             <View style={styles.notificationDetailArea}>
-                                <Text style={GlobalStyles.textBold}>Order {notif["orders"].orderNo}</Text>
+                                <Text style={GlobalStyles.textBold}>Order {notif["orders"]?.orderNo}</Text>
                                 <Text style={GlobalStyles.textDisable}>{renderCreatedAtTime(notif["createdAt"])}</Text>
                             </View>
                         </View>
@@ -75,22 +83,17 @@ const NotificationsScreen = ({ navigation }: ScreenProps): JSX.Element => {
                     )
                 }
             </ScrollView>
+            {activityIndicator && (
+                <ActivityIndicator
+                    size={'large'}
+                    style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
+                />
+            )}
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    headerSection: {
-        alignItems: 'center',
-        height: 80,
-        width: '100%',
-        justifyContent: 'center',
-    },
-    headerTitle: {
-        fontSize: 18,
-        fontWeight: "600",
-        color: GoDeliveryColors.primary,
-    },
     scrollArea: {
         padding: 10,
         marginBottom: 20,
@@ -105,7 +108,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         backgroundColor: GoDeliveryColors.white,
         height: 80,
-        borderRadius: 10,
+        borderRadius: 5,
         ...Platform.select({
             ios: {
                 shadowColor: GoDeliveryColors.secondary,

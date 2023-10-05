@@ -8,7 +8,6 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
-import Icons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';

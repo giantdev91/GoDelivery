@@ -1,12 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, } from 'react-native';
 import GoDeliveryColors from '../../styles/colors';
 import GlobalStyles from '../../styles/style';
 import store from '../../redux/store';
-import Icons from 'react-native-vector-icons/Ionicons';
-import { Checkbox, Divider } from 'react-native-paper';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
-import PasswordInput from '../../components/PasswordInput';
 import Action from '../../service';
 import LargeLabelButton from '../../components/LargeLabelButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -36,7 +33,6 @@ const ProfileDeleteAccount = ({ navigation }: {
         Action.client.deleteAccount({ clientId: currentUser.id })
             .then(async res => {
                 const response = res.data;
-                console.log("response: ", response);
                 setActivityIndicator(false);
                 toggleModal();
                 if (response.success) {
@@ -148,7 +144,7 @@ const styles = StyleSheet.create({
         paddingVertical: 30,
         paddingHorizontal: 20,
         width: '100%',
-        borderRadius: 10,
+        borderRadius: 5,
     },
     controlButtonRow: {
         flexDirection: 'row',
@@ -161,7 +157,7 @@ const styles = StyleSheet.create({
         backgroundColor: GoDeliveryColors.primary,
         paddingHorizontal: 20,
         paddingVertical: 5,
-        borderRadius: 10,
+        borderRadius: 5,
     }
 });
 

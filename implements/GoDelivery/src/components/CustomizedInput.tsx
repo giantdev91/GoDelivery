@@ -12,6 +12,7 @@ interface CustomizedInputProps {
   val?: string;
   error?: boolean;
   showCheck?: boolean;
+  disabled?: boolean;
 }
 
 const CustomizedInput = (props: CustomizedInputProps): JSX.Element => {
@@ -36,6 +37,7 @@ const CustomizedInput = (props: CustomizedInputProps): JSX.Element => {
           keyboardType={props.keyboardType == 'number' ? 'numeric' : 'default'}
           onChangeText={value => handleValue(value)}
           secureTextEntry={false}
+          editable={!props.disabled}
         />
       </View>
     </View>
@@ -53,7 +55,7 @@ const styles = StyleSheet.create({
   },
   inputBack: {
     backgroundColor: GoDeliveryColors.white,
-    borderRadius: 10,
+    borderRadius: 5,
     borderColor: GoDeliveryColors.disabled,
     borderWidth: 1,
     paddingHorizontal: 20,

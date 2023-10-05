@@ -3,7 +3,6 @@ import { StyleSheet, TouchableOpacity, View, Text, Image, Dimensions, Linking, A
 import Icons from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
 import GlobalStyles from '../../styles/style';
-import HeaderBar from '../../components/HeaderBar';
 import GoDeliveryColors from '../../styles/colors';
 import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
@@ -131,7 +130,6 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
             .then((res) => {
                 const response = res.data;
                 setDeliveryman(response.data);
-                console.log("delivery man info =======> ", response.data.locationLatitude, response.data.locationLongitude);
                 const latitude = parseFloat(response.data.locationLatitude);
                 const longitude = parseFloat(response.data.locationLongitude);
                 setDeliverymanPosition({
@@ -185,6 +183,10 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
         getDeliveryMansInfo();
     }
 
+    const handleBack = () => {
+        navigation.goBack();
+    }
+
     useFocusEffect(
         useCallback(() => {
             refreshStatus();
@@ -201,7 +203,6 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
 
     return (
         <View style={[GlobalStyles.container]}>
-            <HeaderBar navigation={navigation} title={orderStatus == 1 ? 'IN PROGRESS' : 'DELIVERING'} />
             <MapView
                 style={{ flex: 1.5, borderColor: 'red', borderWidth: 1 }}
                 provider={PROVIDER_GOOGLE}
@@ -249,6 +250,9 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
                 />)}
 
             </MapView>
+            <TouchableOpacity style={[GlobalStyles.headerBackButton, { backgroundColor: '#FFFFFFB0', borderRadius: 100, }]} onPress={handleBack}>
+                <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
+            </TouchableOpacity>
             {/* <DistanceComponent locationStr={deliverymanPositionStr} estimationTime={estimationTime} /> */}
             <DeliveryManDetailDialog
                 avartar={deliveryman.avatar}
@@ -307,7 +311,7 @@ const styles = StyleSheet.create({
         top: 55,
         alignSelf: 'center',
         width: '90%',
-        borderRadius: 10,
+        borderRadius: 5,
         backgroundColor: GoDeliveryColors.white,
         height: 60,
         flexDirection: 'row',
@@ -318,7 +322,7 @@ const styles = StyleSheet.create({
     deliveryManDetailDialog: {
         width: '95%',
         backgroundColor: 'white',
-        borderRadius: 10,
+        borderRadius: 5,
         height: 90,
         position: 'absolute',
         bottom: 80,
