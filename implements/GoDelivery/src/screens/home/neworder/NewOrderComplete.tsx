@@ -35,11 +35,11 @@ const NewOrderComplete = ({ navigation }: ScreenProps): JSX.Element => {
       {/* <HeaderBar navigation={navigation} title={'New Order'} /> */}
       <View style={{ justifyContent: 'flex-start', alignItems: 'flex-start' }}>
         <Image
-          source={require('../../../assets/images/goods.jpg')}
+          source={require('../../../../assets/images/goods.jpg')}
           style={[{ width: '100%', height: 300, resizeMode: 'cover' }]}
         />
         <Image
-          source={require('../../../assets/images/company-logo.png')}
+          source={require('../../../../assets/images/company-logo.png')}
           style={{ position: 'absolute', top: 200, height: 150, width: 240, resizeMode: 'contain', alignSelf: 'center' }}
         />
       </View>
