@@ -1,11 +1,12 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import GoDeliveryColors from '../styles/colors';
 
 interface PasswordInputProps {
   placeholder?: string;
   handler: (val: string) => void;
+  error?: boolean;
 }
 
 const PasswordInput = (props: PasswordInputProps): JSX.Element => {
@@ -19,7 +20,7 @@ const PasswordInput = (props: PasswordInputProps): JSX.Element => {
 
   return (
     <View style={styles.background}>
-      <View style={styles.inputBack}>
+      <View style={[styles.inputBack, { borderColor: props.error ? GoDeliveryColors.primary : GoDeliveryColors.disabled }]}>
         <Icons
           name={'lock-closed-outline'}
           size={25}
@@ -42,15 +43,6 @@ const PasswordInput = (props: PasswordInputProps): JSX.Element => {
           />
         </TouchableOpacity>
       </View>
-      <View style={styles.checkIconArea}>
-        {value && (
-          <Icons
-            name="checkmark-outline"
-            size={25}
-            color={GoDeliveryColors.green}
-          />
-        )}
-      </View>
     </View>
   );
 };
@@ -63,7 +55,7 @@ const styles = StyleSheet.create({
   },
   inputBack: {
     backgroundColor: GoDeliveryColors.white,
-    borderRadius: 10,
+    borderRadius: 5,
     borderWidth: 1,
     borderColor: GoDeliveryColors.disabled,
     paddingHorizontal: 20,
@@ -77,10 +69,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     flex: 1,
     paddingHorizontal: 10,
-  },
-  checkIconArea: {
-    width: 35,
-    alignItems: 'flex-end',
   },
 });
 

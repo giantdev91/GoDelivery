@@ -15,7 +15,9 @@ router.route("/signin").post(asyncHandler(deliveryController.signin));
 router.route("/totalcount").get(asyncHandler(deliveryController.totalcount));
 
 router.route("/orderlist").post(asyncHandler(deliveryController.orderList));
-router.route("/delete").post(asyncHandler(deliveryController.deleteDeliveryMan));
+router
+    .route("/delete")
+    .post(asyncHandler(deliveryController.deleteDeliveryMan));
 router
     .route("/updateFcmToken")
     .post(asyncHandler(deliveryController.updateFcmToken));
@@ -36,5 +38,9 @@ router
 router
     .route("/updateUserStatus")
     .post(asyncHandler(deliveryController.updateUserStatus));
+
+router
+    .route("/changePassword")
+    .post(asyncHandler(deliveryController.changePassword));
 
 module.exports = router;

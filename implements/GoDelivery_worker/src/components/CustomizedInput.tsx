@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, TextInput} from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, TextInput } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import GoDeliveryColors from '../styles/colors';
 
@@ -12,6 +12,7 @@ interface CustomizedInputProps {
   val?: string;
   error?: boolean;
   showCheck?: boolean;
+  disabled?: boolean;
 }
 
 const CustomizedInput = (props: CustomizedInputProps): JSX.Element => {
@@ -36,19 +37,9 @@ const CustomizedInput = (props: CustomizedInputProps): JSX.Element => {
           keyboardType={props.keyboardType == 'number' ? 'numeric' : 'default'}
           onChangeText={value => handleValue(value)}
           secureTextEntry={false}
+          editable={!props.disabled}
         />
       </View>
-      {!props.showCheck && (
-        <View style={styles.checkIconArea}>
-          {value && (
-            <Icons
-              name="checkmark-outline"
-              size={25}
-              color={GoDeliveryColors.green}
-            />
-          )}
-        </View>
-      )}
     </View>
   );
 };
@@ -64,7 +55,7 @@ const styles = StyleSheet.create({
   },
   inputBack: {
     backgroundColor: GoDeliveryColors.white,
-    borderRadius: 10,
+    borderRadius: 5,
     borderColor: GoDeliveryColors.disabled,
     borderWidth: 1,
     paddingHorizontal: 20,
@@ -78,10 +69,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     flex: 1,
     paddingHorizontal: 10,
-  },
-  checkIconArea: {
-    width: 35,
-    alignItems: 'flex-end',
   },
 });
 

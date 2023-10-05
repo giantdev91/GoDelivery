@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, Platform } from 'react-native';
 import { View } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import FeatherIcon from 'react-native-vector-icons/Feather';
@@ -34,8 +34,6 @@ const InProgress = ({ navigation }: {
         Action.order.inprogressOrders({ sender: currentUser.id, receiver: currentUser.phone })
             .then((res) => {
                 const response = res.data;
-
-                console.log("data ====> ", response.data);
                 if (orderStatus == 0) {
                     setOrders(response.data);
                 } else {
@@ -167,9 +165,30 @@ const styles = StyleSheet.create({
     orderCard: {
         flexDirection: 'row',
         gap: 15,
-        padding: 20,
-        borderBottomWidth: 0.5,
-        borderColor: GoDeliveryColors.disabled
+        padding: 10,
+        borderRadius: 5,
+        backgroundColor: GoDeliveryColors.white,
+        marginHorizontal: 10,
+        marginVertical: 7,
+        ...Platform.select({
+            ios: {
+                shadowColor: GoDeliveryColors.secondary,
+                shadowOffset: {
+                    width: 0,
+                    height: 8,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+            },
+            android: {
+                elevation: 8,
+                shadowOffset: {
+                    width: 0,
+                    height: 8,
+                },
+                shadowColor: GoDeliveryColors.secondary,
+            },
+        }),
     },
     textSection: {
         flex: 1,

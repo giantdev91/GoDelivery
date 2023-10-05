@@ -3,7 +3,6 @@ import Geolocation from 'react-native-geolocation-service';
 import Action from '../service';
 import store from '../redux/store';
 import { UPDATE_INTERVAL } from './Constant';
-import { requestLocationPermission } from './RequestPermission';
 
 const backgroundOptions = {
     taskName: 'GoDelivery location show', // A unique name for your background task.
@@ -33,13 +32,11 @@ const locationSynchronizeTask = async () => {
                 locationLongitude: locationLongitude,
             }).then((res) => {
                 const response = res.data;
-                console.log("update location response: ", response);
             }).catch((err) => {
                 console.error('error: ', err);
             })
         },
         error => {
-            console.log(error.code, error.message);
             BackgroundActions.stop();
         },
         { enableHighAccuracy: true, showsBackgroundLocationIndicator: true, fastestInterval: UPDATE_INTERVAL });

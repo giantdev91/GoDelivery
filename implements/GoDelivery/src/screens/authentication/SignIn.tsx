@@ -5,9 +5,9 @@ import {
   StyleSheet,
   Text,
   ActivityIndicator,
-  Alert,
   ScrollView,
 } from 'react-native';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
@@ -88,7 +88,12 @@ const SignInScreen = ({ route, navigation }: { route: any; navigation: any }) =>
                   console.log('error: ', err);
                 });
             } else {
-              Alert.alert('GoDelivery', responseData.message);
+              Dialog.show({
+                type: ALERT_TYPE.DANGER,
+                title: 'GoDelivery',
+                textBody: responseData.message,
+                button: 'OK',
+              });
             }
             setActivityIndicator(false);
           })
@@ -115,66 +120,68 @@ const SignInScreen = ({ route, navigation }: { route: any; navigation: any }) =>
 
   return (
     <SafeAreaView style={[GlobalStyles.container, { backgroundColor: GoDeliveryColors.white }]}>
-      <ScrollView>
-        <View style={GlobalStyles.authenticationScreenLogoBack}>
-          <Image
-            source={require('../../../assets/images/login.png')}
-            style={GlobalStyles.authenticationScreenLogo}
-          />
-        </View>
-        <View
-          style={[GlobalStyles.container, GlobalStyles.contentAreaPadding, { backgroundColor: GoDeliveryColors.white }]}>
-          <View style={{ justifyContent: 'flex-start', }}>
-            <Text style={GlobalStyles.authenticationHeaderTitle}>LOGIN</Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <View style={{ flex: 1 }}>
-                <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
+      <AlertNotificationRoot>
+        <ScrollView>
+          <View style={GlobalStyles.authenticationScreenLogoBack}>
+            <Image
+              source={require('../../../assets/images/login.png')}
+              style={GlobalStyles.authenticationScreenLogo}
+            />
+          </View>
+          <View
+            style={[GlobalStyles.container, GlobalStyles.contentAreaPadding, { backgroundColor: GoDeliveryColors.white }]}>
+            <View style={{ justifyContent: 'flex-start', }}>
+              <Text style={GlobalStyles.authenticationHeaderTitle}>LOGIN</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <View style={{ flex: 1 }}>
+                  <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
+                </View>
+              </View>
+              <Text style={GlobalStyles.textFieldErrorMsgArea}>{phoneError}</Text>
+              <PasswordInput
+                handler={val => {
+                  setPassword(val);
+                }}
+              />
+              <View style={{ marginTop: 20 }}>
+                <TouchableOpacity
+                  style={styles.footerTitleBack}
+                  onPress={navigateToForgetPassword}>
+                  <Text style={GlobalStyles.primaryEmphasizeLabel}>
+                    Forgot Your Password?
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
-            <Text style={GlobalStyles.textFieldErrorMsgArea}>{phoneError}</Text>
-            <PasswordInput
-              handler={val => {
-                setPassword(val);
-              }}
-            />
-            <View style={{ marginTop: 20 }}>
-              <TouchableOpacity
-                style={styles.footerTitleBack}
-                onPress={navigateToForgetPassword}>
-                <Text style={GlobalStyles.primaryEmphasizeLabel}>
-                  Forgot Your Password?
-                </Text>
-              </TouchableOpacity>
+            <View style={{ flex: 1, marginBottom: 30, justifyContent: 'flex-end', marginTop: 110 }}>
+              <LargeLabelButton buttonText="Login" handler={signInUser} />
+              <View style={{ marginTop: 10 }}>
+                <TouchableOpacity
+                  style={styles.footerTitleBack}
+                  onPress={navigateToSignup}>
+                  <Text style={GlobalStyles.primaryEmphasizeLabel}>
+                    You don’t have an account ?{' '}
+                  </Text>
+                  <Text style={GlobalStyles.primaryEmphasizeLabelHigher}>
+                    Sign Up
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
+            {activityIndicator && (
+              <ActivityIndicator
+                size={'large'}
+                style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
+              />
+            )}
           </View>
-          <View style={{ flex: 1, marginBottom: 30, justifyContent: 'flex-end', marginTop: 110 }}>
-            <LargeLabelButton buttonText="Login" handler={signInUser} />
-            <View style={{ marginTop: 10 }}>
-              <TouchableOpacity
-                style={styles.footerTitleBack}
-                onPress={navigateToSignup}>
-                <Text style={GlobalStyles.primaryEmphasizeLabel}>
-                  You don’t have an account ?{' '}
-                </Text>
-                <Text style={GlobalStyles.primaryEmphasizeLabelHigher}>
-                  Sign Up
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          {activityIndicator && (
-            <ActivityIndicator
-              size={'large'}
-              style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
-            />
-          )}
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </AlertNotificationRoot>
     </SafeAreaView>
   );
 };

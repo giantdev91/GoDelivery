@@ -1,11 +1,11 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet, Text } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
-import Orders from '../screens/home/Orders';
-import HomeScreen from '../screens/home/Home';
 import NotificationsScreen from '../screens/home/Notifications'
 import GoDeliveryColors from '../styles/colors';
-import OrderStatusNavigator from './HomeNavigator';
+import ProfileStackNavigator from './ProfileStackNavigator';
+import OrderStackNavigator from './OrderStackNavigator';
+import HomeScreen from '../screens/home/Home';
 
 const Tab = createBottomTabNavigator();
 
@@ -19,7 +19,7 @@ function TabNavigator(): JSX.Element {
         }}>
             <Tab.Screen
                 name="Main"
-                component={OrderStatusNavigator}
+                component={HomeScreen}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         <Icons
@@ -34,7 +34,7 @@ function TabNavigator(): JSX.Element {
                             style={{
                                 color: color,
                                 marginBottom: 5,
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontWeight: "400"
                             }}>Home</Text>
                     )
@@ -42,7 +42,7 @@ function TabNavigator(): JSX.Element {
             />
             <Tab.Screen
                 name="Orders"
-                component={Orders}
+                component={OrderStackNavigator}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         <Icons
@@ -57,7 +57,7 @@ function TabNavigator(): JSX.Element {
                             style={{
                                 color: color,
                                 marginBottom: 5,
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontWeight: "400"
                             }}>Orders</Text>
                     )
@@ -80,9 +80,32 @@ function TabNavigator(): JSX.Element {
                             style={{
                                 color: color,
                                 marginBottom: 5,
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontWeight: "400"
                             }}>Notification</Text>
+                    )
+                }}
+            />
+            <Tab.Screen
+                name="Profile"
+                component={ProfileStackNavigator}
+                options={{
+                    tabBarIcon: ({ focused, color, size }) => (
+                        <Icons
+                            name="person-outline"
+                            color={color}
+                            size={32}
+                            style={styles.bottomMenuIcon}
+                        />
+                    ),
+                    tabBarLabel: ({ focused, color }) => (
+                        <Text
+                            style={{
+                                color: color,
+                                marginBottom: 5,
+                                fontSize: 12,
+                                fontWeight: "400"
+                            }}>Profile</Text>
                     )
                 }}
             />
@@ -93,8 +116,8 @@ function TabNavigator(): JSX.Element {
 const styles = StyleSheet.create({
     tabBarBackground: {
         backgroundColor: GoDeliveryColors.white,
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
         height: 75
     },
     bottomMenuIcon: {

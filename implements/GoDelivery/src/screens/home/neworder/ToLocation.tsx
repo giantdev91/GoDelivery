@@ -102,7 +102,6 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
     const handleNextButton = async () => {
         setActivityIndicator(true);
         const uri = await ref.current.capture();
-        console.log("do something with ", uri);
         const storageRef = storage().ref();
         const imageRef = storageRef.child('images/' + Date.now());
         const res = await fetch(uri);

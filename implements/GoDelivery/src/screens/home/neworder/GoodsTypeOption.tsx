@@ -36,7 +36,6 @@ const GoodsTypeOption = ({ navigation }: {
         Action.orderOption.goodsTypeOptionList()
             .then((res) => {
                 const response = res.data;
-                console.log("response : ", response);
                 setOptions(response.data);
                 setActivityIndicator(false);
             }).catch((err) => {

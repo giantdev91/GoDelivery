@@ -27,10 +27,16 @@ const updateProfile = async (param: any) => {
     return response;
 }
 
+const updatePassword = async (param: any) => {
+    const response = await APIService.post('/deliveryman/changePassword', param);
+    return response;
+}
+
 export default {
     updateLocation,
     updateFcmToken,
     getById,
     updateDeliverymanStatus,
-    updateProfile
+    updateProfile,
+    updatePassword
 }

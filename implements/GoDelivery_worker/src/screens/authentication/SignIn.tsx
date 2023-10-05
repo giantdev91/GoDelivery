@@ -4,14 +4,10 @@ import {
   Image,
   StyleSheet,
   Text,
-  TouchableWithoutFeedback,
-  Keyboard,
   ScrollView,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
-import Icons from 'react-native-vector-icons/Ionicons';
-import PhoneInput from 'react-native-phone-number-input';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
@@ -24,8 +20,6 @@ import allActions from '../../redux/actions';
 import messaging from '@react-native-firebase/messaging';
 import { requestLocationPermission } from '../../common/RequestPermission';
 import { startBackgroundServiceScheduler } from '../../common/SchedulerService';
-import Geolocation from 'react-native-geolocation-service';
-import store from '../../redux/store';
 import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
 
 interface SignInScreenProps {
@@ -105,7 +99,12 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
                   console.error('error: ', err);
                 });
             } else {
-              Alert.alert(responseData.message);
+              Dialog.show({
+                type: ALERT_TYPE.DANGER,
+                title: 'GoDelivery',
+                textBody: responseData.message,
+                button: 'OK',
+              })
             }
             setActivityIndicator(false);
           })
@@ -124,55 +123,45 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
 
   return (
     <SafeAreaView style={[GlobalStyles.container]}>
-      <View style={GlobalStyles.authenticationScreenLogoBack}>
-        <Image
-          source={require('../../../assets/images/company-logo-white.png')}
-          style={GlobalStyles.authenticationScreenLogo}
-        />
-      </View>
-      <ScrollView
-        style={[GlobalStyles.container, GlobalStyles.contentAreaPadding]}>
-        <View style={{ height: 350, justifyContent: 'center' }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <View style={{ flex: 1 }}>
-              <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
+      <AlertNotificationRoot>
+        <View style={GlobalStyles.authenticationScreenLogoBack}>
+          <Image
+            source={require('../../../assets/images/company-logo-white.png')}
+            style={GlobalStyles.authenticationScreenLogo}
+          />
+        </View>
+        <ScrollView
+          style={[GlobalStyles.container, GlobalStyles.contentAreaPadding]}>
+          <View style={{ height: 350, justifyContent: 'center' }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <View style={{ flex: 1 }}>
+                <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
+              </View>
             </View>
-            <View style={styles.checkIconArea}>
-              {
-                phone && (
-                  <Icons
-                    name="checkmark-outline"
-                    size={25}
-                    color={GoDeliveryColors.green}
-                  />
-                )
-              }
-
-            </View>
+            <Text style={GlobalStyles.textFieldErrorMsgArea}>{phoneError}</Text>
+            <PasswordInput
+              handler={val => {
+                setPassword(val);
+              }}
+            />
+            <View style={GlobalStyles.textFieldErrorMsgArea}></View>
           </View>
-          <Text style={GlobalStyles.textFieldErrorMsgArea}>{phoneError}</Text>
-          <PasswordInput
-            handler={val => {
-              setPassword(val);
-            }}
-          />
-          <View style={GlobalStyles.textFieldErrorMsgArea}></View>
-        </View>
-        <View style={{ marginBottom: 80 }}>
-          <PrimaryButton buttonText="SignIn" handler={signInUser} />
-        </View>
-        {activityIndicator && (
-          <ActivityIndicator
-            size={'large'}
-            style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
-          />
-        )}
-      </ScrollView>
+          <View style={{ marginBottom: 80 }}>
+            <PrimaryButton buttonText="SignIn" handler={signInUser} />
+          </View>
+          {activityIndicator && (
+            <ActivityIndicator
+              size={'large'}
+              style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
+            />
+          )}
+        </ScrollView>
+      </AlertNotificationRoot>
     </SafeAreaView>
   );
 };
@@ -189,7 +178,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   tabLabelStyle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
   },
   textFieldErrorMsgArea: {

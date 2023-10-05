@@ -1,272 +1,242 @@
-import React, { useState, useCallback } from 'react';
-import { StyleSheet, useWindowDimensions, TouchableOpacity, View, Text, Platform } from 'react-native';
-import GlobalStyles from '../../styles/style';
-import MenuButton from '../../components/MenuButton';
-import GoDeliveryColors from '../../styles/colors';
-import { NavigationState, SceneMap, SceneRendererProps, TabView, TabBar } from 'react-native-tab-view';
-import { ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, Platform, TouchableOpacity, ScrollView, Image, ActivityIndicator } from 'react-native';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 import Icons from 'react-native-vector-icons/Ionicons';
-import { useFocusEffect } from '@react-navigation/native';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
+import GlobalStyles from '../../styles/style';
+import GoDeliveryColors from '../../styles/colors';
 import Action from '../../service';
 import store from '../../redux/store';
-import CommonFunctions from '../../common/CommonFunctions'
+import CommonFunctions from '../../common/CommonFunctions';
+import OrderDetail from './InProgressOrderDetail';
 
 interface ScreenProps {
     navigation: any;
     route: any,
 }
 
-interface SceneProps {
-    jumpTo: (key: string) => void;
-}
-
-const calculateSpentTime = (firstTimeStamp: string, lastTimeStamp: string) => {
-    const firstTime = new Date(firstTimeStamp);
-    const lastTime = new Date(lastTimeStamp);
-    // Calculate the time difference in milliseconds
-    const timeDifferenceMs = lastTime - firstTime;
-    // Calculate hours and minutes from the time difference
-    const hours = Math.floor(timeDifferenceMs / (1000 * 60 * 60));
-    const minutes = Math.floor((timeDifferenceMs % (1000 * 60 * 60)) / (1000 * 60));
-    return `${hours} h ${minutes} mins`;
-}
-
-const renderCreatedAtTime = (timestamp: string) => {
-    const originalDate = new Date(timestamp);
-    const formattedDate = originalDate.toLocaleString("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-        timeZone: "UTC",
-    });
-    return formattedDate;
-}
-
-const CompleteRoute = (props: SceneProps) => {
+const OrdersScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
+    const currentUser = store.getState().CurrentUser.user;
+    const [switchShow, setSwitchShow] = useState(false);
+    const [orderStatus, setOrderStatus] = useState(1);
+    const [activityIndicator, setActivityIndicator] = useState(false);
     const [orders, setOrders] = useState([]);
+
+    const toggleSwitch = () => {
+        setSwitchShow(!switchShow);
+    }
+
+    const getTitle = () => {
+        if (orderStatus == 0) {
+            return "NEW ORDER";
+        } else if (orderStatus == 1) {
+            return "IN PROGRESS";
+        } else if (orderStatus == 3) {
+            return "COMPLETED";
+        } else if (orderStatus == 4) {
+            return "CANCELLED";
+        }
+    }
+
+    const handleAccept = (orderID: number) => {
+        setActivityIndicator(true);
+        Action.order.acceptOrder({ orderID: orderID, deliverymanID: currentUser.id })
+            .then((res) => {
+                const response = res.data;
+                Dialog.show({
+                    type: ALERT_TYPE.SUCCESS,
+                    title: 'GoDelivery',
+                    textBody: response.message,
+                    button: 'close',
+                })
+                setOrderStatus(1);
+                setActivityIndicator(false);
+            }).catch((err) => {
+                console.error("error: ", err);
+                setActivityIndicator(false);
+            });
+    }
+
+    const renderOrderList = () => {
+        return (
+            <ScrollView style={{ flex: 1 }}>
+                {
+                    orders.map((order, key) => (
+                        <TouchableOpacity key={key} onPress={() => {
+                            if (order["status"] == 0) {
+                                handleAccept(order["id"]);
+                            } else {
+                                navigation.navigate("OrderDetail", { orderID: order["id"] })
+                            }
+                        }}>
+                            <View style={[styles.orderCard]}>
+                                <View style={styles.textSection}>
+                                    <View style={styles.locationTextRow}>
+                                        <Icons name="radio-button-on-outline" size={15} color={GoDeliveryColors.primary} />
+                                        <View style={{ width: '90%' }}>
+                                            <Text style={GlobalStyles.textBold}>{CommonFunctions.formatDateToString(new Date(order["expectationTime"]))}</Text>
+                                            <Text numberOfLines={2} style={GlobalStyles.textDisable}>{order["from"]}</Text>
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.locationTextRow}>
+                                        <Icons name="radio-button-off-outline" size={15} color={GoDeliveryColors.primary} />
+                                        <View style={{ width: '90%' }}>
+                                            <Text numberOfLines={2} style={GlobalStyles.textDisable}>{order["to"]}</Text>
+                                        </View>
+                                    </View>
+                                </View>
+                                <View style={styles.mapSection}>
+                                    {
+                                        order["screenShot"] ?
+                                            (
+                                                <Image source={{ uri: order["screenShot"] }} style={styles.mapThumbnail} />
+                                            ) :
+                                            (
+                                                <Image source={require("../../../assets/images/sample_map.png")} style={styles.mapThumbnail} />
+                                            )
+                                    }
+                                    {
+                                        order["status"] != 0 && (
+                                            <View style={[styles.statusBar, { backgroundColor: order["status"] == 3 ? GoDeliveryColors.green : GoDeliveryColors.primary }]}>
+                                                <Text style={[GlobalStyles.text, { color: GoDeliveryColors.white }]}>{order["status"] == 3 ? 'Completed' : 'Cancelled'}</Text>
+                                            </View>
+                                        )
+                                    }
+                                    {
+                                        order["status"] == 0 && (
+                                            <View style={[styles.statusBar, { backgroundColor: GoDeliveryColors.primary }]}>
+                                                <Text style={[GlobalStyles.text, { color: GoDeliveryColors.white }]}>Accept</Text>
+                                            </View>
+                                        )
+                                    }
+                                </View>
+                            </View>
+                        </TouchableOpacity>
+                    ))
+                }
+            </ScrollView>
+        )
+    }
+
+    const fetchCreatedOrderList = () => {
+        setActivityIndicator(true);
+        Action.order.createdOrderList({ deliverymanID: currentUser.id })
+            .then((res) => {
+                const response = res.data;
+                setOrders(response.data);
+                setActivityIndicator(false);
+            }).catch((err) => {
+                console.error("error: ", err);
+                setActivityIndicator(false);
+            })
+    }
 
     const fetchCompletedOrders = () => {
-        Action.order.completeOrders({ status: 3, deliverymanID: store.getState().CurrentUser.user.id })
+        setActivityIndicator(true);
+        Action.order.completeOrders({ status: 3, deliverymanID: currentUser.id })
             .then((res) => {
                 const response = res.data;
                 if (response.success) {
                     setOrders(response.data);
                 }
+                setActivityIndicator(false);
             }).catch((err) => {
                 console.log("error: ", err);
+                setActivityIndicator(false);
             })
     }
-
-    useFocusEffect(
-        useCallback(() => {
-            fetchCompletedOrders();
-        }, [])
-    );
-
-    return (
-        <View style={[GlobalStyles.container]}>
-            <ScrollView style={styles.scrollArea}>
-                {
-                    orders && orders.map((order, index) => (
-                        <View style={styles.dataCard} key={index}>
-                            <View style={{ alignSelf: 'flex-end', flexDirection: 'row', gap: 20 }}>
-                                {
-                                    order["rate"] && (
-                                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
-                                            <Icons name="star" size={20} color={'gold'} />
-                                            <Text style={GlobalStyles.text}> {order["rate"]}</Text>
-                                        </View>
-                                    )
-                                }
-                                <Text style={styles.priceTitle}>MZN {order["price"]}</Text>
-                            </View>
-                            <View style={styles.labelRow}>
-                                <Text style={[GlobalStyles.textBold, styles.title]}>Status: </Text>
-                                <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.green }, styles.content]}>{CommonFunctions.renderStatusLabel(order["status"])}</Text>
-                            </View>
-                            <View style={styles.labelRow}>
-                                <Text style={[GlobalStyles.text, styles.title]}>Order: </Text>
-                                <Text style={[GlobalStyles.text, styles.content]}>{order["orderNo"]}</Text>
-                            </View>
-                            <View style={styles.labelRow}>
-                                <Text style={[GlobalStyles.text, styles.title]}>From: </Text>
-                                <Text style={[GlobalStyles.text, styles.content]} numberOfLines={2}>{order["from"]}</Text>
-                            </View>
-                            <View style={styles.labelRow}>
-                                <Text style={[GlobalStyles.text, styles.title]}>To: </Text>
-                                <Text style={[GlobalStyles.text, styles.content]} numberOfLines={2}>{order["to"]}</Text>
-                            </View>
-                            <View style={styles.labelRow}>
-                                <Text style={[GlobalStyles.text, styles.title]}>Details: </Text>
-                                <Text style={[GlobalStyles.text,]}>{CommonFunctions.formatDate(new Date(order["expectationTime"]))}, {order["distance"]}km, </Text>
-                                <Text style={[GlobalStyles.text, styles.content]}>{CommonFunctions.calculateDeliveryTime(order["pickupTime"], order["dropoffTime"])}</Text>
-                            </View>
-                        </View>
-                    ))
-                }
-                {
-                    (orders.length == 0) && (
-                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: 40, marginTop: 60, paddingVertical: 20 }}>
-                            <Icons name="document-text-outline" size={120} color={'#c7c7c7'} />
-                            <Text style={{ textAlign: 'center', fontSize: 20, color: GoDeliveryColors.secondary, marginTop: 50 }}>No history yet</Text>
-                        </View>
-                    )
-                }
-            </ScrollView>
-        </View>
-    )
-}
-
-const CanceledRoute = (props: SceneProps) => {
-    const [orders, setOrders] = useState([]);
 
     const fetchCanceledOrders = () => {
-        Action.order.completeOrders({ status: 4, deliverymanID: store.getState().CurrentUser.user.id })
+        setActivityIndicator(true);
+        Action.order.completeOrders({ status: 4, deliverymanID: currentUser.id })
             .then((res) => {
                 const response = res.data;
                 if (response.success) {
                     setOrders(response.data);
                 }
+                setActivityIndicator(false);
             }).catch((err) => {
                 console.log("error: ", err);
+                setActivityIndicator(false);
             })
     }
 
-    useFocusEffect(
-        useCallback(() => {
+    const fetchOrderList = () => {
+        if (orderStatus == 0) {
+            fetchCreatedOrderList();
+        }
+        if (orderStatus == 3) {
+            fetchCompletedOrders();
+        }
+        if (orderStatus == 4) {
             fetchCanceledOrders();
-        }, [])
-    );
+        }
+    }
+
+    useEffect(() => {
+        fetchOrderList();
+    }, [orderStatus]);
 
     return (
         <View style={[GlobalStyles.container]}>
-            <ScrollView style={styles.scrollArea}>
-                {
-                    orders.map((order, index) => (
-                        <View style={styles.dataCard} key={index}>
-                            <View style={{ alignSelf: 'flex-end', flexDirection: 'row', gap: 20 }}>
-                                {
-                                    order["rate"] && (
-                                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
-                                            <Icons name="star" size={20} color={'gold'} />
-                                            <Text style={GlobalStyles.text}> {order["rate"]}</Text>
-                                        </View>
-                                    )
-                                }
-                                <Text style={styles.priceTitle}>MZN {order["price"]}</Text>
+            <AlertNotificationRoot>
+                <View style={[GlobalStyles.headerSection, { zIndex: 100 }]}>
+                    <Text style={GlobalStyles.whiteHeaderTitle}>{getTitle()}</Text>
+                    <TouchableOpacity style={GlobalStyles.headerCheckButton} onPress={toggleSwitch}>
+                        <FeatherIcon name='more-vertical' size={25} color={GoDeliveryColors.secondary} />
+                    </TouchableOpacity>
+                    {
+                        switchShow && (
+                            <View style={[styles.switchDialog, GlobalStyles.shadowProp]}>
+                                <TouchableOpacity onPress={() => { setOrderStatus(1); toggleSwitch(); }} style={{ paddingVertical: 7 }}><Text style={GlobalStyles.textMedium}>IN PROGRESS</Text></TouchableOpacity>
+                                <TouchableOpacity onPress={() => { setOrderStatus(0); toggleSwitch(); }} style={{ paddingVertical: 7 }}><Text style={GlobalStyles.textMedium}>NEW ORDER</Text></TouchableOpacity>
+                                <TouchableOpacity onPress={() => { setOrderStatus(3); toggleSwitch(); }} style={{ paddingVertical: 7 }}><Text style={GlobalStyles.textMedium}>COMPLETED</Text></TouchableOpacity>
+                                <TouchableOpacity onPress={() => { setOrderStatus(4); toggleSwitch(); }} style={{ paddingVertical: 7 }}><Text style={GlobalStyles.textMedium}>CANCELLED</Text></TouchableOpacity>
                             </View>
-                            <View style={styles.labelRow}>
-                                <Text style={[GlobalStyles.textBold, styles.title]}>Status: </Text>
-                                <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.primary }, styles.content]}>{CommonFunctions.renderStatusLabel(order["status"])}</Text>
-                            </View>
-                            <View style={styles.labelRow}>
-                                <Text style={[GlobalStyles.text, styles.title]}>Order: </Text>
-                                <Text style={[GlobalStyles.text, styles.content]}>{order["orderNo"]}</Text>
-                            </View>
-                            <View style={styles.labelRow}>
-                                <Text style={[GlobalStyles.text, styles.title]}>From: </Text>
-                                <Text style={[GlobalStyles.text, styles.content]} numberOfLines={2}>{order["from"]}</Text>
-                            </View>
-                            <View style={styles.labelRow}>
-                                <Text style={[GlobalStyles.text, styles.title]}>To: </Text>
-                                <Text style={[GlobalStyles.text, styles.content]} numberOfLines={2}>{order["to"]}</Text>
-                            </View>
-                            <View style={styles.labelRow}>
-                                <Text style={[GlobalStyles.text, styles.title]}>Details: </Text>
-                                <Text style={[GlobalStyles.text, styles.content]}>{CommonFunctions.formatDate(new Date(order["expectationTime"]))}, {order["distance"]}km</Text>
-                            </View>
-                        </View>
-                    ))
-                }
-                {
-                    orders.length == 0 && (
-                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: 40, marginTop: 60, paddingVertical: 20 }}>
-                            <Icons name="document-text-outline" size={120} color={'#c7c7c7'} />
-                            <Text style={{ textAlign: 'center', fontSize: 20, color: GoDeliveryColors.secondary, marginTop: 50 }}>No history yet</Text>
-                        </View>
-                    )
-                }
-            </ScrollView>
-        </View>
-    )
-}
-
-const OrdersScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
-    const layout = useWindowDimensions();
-    const [index, setIndex] = React.useState(0);
-    const [routes] = React.useState([
-        { key: 'complete', title: 'COMPLETE' },
-        { key: 'canceled', title: 'CANCELED' },
-    ]);
-
-    const renderScene = SceneMap({
-        complete: CompleteRoute,
-        canceled: CanceledRoute,
-    });
-
-    const renderTabBar = (props: SceneRendererProps & { navigationState: NavigationState<any> }) => (
-        <TabBar
-            {...props}
-            activeColor={GoDeliveryColors.primary}
-            inactiveColor={GoDeliveryColors.disabled}
-            indicatorStyle={{ backgroundColor: GoDeliveryColors.primary, height: 4, }}
-            style={{ backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20, marginHorizontal: 20, }}
-            labelStyle={styles.tabLabelStyle}
-        />
-    )
-
-
-    return (
-        <View style={[GlobalStyles.container]}>
-            <MenuButton navigation={navigation} color='default' />
-            <View style={styles.headerSection}>
-                <Text style={styles.headerTitle}>WORK HISTORY</Text>
-            </View>
-            <TabView
-                navigationState={{ index, routes }}
-                renderScene={renderScene}
-                onIndexChange={setIndex}
-                renderTabBar={renderTabBar}
-                initialLayout={{ width: layout.width }}
-            />
+                        )
+                    }
+                </View>
+                <View style={{ flex: 1 }}>
+                    {
+                        (orderStatus == 0 || orderStatus == 3 || orderStatus == 4) && renderOrderList()
+                    }
+                    {
+                        orderStatus == 1 && (
+                            <OrderDetail navigation={navigation} />
+                        )
+                    }
+                </View>
+            </AlertNotificationRoot>
+            {activityIndicator && (
+                <ActivityIndicator
+                    size={'large'}
+                    style={{ position: 'absolute', alignSelf: 'center', top: 300 }}
+                />
+            )}
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    headerSection: {
-        alignItems: 'center',
-        height: 60,
-        width: '100%',
-        justifyContent: 'center',
-    },
-    headerTitle: {
-        fontSize: 20,
-        fontWeight: "600",
-        color: GoDeliveryColors.primary,
-    },
-    tabLabelStyle: {
-        fontSize: 16,
-        fontWeight: "600",
-    },
-    scrollArea: {
-        padding: 10,
-        marginBottom: 20,
-    },
-    dataCard: {
-        marginVertical: 10,
-        marginHorizontal: 10,
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        flexDirection: 'column',
+    switchDialog: {
+        position: 'absolute',
+        right: 10,
+        top: 50,
         justifyContent: 'flex-start',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         backgroundColor: GoDeliveryColors.white,
-        borderRadius: 10,
-        height: 175,
+        padding: 10,
+        zIndex: 100,
+    },
+    orderCard: {
+        flexDirection: 'row',
+        gap: 15,
+        padding: 10,
+        borderRadius: 5,
+        backgroundColor: GoDeliveryColors.white,
+        marginHorizontal: 10,
+        marginVertical: 7,
         ...Platform.select({
             ios: {
                 shadowColor: GoDeliveryColors.secondary,
@@ -279,29 +249,44 @@ const styles = StyleSheet.create({
             },
             android: {
                 elevation: 8,
-                shadowColor: GoDeliveryColors.secondary
+                shadowOffset: {
+                    width: 0,
+                    height: 8,
+                },
+                shadowColor: GoDeliveryColors.secondary,
             },
         }),
     },
-    priceTitle: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: GoDeliveryColors.secondary,
+    textSection: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'space-between',
     },
-    labelRow: {
-        width: '100%',
+    mapSection: {
+        width: 120,
+    },
+    locationTextRow: {
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
+        gap: 10,
     },
-    title: {
-        width: 55,
-        justifyContent: 'flex-start'
+    mapThumbnail: {
+        width: 120,
+        height: 120,
+        borderRadius: 5,
     },
-    content: {
-        flex: 1,
-        justifyContent: 'flex-start'
-    }
+    statusBar: {
+        position: 'absolute',
+        top: 0,
+        width: 120,
+        height: 30,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: GoDeliveryColors.green,
+        borderRadius: 5,
+    },
 });
 
 export default OrdersScreen;

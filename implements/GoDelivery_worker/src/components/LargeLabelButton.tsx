@@ -9,20 +9,24 @@ interface PrimaryButtonProps {
     handler?: () => void,
 }
 
-const PrimaryButton = (props: PrimaryButtonProps): JSX.Element => {
+const LargeLabelButton = (props: PrimaryButtonProps): JSX.Element => {
     return (
         <TouchableOpacity
             disabled={props.disabled}
             style={[GlobalStyles.primaryButton, GlobalStyles.shadowProp, { backgroundColor: props.disabled ? GoDeliveryColors.primayDisabled : GoDeliveryColors.primary }]}
             onPress={props.handler}
         >
-            <Text style={[GlobalStyles.primaryLabel]}>{props.buttonText}</Text>
+            <Text style={[styles.buttonText]}>{props.buttonText}</Text>
         </TouchableOpacity>
     );
 };
 
 const styles = StyleSheet.create({
-
+    buttonText: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: GoDeliveryColors.white
+    }
 });
 
-export default PrimaryButton;
+export default LargeLabelButton;

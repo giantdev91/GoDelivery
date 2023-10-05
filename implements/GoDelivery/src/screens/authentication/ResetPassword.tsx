@@ -6,8 +6,8 @@ import {
   Text,
   ScrollView,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -70,7 +70,12 @@ const ResetPasswordScreen = ({ route, navigation }: { route: any; navigation: an
               routes: [{ name: 'SignIn' }],
             });
           } else {
-            Alert.alert("GoDelivery", "Operation failed. Try again.")
+            Dialog.show({
+              type: ALERT_TYPE.DANGER,
+              title: 'GoDelivery',
+              textBody: "Operation failed. Try again.",
+              button: 'OK',
+            });
             setActivityIndicator(false);
           }
         })
@@ -86,43 +91,44 @@ const ResetPasswordScreen = ({ route, navigation }: { route: any; navigation: an
 
   return (
     <SafeAreaView style={[GlobalStyles.container, { backgroundColor: GoDeliveryColors.white }]}>
-      <ScrollView>
-        <View style={GlobalStyles.authenticationScreenLogoBack}>
-          <Image
-            source={require('../../../assets/images/reset_password.png')}
-            style={GlobalStyles.authenticationScreenLogo}
-          />
-        </View>
-        <View
-          style={[GlobalStyles.container, GlobalStyles.contentAreaPadding, { backgroundColor: GoDeliveryColors.white, }]}>
-          <View style={{ justifyContent: 'flex-start', }}>
-            <Text style={GlobalStyles.authenticationHeaderTitle}>CREATE NEW PASSWORD</Text>
-            <Text style={[GlobalStyles.text, { textAlign: 'center', paddingHorizontal: 40, marginBottom: 20, }]}>
-              Please enter your new password below
-            </Text>
-            <PasswordInput handler={val => setPassword(val)} error={passwordError.length > 0} placeholder='New Password' />
-            <Text style={GlobalStyles.textFieldErrorMsgArea}>{passwordError}</Text>
-            <PasswordInput
-              placeholder="Confirm Password"
-              handler={val => setConfirmPassword(val)}
-              error={confirmPasswordError.length > 0}
+      <AlertNotificationRoot>
+        <ScrollView>
+          <View style={GlobalStyles.authenticationScreenLogoBack}>
+            <Image
+              source={require('../../../assets/images/reset_password.png')}
+              style={GlobalStyles.authenticationScreenLogo}
             />
-            <Text style={GlobalStyles.textFieldErrorMsgArea}>
-              {confirmPasswordError}
-            </Text>
           </View>
-          <View style={{ flex: 1, marginBottom: 50, justifyContent: 'flex-end', marginTop: 110 }}>
-            <LargeLabelButton buttonText="Save" handler={handleSave} />
+          <View
+            style={[GlobalStyles.container, GlobalStyles.contentAreaPadding, { backgroundColor: GoDeliveryColors.white, }]}>
+            <View style={{ justifyContent: 'flex-start', }}>
+              <Text style={GlobalStyles.authenticationHeaderTitle}>CREATE NEW PASSWORD</Text>
+              <Text style={[GlobalStyles.text, { textAlign: 'center', paddingHorizontal: 40, marginBottom: 20, }]}>
+                Please enter your new password below
+              </Text>
+              <PasswordInput handler={val => setPassword(val)} error={passwordError.length > 0} placeholder='New Password' />
+              <Text style={GlobalStyles.textFieldErrorMsgArea}>{passwordError}</Text>
+              <PasswordInput
+                placeholder="Confirm Password"
+                handler={val => setConfirmPassword(val)}
+                error={confirmPasswordError.length > 0}
+              />
+              <Text style={GlobalStyles.textFieldErrorMsgArea}>
+                {confirmPasswordError}
+              </Text>
+            </View>
+            <View style={{ flex: 1, marginBottom: 50, justifyContent: 'flex-end', marginTop: 110 }}>
+              <LargeLabelButton buttonText="Save" handler={handleSave} />
+            </View>
+            {activityIndicator && (
+              <ActivityIndicator
+                size={'large'}
+                style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
+              />
+            )}
           </View>
-          {activityIndicator && (
-            <ActivityIndicator
-              size={'large'}
-              style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
-            />
-          )}
-        </View>
-      </ScrollView>
-
+        </ScrollView>
+      </AlertNotificationRoot>
     </SafeAreaView>
   );
 };

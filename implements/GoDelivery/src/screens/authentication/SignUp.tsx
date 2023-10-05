@@ -6,9 +6,8 @@ import {
   Text,
   ScrollView,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
-
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
 import CustomizedInput from '../../components/CustomizedInput';
@@ -97,11 +96,21 @@ const SignUpScreen = ({ navigation }: { navigation: any }) => {
                 setActivityIndicator(false);
                 navigation.navigate('OTP', param);
               } else {
-                Alert.alert("GoDelivery", 'Phone number valid failed');
+                Dialog.show({
+                  type: ALERT_TYPE.DANGER,
+                  title: 'GoDelivery',
+                  textBody: 'Phone number valid failed',
+                  button: 'OK',
+                });
                 setActivityIndicator(false);
               }
             } else {
-              Alert.alert("GoDelivery", responseData.message);
+              Dialog.show({
+                type: ALERT_TYPE.DANGER,
+                title: 'GoDelivery',
+                textBody: responseData.message,
+                button: 'OK',
+              });
               setActivityIndicator(false);
             }
           })
@@ -123,72 +132,74 @@ const SignUpScreen = ({ navigation }: { navigation: any }) => {
 
   return (
     <SafeAreaView style={[GlobalStyles.container, { backgroundColor: GoDeliveryColors.white }]}>
-      <ScrollView>
-        <View style={GlobalStyles.authenticationScreenLogoBack}>
-          <Image
-            source={require('../../../assets/images/sign_up.png')}
-            style={GlobalStyles.authenticationScreenLogo}
-          />
-        </View>
-        <View
-          style={[GlobalStyles.container, GlobalStyles.contentAreaPadding, { backgroundColor: GoDeliveryColors.white }]}>
-          <View style={{ justifyContent: 'center' }}>
-            <Text style={GlobalStyles.authenticationHeaderTitle}>SIGN UP</Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <View style={{ flex: 1 }}>
-                <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
+      <AlertNotificationRoot>
+        <ScrollView>
+          <View style={GlobalStyles.authenticationScreenLogoBack}>
+            <Image
+              source={require('../../../assets/images/sign_up.png')}
+              style={GlobalStyles.authenticationScreenLogo}
+            />
+          </View>
+          <View
+            style={[GlobalStyles.container, GlobalStyles.contentAreaPadding, { backgroundColor: GoDeliveryColors.white }]}>
+            <View style={{ justifyContent: 'center' }}>
+              <Text style={GlobalStyles.authenticationHeaderTitle}>SIGN UP</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <View style={{ flex: 1 }}>
+                  <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
+                </View>
+              </View>
+              <Text style={GlobalStyles.textFieldErrorMsgArea}>{phoneError}</Text>
+              <CustomizedInput
+                icon="person-outline"
+                placeHolder="User Name"
+                val={username}
+                handler={val => {
+                  setUsername(val);
+                }}
+                error={usernameError.length > 0}
+              />
+              <Text style={GlobalStyles.textFieldErrorMsgArea}>{usernameError}</Text>
+              <PasswordInput handler={val => setPassword(val)} error={passwordError.length > 0} placeholder="Password" />
+              <Text style={GlobalStyles.textFieldErrorMsgArea}>{passwordError}</Text>
+              <PasswordInput
+                placeholder="Confirm Password"
+                handler={val => setConfirmPassword(val)}
+                error={confirmPasswordError.length > 0}
+              />
+              <Text style={GlobalStyles.textFieldErrorMsgArea}>
+                {confirmPasswordError}
+              </Text>
+            </View>
+            {activityIndicator && (
+              <ActivityIndicator
+                size="large"
+                style={{ position: 'absolute', alignSelf: 'center', bottom: 300 }}
+              />
+            )}
+            <View style={{ marginBottom: 50, }}>
+              <LargeLabelButton buttonText="Sign Up" handler={navigateToOTP} />
+              <View style={{ marginTop: 10 }}>
+                <TouchableOpacity
+                  style={styles.footerTitleBack}
+                  onPress={navigateToSignin}>
+                  <Text style={GlobalStyles.primaryEmphasizeLabel}>
+                    You have an account ?{' '}
+                  </Text>
+                  <Text style={GlobalStyles.primaryEmphasizeLabelHigher}>
+                    Login
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
-            <Text style={GlobalStyles.textFieldErrorMsgArea}>{phoneError}</Text>
-            <CustomizedInput
-              icon="person-outline"
-              placeHolder="User Name"
-              val={username}
-              handler={val => {
-                setUsername(val);
-              }}
-              error={usernameError.length > 0}
-            />
-            <Text style={GlobalStyles.textFieldErrorMsgArea}>{usernameError}</Text>
-            <PasswordInput handler={val => setPassword(val)} error={passwordError.length > 0} placeholder="Password" />
-            <Text style={GlobalStyles.textFieldErrorMsgArea}>{passwordError}</Text>
-            <PasswordInput
-              placeholder="Confirm Password"
-              handler={val => setConfirmPassword(val)}
-              error={confirmPasswordError.length > 0}
-            />
-            <Text style={GlobalStyles.textFieldErrorMsgArea}>
-              {confirmPasswordError}
-            </Text>
           </View>
-          {activityIndicator && (
-            <ActivityIndicator
-              size="large"
-              style={{ position: 'absolute', alignSelf: 'center', bottom: 300 }}
-            />
-          )}
-          <View style={{ marginBottom: 50, }}>
-            <LargeLabelButton buttonText="Sign Up" handler={navigateToOTP} />
-            <View style={{ marginTop: 10 }}>
-              <TouchableOpacity
-                style={styles.footerTitleBack}
-                onPress={navigateToSignin}>
-                <Text style={GlobalStyles.primaryEmphasizeLabel}>
-                  You have an account ?{' '}
-                </Text>
-                <Text style={GlobalStyles.primaryEmphasizeLabelHigher}>
-                  Login
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </AlertNotificationRoot>
     </SafeAreaView>
   );
 };

@@ -1,9 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, Image, ScrollView, Alert } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Image, ScrollView, Text } from 'react-native';
 import GlobalStyles from '../../styles/style';
-import HeaderBar from '../../components/HeaderBar';
 import CustomizedInput from '../../components/CustomizedInput';
-import PrimaryButton from '../../components/PrimaryButton';
 import PasswordInput from '../../components/PasswordInput';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
@@ -11,21 +9,21 @@ import GoDeliveryColors from '../../styles/colors';
 import Modal from 'react-native-modal';
 import { ActivityIndicator } from 'react-native';
 import storage from '@react-native-firebase/storage'; // Import the firestore module
-import { Platform } from 'react-native';
 import store from '../../redux/store';
 import { useFocusEffect } from '@react-navigation/native';
 import Action from '../../service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
 import allActions from '../../redux/actions';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
 import Icons from 'react-native-vector-icons/Ionicons';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 
 interface ScreenProps {
     navigation: any;
 }
 
-const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
+const ProfileEdit = ({ navigation }: ScreenProps): JSX.Element => {
     var currentUser = store.getState().CurrentUser.user;
     const [userData, setUserData] = useState({});
     const [avatarUri, setAvatarUri] = useState(currentUser.avatar);
@@ -94,7 +92,12 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
                 .then((res) => {
                     const response = res.data;
                     if (response.success) {
-                        Alert.alert("GoDelivery", "Save success!");
+                        Dialog.show({
+                            type: ALERT_TYPE.SUCCESS,
+                            title: 'GoDelivery',
+                            textBody: "Save success!",
+                            button: 'close',
+                        })
                         dispatch(allActions.UserAction.setUser(response.data));
                         storeData(response.data);
                     }
@@ -104,7 +107,6 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
                     setActivityIndicator(false);
                 });
         }
-
     }
 
     const setPickerResponse = async (response: any) => {
@@ -150,6 +152,19 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
         launchCamera(options, setPickerResponse);
     };
 
+    const handleBack = () => {
+        navigation.goBack();
+    }
+
+    const handleConfirm = () => {
+        Dialog.show({
+            type: ALERT_TYPE.SUCCESS,
+            title: 'GoDelivery',
+            textBody: 'Save success',
+            button: 'close',
+        })
+    }
+
     useFocusEffect(
         useCallback(() => {
             currentUser = store.getState().CurrentUser.user;
@@ -160,74 +175,83 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
 
     return (
         <View style={[GlobalStyles.container]}>
-            <HeaderBar navigation={navigation} title={'My Profile'} />
-            <ScrollView style={GlobalStyles.container}>
-                <View style={styles.avatarArea}>
-                    <View style={{ width: 160, height: 160 }}>
-                        {
-                            !avatarUri && (<Image source={require('../../../assets/images/delivery-man.png')} style={styles.avatarImg} />)
-                        }
-                        {
-                            avatarUri && (<Image source={{ uri: avatarUri }} style={styles.avatarImg} />)
-                        }
-
-                        <TouchableOpacity
-                            onPress={() => {
-                                setModalVisible(true);
-                            }}
-                            style={{
-                                backgroundColor: GoDeliveryColors.place,
-                                padding: 10,
-                                borderRadius: 100,
-                                position: 'absolute',
-                                bottom: 0,
-                                right: 0,
-                            }}>
-                            <FeatherIcon
-                                name="camera"
-                                size={25}
-                                style={{
-                                    color: GoDeliveryColors.primary,
+            <AlertNotificationRoot>
+                <View style={GlobalStyles.headerSection}>
+                    <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
+                        <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
+                    </TouchableOpacity>
+                    <Text style={GlobalStyles.whiteHeaderTitle}>Change Password</Text>
+                    <TouchableOpacity style={GlobalStyles.headerCheckButton} onPress={handleSubmit}>
+                        <Icons name='checkmark-outline' size={30} color={GoDeliveryColors.secondary} />
+                    </TouchableOpacity>
+                </View>
+                <ScrollView style={GlobalStyles.container}>
+                    <View style={styles.avatarArea}>
+                        <View style={{ width: 120, height: 120 }}>
+                            {
+                                !avatarUri && (<Image source={require('../../../assets/images/delivery-man.png')} style={styles.avatarImg} />)
+                            }
+                            {
+                                avatarUri && (<Image source={{ uri: avatarUri }} style={styles.avatarImg} />)
+                            }
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setModalVisible(true);
                                 }}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-                <View style={styles.profileFormArea}>
-                    <View style={{ marginTop: 20 }}>
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            }}>
-                            <View style={{ flex: 1, }}>
-                                <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
-                            </View>
-                            <View style={styles.checkIconArea}>
-                                {phone && (
-                                    <Icons
-                                        name="checkmark-outline"
-                                        size={25}
-                                        color={GoDeliveryColors.green}
-                                    />
-                                )}
-                            </View>
-                        </View>
-                        <Text style={GlobalStyles.textFieldErrorMsgArea}>
-                            {phoneError}
-                        </Text>
-                        <CustomizedInput icon='person-outline' placeHolder='Username' handler={setUsername} val={username} error={usernameError.length > 0} />
-                        <Text style={GlobalStyles.textFieldErrorMsgArea}>{usernameError}</Text>
-                        <PasswordInput handler={(val) => { setPassword(val) }} />
-                        <View style={GlobalStyles.textFieldErrorMsgArea}>
+                                style={{
+                                    backgroundColor: GoDeliveryColors.place,
+                                    padding: 10,
+                                    borderRadius: 100,
+                                    position: 'absolute',
+                                    bottom: 0,
+                                    right: 0,
+                                }}>
+                                <FeatherIcon
+                                    name="camera"
+                                    size={25}
+                                    style={{
+                                        color: GoDeliveryColors.primary,
+                                    }}
+                                />
+                            </TouchableOpacity>
                         </View>
                     </View>
-                    <View style={{ marginTop: 20 }}>
-                        <PrimaryButton buttonText='Submit' handler={handleSubmit} />
+                    <View style={styles.profileFormArea}>
+                        <View style={{ marginTop: 20 }}>
+                            <View style={[styles.inputContainer, { zIndex: 3 }]}>
+                                <Text style={GlobalStyles.textDisable}>Full Name</Text>
+                                <CustomizedInput icon='person-outline' placeHolder='Username' handler={setUsername} val={username} error={usernameError.length > 0} />
+                                {usernameError && (<View style={GlobalStyles.errorTooltip}>
+                                    <Icons name="alert-outline" size={20} color={GoDeliveryColors.white} style={GlobalStyles.errorIcon} />
+                                    <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{usernameError}</Text></View>
+                                </View>)}
+                            </View>
+
+                            <View style={[styles.inputContainer, { zIndex: 2 }]}>
+                                <Text style={GlobalStyles.textDisable}>Phone Number</Text>
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                    }}>
+                                    <View style={{ flex: 1, }}>
+                                        <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
+                                    </View>
+                                </View>
+                                {phoneError && (<View style={GlobalStyles.errorTooltip}>
+                                    <Icons name="alert-outline" size={20} color={GoDeliveryColors.white} style={GlobalStyles.errorIcon} />
+                                    <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{phoneError}</Text></View>
+                                </View>)}
+                            </View>
+                            <View style={[styles.inputContainer, { zIndex: 1 }]}>
+                                <Text style={GlobalStyles.textDisable}>Password</Text>
+                                <PasswordInput handler={(val) => { setPassword(val) }} />
+                            </View>
+                        </View>
                     </View>
-                </View>
-            </ScrollView>
+                </ScrollView>
+            </AlertNotificationRoot>
             {
                 activiIndicator && <ActivityIndicator size="large" style={{ position: 'absolute', bottom: 150, alignSelf: 'center' }} />
             }
@@ -282,18 +306,18 @@ const ProfileScreen = ({ navigation }: ScreenProps): JSX.Element => {
 
 const styles = StyleSheet.create({
     avatarArea: {
-        marginTop: 30,
-        paddingVertical: 30,
+        marginTop: 20,
+        paddingVertical: 15,
         alignItems: 'center',
         justifyContent: 'center',
     },
     avatarImg: {
-        width: 160,
-        height: 160,
+        width: 120,
+        height: 120,
         borderRadius: 200,
     },
     profileFormArea: {
-        padding: 20,
+        paddingHorizontal: 30,
         flex: 1,
     },
     modalContainer: {
@@ -313,10 +337,10 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 100,
     },
-    checkIconArea: {
-        width: 35,
-        alignItems: 'flex-end',
+    inputContainer: {
+        marginVertical: 20,
     },
+
 });
 
-export default ProfileScreen;
+export default ProfileEdit;

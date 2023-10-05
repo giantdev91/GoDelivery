@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     offlineTitleText: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
         color: GoDeliveryColors.secondary
     },

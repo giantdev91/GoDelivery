@@ -5,8 +5,8 @@ import {
   StyleSheet,
   Text,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
 import { TouchableOpacity } from 'react-native';
@@ -61,7 +61,12 @@ const ForgotOTPCheckScreen = ({ route, navigation }: { route: any; navigation: a
       setActivityIndicator(false);
     } else {
       setActivityIndicator(false);
-      Alert.alert("GoDelivery", "Validation failed. Try again.");
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'GoDelivery',
+        textBody: "Validation failed. Try again.",
+        button: 'OK',
+      })
     }
   }
 
@@ -94,59 +99,61 @@ const ForgotOTPCheckScreen = ({ route, navigation }: { route: any; navigation: a
 
   return (
     <SafeAreaView style={[GlobalStyles.container, { backgroundColor: GoDeliveryColors.white }]}>
-      <View style={GlobalStyles.authenticationScreenLogoBack}>
-        <Image
-          source={require('../../../assets/images/otpcode.png')}
-          style={GlobalStyles.authenticationScreenLogo}
-        />
-        <BackButton navigation={navigation} />
-      </View>
-      <View
-        style={[GlobalStyles.container, GlobalStyles.contentAreaPadding, { backgroundColor: GoDeliveryColors.white, }]}>
-        <View style={{ justifyContent: 'flex-start', }}>
-          <Text style={GlobalStyles.authenticationHeaderTitle}>INSERT OTP CODE</Text>
-          <Text style={[GlobalStyles.text, { textAlign: 'center', paddingHorizontal: 40, marginBottom: 20, }]}>
-            Please enter the 6 digit code sent to your phone number
-          </Text>
-          <View style={{ width: 450, height: 70, paddingHorizontal: 80, alignSelf: 'center' }}>
-            <OTPInputView
-              autoFocusOnLoad={false}
-              pinCount={6}
-              style={{ borderColor: 'black', }}
-              code={value}
-              onCodeChanged={code => setValue(code)}
-              onCodeFilled={code => setValue(code)}
-              codeInputFieldStyle={{
-                borderColor: GoDeliveryColors.primary,
-                borderRadius: 100,
-                color: GoDeliveryColors.secondary,
-              }} />
-          </View>
-          <View style={{ alignItems: 'center', marginVertical: 20 }}>
-            <Text style={styles.smallLabelStyle}>00.{prependZero(count)}</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginVertical: 10 }}>
-              <Text style={[styles.smallLabelStyle,
-              { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', },
-              { color: count === 0 ? GoDeliveryColors.secondary : GoDeliveryColors.disabled }
-              ]}>Do not send OTP?
+      <AlertNotificationRoot>
+        <View style={GlobalStyles.authenticationScreenLogoBack}>
+          <Image
+            source={require('../../../assets/images/otpcode.png')}
+            style={GlobalStyles.authenticationScreenLogo}
+          />
+          <BackButton navigation={navigation} />
+        </View>
+        <View
+          style={[GlobalStyles.container, GlobalStyles.contentAreaPadding, { backgroundColor: GoDeliveryColors.white, }]}>
+          <View style={{ justifyContent: 'flex-start', }}>
+            <Text style={GlobalStyles.authenticationHeaderTitle}>INSERT OTP CODE</Text>
+            <Text style={[GlobalStyles.text, { textAlign: 'center', paddingHorizontal: 40, marginBottom: 20, }]}>
+              Please enter the 6 digit code sent to your phone number
+            </Text>
+            <View style={{ width: 450, height: 70, paddingHorizontal: 80, alignSelf: 'center' }}>
+              <OTPInputView
+                autoFocusOnLoad={false}
+                pinCount={6}
+                style={{ borderColor: 'black', }}
+                code={value}
+                onCodeChanged={code => setValue(code)}
+                onCodeFilled={code => setValue(code)}
+                codeInputFieldStyle={{
+                  borderColor: GoDeliveryColors.primary,
+                  borderRadius: 100,
+                  color: GoDeliveryColors.secondary,
+                }} />
+            </View>
+            <View style={{ alignItems: 'center', marginVertical: 20 }}>
+              <Text style={styles.smallLabelStyle}>00.{prependZero(count)}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginVertical: 10 }}>
+                <Text style={[styles.smallLabelStyle,
+                { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', },
+                { color: count === 0 ? GoDeliveryColors.secondary : GoDeliveryColors.disabled }
+                ]}>Do not send OTP?
 
-              </Text>
-              <TouchableOpacity style={{ marginLeft: 10, }} disabled={count > 0} onPress={resendCode}>
-                <Text style={[styles.smallLabelStyle, { color: count == 0 ? GoDeliveryColors.primary : GoDeliveryColors.primayDisabled }]}>Send OTP</Text>
-              </TouchableOpacity>
+                </Text>
+                <TouchableOpacity style={{ marginLeft: 10, }} disabled={count > 0} onPress={resendCode}>
+                  <Text style={[styles.smallLabelStyle, { color: count == 0 ? GoDeliveryColors.primary : GoDeliveryColors.primayDisabled }]}>Send OTP</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
+          <View style={{ flex: 1, marginBottom: 60, justifyContent: 'flex-end' }}>
+            <LargeLabelButton buttonText="Confirm" handler={confirmCode} />
+          </View>
+          {activityIndicator && (
+            <ActivityIndicator
+              size={'large'}
+              style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
+            />
+          )}
         </View>
-        <View style={{ flex: 1, marginBottom: 60, justifyContent: 'flex-end' }}>
-          <LargeLabelButton buttonText="Confirm" handler={confirmCode} />
-        </View>
-        {activityIndicator && (
-          <ActivityIndicator
-            size={'large'}
-            style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
-          />
-        )}
-      </View>
+      </AlertNotificationRoot>
     </SafeAreaView>
   );
 };

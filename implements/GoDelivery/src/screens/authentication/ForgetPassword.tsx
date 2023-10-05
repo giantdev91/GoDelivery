@@ -5,9 +5,9 @@ import {
   StyleSheet,
   Text,
   ActivityIndicator,
-  Alert,
   ScrollView,
 } from 'react-native';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
 import { TouchableOpacity } from 'react-native';
@@ -75,7 +75,12 @@ const ForgetPasswordScreen = ({ navigation }: { navigation: any }) => {
           .then(async response => {
             const responseData = response.data;
             if (responseData.success) {
-              Alert.alert('GoDelivery', "This phone number is not registered.");
+              Dialog.show({
+                type: ALERT_TYPE.DANGER,
+                title: 'GoDelivery',
+                textBody: "This phone number is not registered.",
+                button: 'OK',
+              })
               setActivityIndicator(false);
             } else {
               if (await TwillioService.sendSMSVerfication(argPhone)) {
@@ -85,7 +90,12 @@ const ForgetPasswordScreen = ({ navigation }: { navigation: any }) => {
                 }
                 navigation.navigate('ForgotOTPCheck', param);
               } else {
-                Alert.alert('GoDelivery', 'Phone number valid failed');
+                Dialog.show({
+                  type: ALERT_TYPE.DANGER,
+                  title: 'GoDelivery',
+                  textBody: 'Phone number valid failed',
+                  button: 'OK',
+                })
                 setActivityIndicator(false);
               }
             }
@@ -105,43 +115,44 @@ const ForgetPasswordScreen = ({ navigation }: { navigation: any }) => {
 
   return (
     <SafeAreaView style={[GlobalStyles.container, { backgroundColor: GoDeliveryColors.white }]}>
-      <ScrollView>
-        <View style={GlobalStyles.authenticationScreenLogoBack}>
-          <Image
-            source={require('../../../assets/images/forgot_password.png')}
-            style={GlobalStyles.authenticationScreenLogo}
-          />
-          <BackButton navigation={navigation} />
-        </View>
-        <View
-          style={[GlobalStyles.container, GlobalStyles.contentAreaPadding, { backgroundColor: GoDeliveryColors.white }]}>
-          <View style={{ justifyContent: 'flex-start', }}>
-            <Text style={GlobalStyles.authenticationHeaderTitle}>FORGOT PASSWORD</Text>
-            <Text style={[GlobalStyles.text, { textAlign: 'center', paddingHorizontal: 40, marginBottom: 20, }]}>Please enter your phone number to receive a verification code</Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <View style={{ flex: 1 }}>
-                <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
-              </View>
-            </View>
-            <Text style={GlobalStyles.textFieldErrorMsgArea}>{phoneError}</Text>
-          </View>
-          <View style={{ flex: 1, marginBottom: 50, justifyContent: 'flex-end', marginTop: 160 }}>
-            <LargeLabelButton buttonText="Send" handler={checkPhone} />
-          </View>
-          {activityIndicator && (
-            <ActivityIndicator
-              size={'large'}
-              style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
+      <AlertNotificationRoot>
+        <ScrollView>
+          <View style={GlobalStyles.authenticationScreenLogoBack}>
+            <Image
+              source={require('../../../assets/images/forgot_password.png')}
+              style={GlobalStyles.authenticationScreenLogo}
             />
-          )}
-        </View>
-      </ScrollView>
-
+            <BackButton navigation={navigation} />
+          </View>
+          <View
+            style={[GlobalStyles.container, GlobalStyles.contentAreaPadding, { backgroundColor: GoDeliveryColors.white }]}>
+            <View style={{ justifyContent: 'flex-start', }}>
+              <Text style={GlobalStyles.authenticationHeaderTitle}>FORGOT PASSWORD</Text>
+              <Text style={[GlobalStyles.text, { textAlign: 'center', paddingHorizontal: 40, marginBottom: 20, }]}>Please enter your phone number to receive a verification code</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <View style={{ flex: 1 }}>
+                  <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
+                </View>
+              </View>
+              <Text style={GlobalStyles.textFieldErrorMsgArea}>{phoneError}</Text>
+            </View>
+            <View style={{ flex: 1, marginBottom: 50, justifyContent: 'flex-end', marginTop: 160 }}>
+              <LargeLabelButton buttonText="Send" handler={checkPhone} />
+            </View>
+            {activityIndicator && (
+              <ActivityIndicator
+                size={'large'}
+                style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
+              />
+            )}
+          </View>
+        </ScrollView>
+      </AlertNotificationRoot>
     </SafeAreaView>
   );
 };

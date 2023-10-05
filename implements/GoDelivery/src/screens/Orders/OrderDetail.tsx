@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import { View } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import GlobalStyles from '../../styles/style';
@@ -24,7 +25,12 @@ const OrderDetail = ({ route, navigation }: {
 
     const handleGoToDetail = () => {
         if (order["status"] == 0) {
-            Alert.alert("GoDelivery", "This order didn't assign yet. There is no tracking info.");
+            Dialog.show({
+                type: ALERT_TYPE.SUCCESS,
+                title: 'GoDelivery',
+                textBody: "This order didn't assign yet. There is no tracking info.",
+                button: 'OK',
+            });
         } else {
             if (order["status"] == 1 || order["status"] == 2) {
                 const senderLocation = {
@@ -63,76 +69,78 @@ const OrderDetail = ({ route, navigation }: {
     }, []);
 
     return (
-        <View style={[GlobalStyles.container, { backgroundColor: GoDeliveryColors.white }]}>
-            <View style={[GlobalStyles.headerSection, { zIndex: 100 }]}>
-                <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
-                    <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
-                </TouchableOpacity>
-                <Text style={GlobalStyles.whiteHeaderTitle}>Order Details</Text>
+        <AlertNotificationRoot>
+            <View style={[GlobalStyles.container, { backgroundColor: GoDeliveryColors.white }]}>
+                <View style={[GlobalStyles.headerSection, { zIndex: 100 }]}>
+                    <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
+                        <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
+                    </TouchableOpacity>
+                    <Text style={GlobalStyles.whiteHeaderTitle}>Order Details</Text>
+
+                </View>
+                <ScrollView>
+                    <View style={{ padding: 10 }}>
+                        <TouchableOpacity onPress={handleGoToDetail}>
+                            {
+                                order["screenShot"] ? (
+                                    <Image source={{ uri: order["screenShot"] }} style={styles.mapThumbnail} />
+                                ) : (
+                                    <Image source={require("../../../assets/images/sample_map.png")} style={styles.mapThumbnail} />
+                                )
+                            }
+
+                        </TouchableOpacity>
+                        <View style={{ justifyContent: 'space-between', flexDirection: 'row', marginTop: 10, }}>
+                            <Text style={GlobalStyles.subTitle}>{CommonFunctions.formatDateToString(new Date(order["expectationTime"]))}</Text>
+                            <Text style={GlobalStyles.subTitle}>MZN {Number(Number(order["price"]).toFixed(2)).toLocaleString()}</Text>
+                        </View>
+                        <Text style={GlobalStyles.textBold}>{order["goodsType"]}</Text>
+                        <Text style={GlobalStyles.textDisable}>{order["description"]}</Text>
+                        <Text style={GlobalStyles.textBold}>{order["goodsVolumn"]}</Text>
+                        <View style={{ paddingHorizontal: 20, paddingVertical: 20, borderBottomWidth: 0.5, borderBottomColor: GoDeliveryColors.disabled }}>
+                            <View style={styles.locationStringRow}>
+                                <Icons name="radio-button-on-outline" size={15} color={GoDeliveryColors.primary} />
+                                <View>
+                                    <Text style={GlobalStyles.textBold}>Pickup Location</Text>
+                                    <Text numberOfLines={2} style={GlobalStyles.textDisable}>{order["from"]}</Text>
+                                    <Text style={GlobalStyles.textDisable}>{order?.client?.name}</Text>
+                                    <Text style={GlobalStyles.textDisable}>+{order?.client?.phone}</Text>
+                                </View>
+                            </View>
+
+                            <View style={[styles.locationStringRow, { marginTop: 20 }]}>
+                                <Icons name="radio-button-off-outline" size={15} color={GoDeliveryColors.primary} />
+                                <View>
+                                    <Text style={GlobalStyles.textBold}>Dropoff Location</Text>
+                                    <Text numberOfLines={2} style={GlobalStyles.textDisable}>{order["to"]}</Text>
+                                    <Text style={GlobalStyles.textDisable}>{order.receiverName}</Text>
+                                    <Text style={GlobalStyles.textDisable}>+{order.receiver}</Text>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={{ paddingVertical: 20 }}>
+                            <Text style={GlobalStyles.textMedium}>Driver</Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', gap: 10, marginTop: 10 }}>
+                                <View style={{ width: 70, height: 70 }}>
+                                    {
+                                        !order?.delivery_man?.avatar && (<Image source={require('../../../assets/images/user_default_avatar.png')} style={styles.avatarImg} />)
+                                    }
+                                    {
+                                        order?.delivery_man?.avatar && (<Image source={{ uri: order?.delivery_man?.avatar }} style={styles.avatarImg} />)
+                                    }
+                                </View>
+                                <View>
+                                    <Text style={GlobalStyles.textBold}>{order?.delivery_man?.name}</Text>
+                                    <Text style={GlobalStyles.textDisable}>{order?.delivery_man?.motor?.plate}</Text>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+
+                </ScrollView>
 
             </View>
-            <ScrollView>
-                <View style={{ padding: 10 }}>
-                    <TouchableOpacity onPress={handleGoToDetail}>
-                        {
-                            order["screenShot"] ? (
-                                <Image source={{ uri: order["screenShot"] }} style={styles.mapThumbnail} />
-                            ) : (
-                                <Image source={require("../../../assets/images/sample_map.png")} style={styles.mapThumbnail} />
-                            )
-                        }
-
-                    </TouchableOpacity>
-                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', marginTop: 10, }}>
-                        <Text style={GlobalStyles.subTitle}>{CommonFunctions.formatDateToString(new Date(order["expectationTime"]))}</Text>
-                        <Text style={GlobalStyles.subTitle}>MZN {Number(Number(order["price"]).toFixed(2)).toLocaleString()}</Text>
-                    </View>
-                    <Text style={GlobalStyles.textBold}>{order["goodsType"]}</Text>
-                    <Text style={GlobalStyles.textDisable}>{order["description"]}</Text>
-                    <Text style={GlobalStyles.textBold}>{order["goodsVolumn"]}</Text>
-                    <View style={{ paddingHorizontal: 20, paddingVertical: 20, borderBottomWidth: 0.5, borderBottomColor: GoDeliveryColors.disabled }}>
-                        <View style={styles.locationStringRow}>
-                            <Icons name="radio-button-on-outline" size={15} color={GoDeliveryColors.primary} />
-                            <View>
-                                <Text style={GlobalStyles.textBold}>Pickup Location</Text>
-                                <Text numberOfLines={2} style={GlobalStyles.textDisable}>{order["from"]}</Text>
-                                <Text style={GlobalStyles.textDisable}>{order?.client?.name}</Text>
-                                <Text style={GlobalStyles.textDisable}>+{order?.client?.phone}</Text>
-                            </View>
-                        </View>
-
-                        <View style={[styles.locationStringRow, { marginTop: 20 }]}>
-                            <Icons name="radio-button-off-outline" size={15} color={GoDeliveryColors.primary} />
-                            <View>
-                                <Text style={GlobalStyles.textBold}>Dropoff Location</Text>
-                                <Text numberOfLines={2} style={GlobalStyles.textDisable}>{order["to"]}</Text>
-                                <Text style={GlobalStyles.textDisable}>{order.receiverName}</Text>
-                                <Text style={GlobalStyles.textDisable}>+{order.receiver}</Text>
-                            </View>
-                        </View>
-                    </View>
-                    <View style={{ paddingVertical: 20 }}>
-                        <Text style={GlobalStyles.textMedium}>Driver</Text>
-                        <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', gap: 10, marginTop: 10 }}>
-                            <View style={{ width: 70, height: 70 }}>
-                                {
-                                    !order?.delivery_man?.avatar && (<Image source={require('../../../assets/images/user_default_avatar.png')} style={styles.avatarImg} />)
-                                }
-                                {
-                                    order?.delivery_man?.avatar && (<Image source={{ uri: order?.delivery_man?.avatar }} style={styles.avatarImg} />)
-                                }
-                            </View>
-                            <View>
-                                <Text style={GlobalStyles.textBold}>{order?.delivery_man?.name}</Text>
-                                <Text style={GlobalStyles.textDisable}>{order?.delivery_man?.motor?.plate}</Text>
-                            </View>
-                        </View>
-                    </View>
-                </View>
-
-            </ScrollView>
-
-        </View>
+        </AlertNotificationRoot>
     )
 }
 

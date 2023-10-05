@@ -15,7 +15,16 @@ const CustomizedPhoneInput = ({ handler, value, disabled, placeholder, error }: 
         <View style={[styles.inputContainer, { borderColor: error ? GoDeliveryColors.primary : GoDeliveryColors.disabled }]}>
             <CountryFlag isoCode="MZ" size={20} />
             <Text style={GlobalStyles.text}>+258</Text>
-            <TextInput keyboardType="number-pad" style={[GlobalStyles.text, { textAlign: 'left', justifyContent: 'center' }]} value={value} onChangeText={(text) => handler(text)} maxLength={9} editable={!disabled} placeholder={placeholder} />
+            <TextInput
+                keyboardType="number-pad"
+                numberOfLines={1}
+                style={[GlobalStyles.text, { textAlign: 'left', justifyContent: 'center', padding: 10 }]}
+                value={value}
+                onChangeText={(text) => handler(text)}
+                maxLength={9}
+                editable={!disabled}
+                placeholder={placeholder}
+            />
         </View>
     )
 }
@@ -28,7 +37,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 5,
         paddingHorizontal: 20,
-        borderRadius: 10,
+        borderRadius: 5,
         borderWidth: 1,
         borderColor: GoDeliveryColors.disabled
     }

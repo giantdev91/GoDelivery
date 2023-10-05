@@ -567,3 +567,42 @@ exports.updateUserStatus = async (req, res) => {
         });
     }
 };
+
+exports.changePassword = async (req, res) => {
+    try {
+        const { id, password, oldPassword } = req.body;
+        const deliveryMan = await Delivery_man.findOne({
+            where: {
+                id: id,
+            },
+        });
+
+        if (comparePassword(oldPassword.trim(), deliveryMan.password)) {
+            const hashedPassword = hashPassword(password.trim());
+            await Delivery_man.update(
+                { password: hashedPassword },
+                {
+                    where: { id: id },
+                }
+            );
+            res.status(200).send({
+                success: true,
+                code: 200,
+                message: "Update success",
+                data: deliveryMan,
+            });
+        } else {
+            res.status(200).send({
+                success: false,
+                code: 200,
+                message: "Old password is incorrect!",
+            });
+        }
+    } catch (error) {
+        res.status(200).send({
+            success: false,
+            code: 500,
+            message: "Internal server error",
+        });
+    }
+};

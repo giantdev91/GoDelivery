@@ -8,7 +8,8 @@ const GoDeliveryColors = {
     green: '#07ad3d',
     white: '#FFFFFF',
     background: '#F2F2F2',
-    yellow: '#ff8901'
+    yellow: '#ff8901',
+    labelColor: '#384152',
 }
 
 export default GoDeliveryColors;
