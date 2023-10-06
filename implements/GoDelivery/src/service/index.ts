@@ -5,6 +5,7 @@ import deliveryman from './deliveryman';
 import notification from './notification';
 import sysSetting from './sysSetting';
 import orderOption from './OrderOption';
+import cashReason from './cashReason';
 
 const AllAction = {
     authentication,
@@ -13,7 +14,8 @@ const AllAction = {
     deliveryman,
     notification,
     sysSetting,
-    orderOption
+    orderOption,
+    cashReason
 }
 
 export default AllAction;

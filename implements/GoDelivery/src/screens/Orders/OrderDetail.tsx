@@ -10,6 +10,7 @@ import { Image } from 'react-native';
 import Action from '../../service';
 import store from '../../redux/store';
 import CommonFunctions from '../../common/CommonFunctions';
+import PrimaryButton from '../../components/PrimaryButton';
 
 const OrderDetail = ({ route, navigation }: {
     route: any;
@@ -64,6 +65,16 @@ const OrderDetail = ({ route, navigation }: {
             }).catch(err => console.log("error: ", err));
     }
 
+    const navigateToPayment = () => {
+        const params = {
+            id: order.id,
+            from: order.from,
+            to: order.to,
+            price: order.price,
+        }
+        navigation.navigate("Payment", params);
+    }
+
     useEffect(() => {
         getOrderDetail();
     }, []);
@@ -92,7 +103,7 @@ const OrderDetail = ({ route, navigation }: {
                         </TouchableOpacity>
                         <View style={{ justifyContent: 'space-between', flexDirection: 'row', marginTop: 10, }}>
                             <Text style={GlobalStyles.subTitle}>{CommonFunctions.formatDateToString(new Date(order["expectationTime"]))}</Text>
-                            <Text style={GlobalStyles.subTitle}>MZN {Number(Number(order["price"]).toFixed(2)).toLocaleString()}</Text>
+                            <Text style={GlobalStyles.subTitle}>MZN {CommonFunctions.getLocalNumberValue(order["price"])}</Text>
                         </View>
                         <Text style={GlobalStyles.textBold}>{order["goodsType"]}</Text>
                         <Text style={GlobalStyles.textDisable}>{order["description"]}</Text>
@@ -135,6 +146,14 @@ const OrderDetail = ({ route, navigation }: {
                                 </View>
                             </View>
                         </View>
+                        {
+                            (order["status"] == 1 && order['payOption'] == '2') &&
+                            <PrimaryButton buttonText='Checkout' handler={navigateToPayment} />
+                        }
+                        {
+                            (order["status"] == 2 && order['payOption'] == '1') &&
+                            <PrimaryButton buttonText='Checkout' handler={navigateToPayment} />
+                        }
                     </View>
 
                 </ScrollView>
