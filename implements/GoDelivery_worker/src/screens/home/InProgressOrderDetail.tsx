@@ -103,6 +103,7 @@ const OrderDetail = ({ navigation, route }: {
             .then((res) => {
                 const response = res.data;
                 const orderInfo = response.data;
+                console.log("orderInfo ==> ", orderInfo);
                 if (orderInfo != null) {
                     setMyOrder(orderInfo);
                     setOrderStatus(orderInfo.status);
@@ -232,7 +233,7 @@ const OrderDetail = ({ navigation, route }: {
         <View style={{ flex: 1, height: MAP_HEIGHT }}>
             <AlertNotificationRoot>
                 {
-                    myOrder && (
+                    myOrder?.status && (
                         <View style={styles.orderInfoArea}>
                             <View style={[{ flex: 1 }, GlobalStyles.shadowProp]}>
                                 {allPositionDataLoaded && (

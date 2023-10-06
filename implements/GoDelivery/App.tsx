@@ -45,6 +45,7 @@ function App(): JSX.Element {
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log("message received!");
       Alert.alert(remoteMessage?.notification?.title ?? "", remoteMessage?.notification?.body);
     });
 
