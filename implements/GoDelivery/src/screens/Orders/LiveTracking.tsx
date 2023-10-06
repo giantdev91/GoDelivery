@@ -82,10 +82,10 @@ const DeliveryManDetailDialog = (props: DeliveryManDetailDialogProps) => {
         <View style={[styles.deliveryManDetailDialog, GlobalStyles.shadowProp, { bottom: props.status == 1 ? 70 : 10 }]}>
             <View style={[{ height: '100%', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }]}>
                 {
-                    !props.avartar && (<Image source={require('../../../assets/images/delivery-man.png')} style={{ width: 50, height: 50, }} />)
+                    !props.avartar && (<Image source={require('../../../assets/images/delivery-man.png')} style={{ width: 50, height: 50, borderRadius: 100 }} />)
                 }
                 {
-                    props.avartar && (<Image source={{ uri: props.avartar }} style={{ width: 50, height: 50, }} />)
+                    props.avartar && (<Image source={{ uri: props.avartar }} style={{ width: 50, height: 50, borderRadius: 100 }} />)
                 }
                 <View style={{ flexDirection: 'column', height: '100%', marginLeft: 10, alignItems: 'flex-start', justifyContent: 'space-evenly' }}>
                     {/* <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>

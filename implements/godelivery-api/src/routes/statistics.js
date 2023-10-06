@@ -32,7 +32,7 @@ router
     .post(asyncHandler(statisticsController.thisWeekValueOfDeliveryman));
 
 router
-    .route("/thisMonthValueOfDeliveryman")
+    .route("/monthValueOfDeliveryman")
     .post(asyncHandler(statisticsController.thisMonthValueOfDeliveryman));
 
 module.exports = router;

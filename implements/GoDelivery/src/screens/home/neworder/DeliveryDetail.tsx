@@ -4,6 +4,7 @@ import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-a
 import Icons from 'react-native-vector-icons/Ionicons';
 import RadioGroup from 'react-native-radio-buttons-group';
 import { useFocusEffect } from '@react-navigation/native';
+import Modal from "react-native-modal";
 import GlobalStyles from '../../../styles/style';
 import GoDeliveryColors from '../../../styles/colors';
 import CustomizedPhoneInput from '../../../components/CustomizedPhoneInput';
@@ -43,6 +44,7 @@ const DeliveryDetail = ({ navigation }: {
     const [price, setPrice] = useState(orderInfo["price"]);
     const [description, setDescription] = useState("");
     const [payOption, setPayOption] = useState('1');
+    const [isModalVisible, setModalVisible] = useState(false);
 
     const radioButtons = useMemo(() => ([
         {
@@ -161,7 +163,7 @@ const DeliveryDetail = ({ navigation }: {
         <View style={[GlobalStyles.container]}>
             <AlertNotificationRoot>
                 <View style={GlobalStyles.headerSection}>
-                    <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
+                    <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={() => setModalVisible(true)}>
                         <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
                     </TouchableOpacity>
                     <Text style={GlobalStyles.whiteHeaderTitle}>DELIVERY DETAILS</Text>
@@ -394,6 +396,17 @@ const DeliveryDetail = ({ navigation }: {
                         <PrimaryButton buttonText="NEXT" handler={handleNext} />
                     </View>
                 </ScrollView>
+
+                <Modal isVisible={isModalVisible}>
+                    <View style={styles.alertDialog}>
+                        <Text style={GlobalStyles.subTitle}>Discard Alert</Text>
+                        <Text style={GlobalStyles.textMedium}>Are you sure to exit?</Text>
+                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 40, marginTop: 30 }}>
+                            <TouchableOpacity onPress={() => setModalVisible(false)}><Text style={[GlobalStyles.textMedium, { color: GoDeliveryColors.primary }]}>No</Text></TouchableOpacity>
+                            <TouchableOpacity onPress={() => { setModalVisible(false); handleBack() }}><Text style={[GlobalStyles.textMedium, { color: GoDeliveryColors.primary }]}>Yes</Text></TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
             </AlertNotificationRoot>
         </View>
     )
@@ -464,7 +477,15 @@ const styles = StyleSheet.create({
     optionError: {
         borderWidth: 1,
         borderColor: GoDeliveryColors.primary,
-    }
+    },
+    alertDialog: {
+        alignSelf: 'center',
+        width: '80%',
+        backgroundColor: GoDeliveryColors.white,
+        borderRadius: 5,
+        paddingHorizontal: 20,
+        paddingVertical: 20,
+    },
 });
 
 export default DeliveryDetail;

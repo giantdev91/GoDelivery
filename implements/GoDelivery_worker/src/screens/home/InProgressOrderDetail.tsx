@@ -33,8 +33,9 @@ const CallButton = (props: ControlButtonProps) => (
     </TouchableOpacity>
 )
 
-const OrderDetail = ({ navigation }: {
-    navigation: any
+const OrderDetail = ({ navigation, route }: {
+    navigation: any;
+    route: any;
 }): JSX.Element => {
     const [deliverymanPosition, setDeliverymanPosition] = useState({
         "latitude": 0,
@@ -177,6 +178,18 @@ const OrderDetail = ({ navigation }: {
         }
     }
 
+
+    const navigateToPayment = () => {
+        const params = {
+            id: myOrder.id,
+            from: myOrder.from,
+            to: myOrder.to,
+            price: myOrder.price,
+        }
+        console.log("params ===> ", params);
+        navigation.navigate("Payment", params);
+    }
+
     const handleArrive = () => {
         Action.order.sendArriveNotification({ orderID: myOrder.id })
             .then((res) => {
@@ -184,9 +197,15 @@ const OrderDetail = ({ navigation }: {
                 if (response.success) {
                     if (orderStatus == 1) {
                         setArriveClick('collect');
+                        if (myOrder["payOption"] == '2') {
+                            navigateToPayment();
+                        }
                     }
                     if (orderStatus == 2) {
                         setArriveClick('deliver');
+                        if (myOrder["payOption"] == '1') {
+                            navigateToPayment();
+                        }
                     }
                 }
             }).catch((err) => {
@@ -197,6 +216,7 @@ const OrderDetail = ({ navigation }: {
     useFocusEffect(
         useCallback(() => {
             fetchMyOrder();
+            setShowComment(false);
         }, [])
     );
 
@@ -394,7 +414,7 @@ const OrderDetail = ({ navigation }: {
                                                 <View style={styles.controlButtonArea}>
                                                     <TouchableOpacity style={[styles.controlButtonBack, GlobalStyles.shadowProp, { backgroundColor: arriveClick != 'collect' ? GoDeliveryColors.primayDisabled : GoDeliveryColors.primary }]} disabled={arriveClick != 'collect'} onPress={() => handleSend(myOrder["id"])}>
                                                         <Icons name="archive-outline" size={30} color={GoDeliveryColors.white} />
-                                                        <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.white }]}>Collected</Text>
+                                                        <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.white }]}>Collect</Text>
                                                     </TouchableOpacity>
                                                     <TouchableOpacity style={[styles.controlButtonBack, GlobalStyles.shadowProp, { backgroundColor: GoDeliveryColors.disabled }]} onPress={() => setModalVisible(true)}>
                                                         <Icons name="trash-outline" size={30} color={GoDeliveryColors.white} />
@@ -408,7 +428,7 @@ const OrderDetail = ({ navigation }: {
                                                 <View style={styles.controlButtonArea}>
                                                     <TouchableOpacity style={[styles.controlButtonBack, GlobalStyles.shadowProp, { backgroundColor: arriveClick != 'deliver' ? GoDeliveryColors.primayDisabled : GoDeliveryColors.primary }]} disabled={arriveClick != 'deliver'} onPress={() => handleReceive(myOrder["id"])}>
                                                         <Icons name="cart-outline" size={30} color={GoDeliveryColors.white} />
-                                                        <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.white }]}>Delivered</Text>
+                                                        <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.white }]}>Deliver</Text>
                                                     </TouchableOpacity>
                                                 </View>
                                             )

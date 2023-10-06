@@ -183,7 +183,7 @@ const GlobalStyles = StyleSheet.create({
     borderRadius: 5,
   },
   textMedium: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '500',
     color: GoDeliveryColors.secondary,
   },
