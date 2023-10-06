@@ -10,6 +10,7 @@ const GoDeliveryColors = {
     background: '#F2F2F2',
     yellow: '#ff8901',
     labelColor: '#384152',
+    golden: '#f1592b',
 }
 
 export default GoDeliveryColors;

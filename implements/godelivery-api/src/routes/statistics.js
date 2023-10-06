@@ -19,4 +19,20 @@ router
     .route("/dailyRevenue")
     .post(asyncHandler(statisticsController.dailyRevenue));
 
+router
+    .route("/totalValueOfDeliveryman")
+    .post(asyncHandler(statisticsController.totalRevenueOfDeliveryman));
+
+router
+    .route("/todayValueOfDeliveryman")
+    .post(asyncHandler(statisticsController.todayValueOfDeliveryman));
+
+router
+    .route("/weekValueOfDeliveryman")
+    .post(asyncHandler(statisticsController.thisWeekValueOfDeliveryman));
+
+router
+    .route("/thisMonthValueOfDeliveryman")
+    .post(asyncHandler(statisticsController.thisMonthValueOfDeliveryman));
+
 module.exports = router;

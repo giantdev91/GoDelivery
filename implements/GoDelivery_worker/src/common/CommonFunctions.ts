@@ -117,10 +117,15 @@ function formatDateToString(date: Date) {
     return formattedString;
 }
 
+const getLocalNumberValue = (value) => {
+    return Number(Number(value).toFixed(2));
+}
+
 export default {
     calculateBounds,
     renderStatusLabel,
     formatDate,
     calculateDeliveryTime,
-    formatDateToString
+    formatDateToString,
+    getLocalNumberValue
 }

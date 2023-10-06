@@ -233,3 +233,127 @@ exports.dailyRevenue = async (req, res) => {
         });
     }
 };
+
+exports.totalRevenueOfDeliveryman = async (req, res) => {
+    try {
+        const { deliverymanId } = req.body;
+        const sqlQuery = `
+        SELECT IFNULL(SUM(od.price), 0) as revenue, COUNT(od.id) as orderCount FROM delivery_mans dm LEFT JOIN orders od ON od.deliverymanID = dm.id where dm.id = ${deliverymanId} AND od.status = 3
+        `;
+        Sequelize.query(sqlQuery, { type: Sequelize.QueryTypes.SELECT })
+            .then((results) => {
+                res.status(200).send({
+                    success: true,
+                    code: 200,
+                    data: results,
+                });
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    } catch (error) {
+        console.log("error: ", error);
+        res.status(200).send({
+            success: false,
+            code: 500,
+            message: "Internal server error",
+        });
+    }
+};
+
+exports.todayValueOfDeliveryman = async (req, res) => {
+    try {
+        const { deliverymanId } = req.body;
+        const sqlQuery = `
+        SELECT IFNULL(SUM(od.price), 0) as revenue, COUNT(od.id) as orderCount
+            FROM delivery_mans dm
+            LEFT JOIN orders od ON od.deliverymanID = dm.id
+            WHERE dm.id = ${deliverymanId}
+            AND od.status = 3
+            AND DATE(od.createdAt) = CURDATE(); 
+        `;
+        Sequelize.query(sqlQuery, { type: Sequelize.QueryTypes.SELECT })
+            .then((results) => {
+                res.status(200).send({
+                    success: true,
+                    code: 200,
+                    data: results,
+                });
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    } catch (error) {
+        console.log("error: ", error);
+        res.status(200).send({
+            success: false,
+            code: 500,
+            message: "Internal server error",
+        });
+    }
+};
+
+exports.thisWeekValueOfDeliveryman = async (req, res) => {
+    try {
+        const { deliverymanId } = req.body;
+        const sqlQuery = `
+        SELECT IFNULL(SUM(od.price), 0) as revenue, COUNT(od.id) as orderCount
+        FROM delivery_mans dm
+        LEFT JOIN orders od ON od.deliverymanID = dm.id
+        WHERE dm.id = ${deliverymanId}
+        AND od.status = 3
+        AND YEARWEEK(od.createdAt) = YEARWEEK(NOW());
+        `;
+        Sequelize.query(sqlQuery, { type: Sequelize.QueryTypes.SELECT })
+            .then((results) => {
+                res.status(200).send({
+                    success: true,
+                    code: 200,
+                    data: results,
+                });
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    } catch (error) {
+        console.log("error: ", error);
+        res.status(200).send({
+            success: false,
+            code: 500,
+            message: "Internal server error",
+        });
+    }
+};
+
+exports.thisMonthValueOfDeliveryman = async (req, res) => {
+    try {
+        const { deliverymanId } = req.body;
+        const sqlQuery = `
+        SELECT IFNULL(SUM(od.price), 0) as revenue, COUNT(od.id) as orderCount
+        FROM delivery_mans dm
+        LEFT JOIN orders od ON od.deliverymanID = dm.id
+        WHERE dm.id = ${deliverymanId}
+        AND od.status = 3
+        AND YEAR(od.createdAt) = YEAR(NOW())
+        AND MONTH(od.createdAt) = MONTH(NOW());
+        `;
+        Sequelize.query(sqlQuery, { type: Sequelize.QueryTypes.SELECT })
+            .then((results) => {
+                res.status(200).send({
+                    success: true,
+                    code: 200,
+                    data: results,
+                });
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    } catch (error) {
+        console.log("error: ", error);
+        res.status(200).send({
+            success: false,
+            code: 500,
+            message: "Internal server error",
+        });
+    }
+};

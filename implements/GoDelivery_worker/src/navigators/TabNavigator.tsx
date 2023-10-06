@@ -18,7 +18,7 @@ function TabNavigator(): JSX.Element {
             tabBarInactiveTintColor: GoDeliveryColors.disabled
         }}>
             <Tab.Screen
-                name="Main"
+                name="Home"
                 component={HomeScreen}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (

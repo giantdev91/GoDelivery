@@ -47,7 +47,7 @@ const OrderValidate = ({ navigation, route }: {
                         textBody: "Successfully completed!",
                         button: 'OK',
                     })
-                    navigation.navigate("Main");
+                    navigation.navigate("Home");
                 }).catch((err) => {
                     console.log("error: ", err);
                     setActivityIndicator(false);
