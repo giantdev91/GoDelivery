@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View, Image, Text, TextInput, } from 'react-native';
-import Icons from 'react-native-vector-icons/Ionicons';
 import { useDispatch } from 'react-redux';
 import GlobalStyles from '../../../styles/style';
 import GoDeliveryColors from '../../../styles/colors';
 import store from '../../../redux/store';
 import allActions from '../../../redux/actions';
+import { BackIcon, ConfirmCheckIcon, WarningIcon } from '../../../common/Icons';
 
 const VolumeOption = ({ navigation }: {
     navigation: any,
@@ -102,11 +102,11 @@ const VolumeOption = ({ navigation }: {
         <View style={GlobalStyles.container}>
             <View style={GlobalStyles.headerSection}>
                 <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
-                    <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
+                    <BackIcon />
                 </TouchableOpacity>
                 <Text style={GlobalStyles.whiteHeaderTitle}>Volume</Text>
                 <TouchableOpacity style={GlobalStyles.headerCheckButton} onPress={handleConfirm}>
-                    <Icons name='checkmark-outline' size={30} color={GoDeliveryColors.secondary} />
+                    <ConfirmCheckIcon />
                 </TouchableOpacity>
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, paddingHorizontal: 20 }}>
@@ -141,7 +141,7 @@ const VolumeOption = ({ navigation }: {
                             onChangeText={setCustomLength}
                             keyboardType='number-pad' />
                         {customLengthError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
-                            <Icons name="alert-outline" size={20} color={GoDeliveryColors.white} style={GlobalStyles.errorIcon} />
+                            <WarningIcon />
                             <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>Value must be less than 50.</Text></View>
                         </View>)}
                     </View>
@@ -153,7 +153,7 @@ const VolumeOption = ({ navigation }: {
                             onChangeText={setCustomWidth}
                             keyboardType='number-pad' />
                         {customWidthError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
-                            <Icons name="alert-outline" size={20} color={GoDeliveryColors.white} style={GlobalStyles.errorIcon} />
+                            <WarningIcon />
                             <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>Value must be less than 50.</Text></View>
                         </View>)}
                     </View>
@@ -166,7 +166,7 @@ const VolumeOption = ({ navigation }: {
                             onChangeText={setCustomHeight}
                             keyboardType='number-pad' />
                         {customHeightError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
-                            <Icons name="alert-outline" size={20} color={GoDeliveryColors.white} style={GlobalStyles.errorIcon} />
+                            <WarningIcon />
                             <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>Value must be less than 50.</Text></View>
                         </View>)}
                     </View>

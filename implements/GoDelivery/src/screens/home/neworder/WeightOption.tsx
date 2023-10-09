@@ -8,6 +8,7 @@ import { Divider } from 'react-native-paper';
 import Action from '../../../service';
 import store from '../../../redux/store';
 import allActions from '../../../redux/actions';
+import { BackIcon, ConfirmCheckIcon } from '../../../common/Icons';
 
 const WeightOption = ({ navigation }: {
     navigation: any,
@@ -51,15 +52,14 @@ const WeightOption = ({ navigation }: {
         <View style={GlobalStyles.container}>
             <View style={GlobalStyles.headerSection}>
                 <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
-                    <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
+                    <BackIcon />
                 </TouchableOpacity>
                 <Text style={GlobalStyles.whiteHeaderTitle}>Weight</Text>
                 <TouchableOpacity style={GlobalStyles.headerCheckButton} onPress={handleConfirm}>
-                    <Icons name='checkmark-outline' size={30} color={GoDeliveryColors.secondary} />
+                    <ConfirmCheckIcon />
                 </TouchableOpacity>
             </View>
-            <ScrollView style={[GlobalStyles.container, { padding: 30, }]}>
-                <Divider style={{ borderColor: GoDeliveryColors.disabled, borderWidth: 0.5, width: '100%' }} />
+            <ScrollView>
                 {
                     options.map((option, index) => (
                         <View key={index} style={{}}>
@@ -71,7 +71,7 @@ const WeightOption = ({ navigation }: {
                                     )
                                 }
                             </TouchableOpacity>
-                            <Divider style={{ borderColor: GoDeliveryColors.disabled, borderWidth: 0.5, width: '100%' }} />
+                            <Divider style={GlobalStyles.dividerStyle} />
                         </View>
                     ))
                 }
@@ -91,10 +91,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingVertical: 10,
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        paddingHorizontal: 30,
     },
     title: {
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: '600',
         color: GoDeliveryColors.labelColor,
     },

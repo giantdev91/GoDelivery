@@ -7,7 +7,7 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 const GlobalStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: GoDeliveryColors.background,
+    backgroundColor: GoDeliveryColors.white,
   },
   contentAreaPadding: {
     paddingHorizontal: 20,
@@ -155,7 +155,7 @@ const GlobalStyles = StyleSheet.create({
     }),
   },
   whiteHeaderTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     color: GoDeliveryColors.secondary,
   },
@@ -191,7 +191,7 @@ const GlobalStyles = StyleSheet.create({
     borderTopWidth: 2,
     marginTop: 3,
     borderColor: GoDeliveryColors.primary,
-    borderRadius: 5
+    borderRadius: 5,
   },
   locationStrContainer: {
     flex: 1,
@@ -228,6 +228,23 @@ const GlobalStyles = StyleSheet.create({
     color: GoDeliveryColors.primary,
     fontSize: 14,
     fontWeight: '600',
+  },
+  dividerStyle: {
+    borderColor: GoDeliveryColors.dividerColor,
+    borderWidth: 0.25,
+    width: '100%',
+  },
+  textInput: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: GoDeliveryColors.disabled,
+    paddingVertical: 3,
+    paddingLeft: 0,
+  },
+  iconBack: {
+    width: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

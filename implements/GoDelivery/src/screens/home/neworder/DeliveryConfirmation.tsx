@@ -8,17 +8,16 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
-import Icons from 'react-native-vector-icons/Ionicons';
 import DateTimePicker, {
   DateTimePickerAndroid,
 } from '@react-native-community/datetimepicker';
-import { Checkbox } from "react-native-paper";
 import GlobalStyles from '../../../styles/style';
 import GoDeliveryColors from '../../../styles/colors';
 import Action from '../../../service';
 import store from '../../../redux/store';
 import { Divider } from 'react-native-paper';
 import PrimaryButton from '../../../components/PrimaryButton';
+import { BackIcon, CheckRectangle, FromLocationIcon, HomeIcon, PhoneIcon, ToLocationIcon, UserIcon } from '../../../common/Icons';
 
 // Function to get the day suffix (e.g., 1st, 2nd, 3rd, etc.)
 function getDaySuffix(day: number) {
@@ -194,7 +193,7 @@ const DeliveryConfirmation = ({
             Dialog.show({
               type: ALERT_TYPE.DANGER,
               title: 'GoDelivery',
-              textBody: 'Operation failed. Try again.',
+              textBody: response.message,
               button: 'OK',
             });
           }
@@ -218,141 +217,119 @@ const DeliveryConfirmation = ({
       <View style={GlobalStyles.container}>
         <View style={GlobalStyles.headerSection}>
           <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
-            <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
+            <BackIcon />
           </TouchableOpacity>
           <Text style={GlobalStyles.whiteHeaderTitle}>DELIVERY CONFIRMATION</Text>
         </View>
         <ScrollView>
           <View style={styles.formArea}>
             {/* Sender info section start */}
-            <Text style={GlobalStyles.subTitle}>Sender</Text>
-            <View style={styles.textWithIcon}>
-              <Icons
-                name="person-outline"
-                size={20}
-                color={GoDeliveryColors.secondary}
-              />
-              <Text style={GlobalStyles.textDisable}>{username}</Text>
+            <View style={{ paddingHorizontal: 20 }}>
+              <Text style={GlobalStyles.subTitle}>Sender</Text>
+              <View style={styles.textWithIcon}>
+                <View style={GlobalStyles.iconBack}>
+                  <UserIcon />
+                </View>
+                <Text style={GlobalStyles.textDisable}>{username}</Text>
+              </View>
+              <View style={styles.textWithIcon}>
+                <View style={GlobalStyles.iconBack}>
+                  <PhoneIcon />
+                </View>
+                <Text style={GlobalStyles.textDisable}>{senderPhone}</Text>
+              </View>
+              <View style={styles.textWithIcon}>
+                <View style={GlobalStyles.iconBack}>
+                  <HomeIcon />
+                </View>
+                <Text style={GlobalStyles.textDisable}>{fromLocationReferBuilding}</Text>
+              </View>
+              <View style={[styles.textWithIcon, { marginTop: 5 }]}>
+                <View style={GlobalStyles.iconBack}>
+                  <FromLocationIcon />
+                </View>
+                <Text style={GlobalStyles.textDisable}>{from}</Text>
+              </View>
             </View>
-            <View style={styles.textWithIcon}>
-              <Icons
-                name="call-outline"
-                size={20}
-                color={GoDeliveryColors.secondary}
-              />
-              <Text style={GlobalStyles.textDisable}>{senderPhone}</Text>
-            </View>
-            <View style={styles.textWithIcon}>
-              <Icons
-                name="home-outline"
-                size={20}
-                color={GoDeliveryColors.secondary}
-              />
-              <Text style={GlobalStyles.textDisable}>{fromLocationReferBuilding}</Text>
-            </View>
-            <View style={styles.textWithIcon}>
-              <Icons
-                name="locate-outline"
-                size={20}
-                color={GoDeliveryColors.green}
-              />
-              <Text style={GlobalStyles.textDisable}>{from}</Text>
-            </View>
+
             <Divider style={styles.divider} />
             {/* Sender info section end */}
 
             {/* Receiver info section start */}
-            <Text style={GlobalStyles.subTitle}>Receiver</Text>
-            <View style={styles.textWithIcon}>
-              <Icons
-                name="person-outline"
-                size={20}
-                color={GoDeliveryColors.secondary}
-              />
-              <Text style={GlobalStyles.textDisable}>{receiverName}</Text>
+            <View style={{ paddingHorizontal: 20 }}>
+              <Text style={GlobalStyles.subTitle}>Receiver</Text>
+              <View style={styles.textWithIcon}>
+                <View style={GlobalStyles.iconBack}>
+                  <UserIcon />
+                </View>
+                <Text style={GlobalStyles.textDisable}>{receiverName}</Text>
+              </View>
+              <View style={styles.textWithIcon}>
+                <View style={GlobalStyles.iconBack}>
+                  <PhoneIcon />
+                </View>
+                <Text style={GlobalStyles.textDisable}>{receiver}</Text>
+              </View>
+              <View style={styles.textWithIcon}>
+                <View style={GlobalStyles.iconBack}>
+                  <HomeIcon />
+                </View>
+                <Text style={GlobalStyles.textDisable}>{toLocationReferBuilding}</Text>
+              </View>
+              <View style={[styles.textWithIcon, { marginTop: 5 }]}>
+                <View style={GlobalStyles.iconBack}>
+                  <ToLocationIcon />
+                </View>
+                <Text style={GlobalStyles.textDisable}>{to}</Text>
+              </View>
             </View>
-            <View style={styles.textWithIcon}>
-              <Icons
-                name="call-outline"
-                size={20}
-                color={GoDeliveryColors.secondary}
-              />
-              <Text style={GlobalStyles.textDisable}>{receiver}</Text>
-            </View>
-            <View style={styles.textWithIcon}>
-              <Icons
-                name="home-outline"
-                size={20}
-                color={GoDeliveryColors.secondary}
-              />
-              <Text style={GlobalStyles.textDisable}>{toLocationReferBuilding}</Text>
-            </View>
-            <View style={styles.textWithIcon}>
-              <Icons
-                name="location-outline"
-                size={20}
-                color={GoDeliveryColors.primary}
-              />
-              <Text style={GlobalStyles.textDisable}>{to}</Text>
-            </View>
+
             <Divider style={styles.divider} />
             {/* Receiver info section end */}
 
             {/* Item Details info section start */}
-            <Text style={GlobalStyles.subTitle}>Item Details</Text>
-            <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
-              <Text style={GlobalStyles.textDisable}>Weight</Text>
-              <Text style={GlobalStyles.textDisable}>{goodsWeight}</Text>
+            <View style={{ paddingHorizontal: 20 }}>
+              <Text style={GlobalStyles.subTitle}>Item Details</Text>
+              <View style={[styles.textWithIcon, { justifyContent: 'space-between', marginTop: 10 }]}>
+                <Text style={GlobalStyles.textDisable}>Weight</Text>
+                <Text style={GlobalStyles.textDisable}>{goodsWeight}</Text>
+              </View>
+              <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
+                <Text style={GlobalStyles.textDisable}>Volume</Text>
+                <Text style={GlobalStyles.textDisable}>{goodsVolumn}</Text>
+              </View>
+              <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
+                <Text style={GlobalStyles.textDisable}>Type of Goods</Text>
+                <Text style={GlobalStyles.textDisable}>{goodsType}</Text>
+              </View>
+              <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
+                <Text style={GlobalStyles.textDisable}>Delivery Charges</Text>
+                <Text style={GlobalStyles.textDisable}>{`MZN ${price}`}</Text>
+              </View>
+              <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
+                <Text style={GlobalStyles.textDisable}>Discount</Text>
+                <Text style={GlobalStyles.textDisable}>{'0 %'}</Text>
+              </View>
+              <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
+                <Text style={GlobalStyles.textDisable}>Total Payment</Text>
+                <Text style={GlobalStyles.textDisable}>{`MZN ${price}`}</Text>
+              </View>
             </View>
-            <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
-              <Text style={GlobalStyles.textDisable}>Volume</Text>
-              <Text style={GlobalStyles.textDisable}>{goodsVolumn}</Text>
-            </View>
-            <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
-              <Text style={GlobalStyles.textDisable}>Type of Goods</Text>
-              <Text style={GlobalStyles.textDisable}>{goodsType}</Text>
-            </View>
-            <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
-              <Text style={GlobalStyles.textDisable}>Delivery Charges</Text>
-              <Text style={GlobalStyles.textDisable}>{`MZN ${price}`}</Text>
-            </View>
-            <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
-              <Text style={GlobalStyles.textDisable}>Discount</Text>
-              <Text style={GlobalStyles.textDisable}>{'0 %'}</Text>
-            </View>
-            <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
-              <Text style={GlobalStyles.textDisable}>Total Payment</Text>
-              <Text style={GlobalStyles.textDisable}>{`MZN ${price}`}</Text>
-            </View>
+
             <Divider style={styles.divider} />
             {/* Item Details info section end */}
 
             {/* Payment Option section start */}
-            <Text style={GlobalStyles.subTitle}>Payment Option</Text>
-            <View style={[styles.textWithIcon]}>
-              <Checkbox
-                status={'checked'}
-              />
-              <Text style={GlobalStyles.textDisable}>{payOption == 1 ? "Paid by Receiver" : "Paid by Sender"}</Text>
+            <View style={{ paddingHorizontal: 20 }}>
+              <Text style={GlobalStyles.subTitle}>Payment Option</Text>
+              <View style={[styles.textWithIcon]}>
+                <View style={GlobalStyles.iconBack}>
+                  <CheckRectangle />
+                </View>
+                <Text style={GlobalStyles.textDisable}>{payOption == 1 ? "Paid by Receiver" : "Paid by Sender"}</Text>
+              </View>
             </View>
             {/* Payment Option section end */}
-
-            {/* <View style={{ marginTop: 10 }}>
-            <View style={styles.infoLabelBack}>
-              <Image
-                source={require('../../../../assets/images/icons/distance.png')}
-                style={styles.iconImg}
-              />
-              <Text style={GlobalStyles.subTitle}>Distance: {distance}Km</Text>
-            </View>
-            <View style={styles.infoLabelBack}>
-              <Image
-                source={require('../../../../assets/images/icons/price.png')}
-                style={styles.iconImg}
-              />
-              <Text style={GlobalStyles.subTitle}>Price: MZN {price}</Text>
-            </View>
-          </View> */}
           </View>
           <View style={[styles.buttonRow, { marginTop: 50 }]}>
             <PrimaryButton buttonText="PROCEED" handler={handleNext} />
@@ -392,7 +369,6 @@ const styles = StyleSheet.create({
     color: GoDeliveryColors.secondary,
   },
   formArea: {
-    paddingHorizontal: 20,
     paddingVertical: 10,
     flex: 1,
   },
@@ -449,8 +425,8 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   divider: {
-    borderColor: GoDeliveryColors.disabled,
-    borderWidth: 0.5,
+    borderColor: GoDeliveryColors.dividerColor,
+    borderWidth: 0.25,
     width: '100%',
     marginVertical: 20,
   },

@@ -4,6 +4,7 @@ import GoDeliveryColors from '../../styles/colors';
 import GlobalStyles from '../../styles/style';
 import store from '../../redux/store';
 import Icons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import PasswordInput from '../../components/PasswordInput';
 import Action from '../../service';
@@ -62,7 +63,7 @@ const ProfileChangePassword = ({ navigation }: {
             password: password,
             oldPassword: oldPassword
         }).then((res) => {
-            
+
             const response = res.data;
             if (response.success) {
                 Dialog.show({
@@ -94,7 +95,7 @@ const ProfileChangePassword = ({ navigation }: {
             <AlertNotificationRoot>
                 <View style={[GlobalStyles.headerSection]}>
                     <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
-                        <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
+                        <FontAwesome name="arrow-left-long" size={20} color={GoDeliveryColors.secondary} />
                     </TouchableOpacity>
                     <Text style={GlobalStyles.whiteHeaderTitle}>Change Password</Text>
                     <TouchableOpacity style={GlobalStyles.headerCheckButton} onPress={handleConfirm}>

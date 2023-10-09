@@ -8,6 +8,7 @@ const GoDeliveryColors = {
     white: '#FFFFFF',
     background: '#F2F2F2',
     labelColor: '#384152',
+    dividerColor: '#e7e7e7',
 }
 
 export default GoDeliveryColors;

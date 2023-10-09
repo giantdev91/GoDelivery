@@ -14,6 +14,7 @@ import { Divider } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { UPDATE_INTERVAL } from '../../common/Constant';
 import TwillioService from '../../service/TwillioService';
+import mapstyle from"../../common/mapStyles";
 
 const MAP_WIDTH = Dimensions.get('screen').width;
 const MAP_HEIGHT = Dimensions.get('screen').height - 275;
@@ -240,6 +241,7 @@ const OrderDetail = ({ navigation, route }: {
                                     <MapView
                                         style={{ flex: 1, }}
                                         provider={PROVIDER_GOOGLE}
+                                        customMapStyle={mapstyle}
                                         region={{
                                             latitude: deliverymanPosition["latitude"],
                                             longitude: deliverymanPosition["longitude"],

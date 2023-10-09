@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { StyleSheet, TouchableOpacity, View, Image, ScrollView, Text, TextInput } from 'react-native';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
-import Icons from 'react-native-vector-icons/Ionicons';
 import RadioGroup from 'react-native-radio-buttons-group';
 import { useFocusEffect } from '@react-navigation/native';
 import Modal from "react-native-modal";
@@ -12,6 +11,7 @@ import store from '../../../redux/store';
 import CustomizedInput from '../../../components/CustomizedInput';
 import { Divider, } from 'react-native-paper';
 import PrimaryButton from '../../../components/PrimaryButton';
+import { BackIcon, ForwardLinkIcon, FromLocationIcon, HomeIcon, PhoneIcon, TextEditIcon, ToLocationIcon, UserIcon, WarningIcon } from '../../../common/Icons';
 
 const MAX_VOLUME = 135;
 const MAX_WEIGHT = 50;
@@ -164,102 +164,97 @@ const DeliveryDetail = ({ navigation }: {
             <AlertNotificationRoot>
                 <View style={GlobalStyles.headerSection}>
                     <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={() => setModalVisible(true)}>
-                        <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
+                        <BackIcon />
                     </TouchableOpacity>
                     <Text style={GlobalStyles.whiteHeaderTitle}>DELIVERY DETAILS</Text>
                 </View>
                 <ScrollView >
                     <View style={styles.formArea}>
                         {/* Sender info section start */}
-                        <View style={styles.locationStrSection}>
-                            <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.secondary }]}>Sender</Text>
-                            <View style={styles.textWithIcon}>
-                                <Icons
-                                    name="locate-outline"
-                                    size={30}
-                                    color={GoDeliveryColors.green}
-                                />
-                                <Text numberOfLines={2} style={GlobalStyles.text}>
-                                    {fromStr}
-                                </Text>
+                        <View style={{ paddingHorizontal: 20 }}>
+                            <View style={styles.locationStrSection}>
+                                <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.secondary }]}>Sender</Text>
                             </View>
-                        </View>
-                        <View style={{ marginTop: 10 }}>
-                            <CustomizedInput
-                                icon="person-outline"
-                                placeHolder="User name to contact"
-                                val={currentUser.name}
-                                handler={setReceiverName}
-                                showCheck={true}
-                                disabled={true}
-                            />
-                        </View>
-                        <View style={{ marginTop: 10 }}>
-                            <CustomizedPhoneInput value={senderPhone.slice(3)} handler={() => { }} disabled={true} placeholder='Phone to contact' />
-                        </View>
-                        <View style={{ marginTop: 10 }}>
-                            <CustomizedInput
-                                icon="home-outline"
-                                placeHolder="Build No / Flat / Floor - Optional"
-                                keyboardType="number"
-                                val={fromLocationReferBuilding}
-                                handler={setFromLocationReferBuilding}
-                                showCheck={true}
-                            />
-                        </View>
-                        {/* Sender info section end */}
-                        <Divider style={styles.divider} />
-                        {/* Receiver info section start */}
-                        <View style={[styles.locationStrSection, { marginTop: 0 }]}>
-                            <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.secondary }]}>Receiver</Text>
-                            <View style={styles.textWithIcon}>
-                                <Icons
-                                    name="location-outline"
-                                    size={30}
-                                    color={GoDeliveryColors.primary}
-                                />
-                                <Text numberOfLines={2} style={GlobalStyles.text}>
-                                    {toStr}
-                                </Text>
+                            <View style={styles.inputRowContainer}>
+                                <View style={GlobalStyles.iconBack}>
+                                    <UserIcon />
+                                </View>
+                                <View>
+                                    <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Full Name</Text>
+                                    <TextInput value={currentUser.name} placeholder='Ex: Jose Manuel' style={GlobalStyles.textInput} editable={false} />
+                                </View>
                             </View>
-                        </View>
-                        <View style={{ marginTop: 10, zIndex: 3 }}>
-                            <CustomizedInput
-                                icon="person-outline"
-                                placeHolder="User name to contact"
-                                val={receiverName}
-                                handler={setReceiverName}
-                                showCheck={true}
-                                error={receiverNameError.length > 0}
-                            />
-                            {receiverNameError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
-                                <Icons name="alert-outline" size={20} color={GoDeliveryColors.white} style={GlobalStyles.errorIcon} />
-                                <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{receiverNameError}</Text></View>
-                            </View>)}
-                        </View>
-                        <View style={{ marginTop: 10, zIndex: 2 }}>
-                            <CustomizedPhoneInput value={receiverPhone} handler={setReceiverPhone} placeholder='Phone to contact' error={receiverPhoneError.length > 0} />
-                            {receiverPhoneError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
-                                <Icons name="alert-outline" size={20} color={GoDeliveryColors.white} style={GlobalStyles.errorIcon} />
-                                <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{receiverPhoneError}</Text></View>
-                            </View>)}
+                            <View style={styles.inputRowContainer}>
+                                <View style={GlobalStyles.iconBack}>
+                                    <PhoneIcon />
+                                </View>
+                                <View>
+                                    <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Phone Number</Text>
+                                    <TextInput value={senderPhone.slice(3)} placeholder='82 12 34 567' style={GlobalStyles.textInput} editable={false} />
+                                </View>
+                            </View>
+                            <View style={styles.inputRowContainer}>
+                                <View style={GlobalStyles.iconBack}>
+                                    <HomeIcon />
+                                </View>
+                                <View>
+                                    <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Address Details</Text>
+                                    <TextInput value={fromLocationReferBuilding} placeholder='Build Name / No / Flat / Floor - Optional' style={GlobalStyles.textInput} onChangeText={setFromLocationReferBuilding} />
+                                </View>
+                            </View>
                         </View>
 
-                        <View style={{ marginTop: 10 }}>
-                            <CustomizedInput
-                                icon="home-outline"
-                                placeHolder="Build No / Flat / Floor - Optional"
-                                keyboardType="number"
-                                val={toLocationReferBuilding}
-                                handler={setToLocationReferBuilding}
-                                showCheck={true}
-                            />
+                        {/* Sender info section end */}
+
+                        <Divider style={styles.divider} />
+
+                        {/* Receiver info section start */}
+                        <View style={{ paddingHorizontal: 20 }}>
+                            <View style={styles.locationStrSection}>
+                                <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.secondary }]}>Receiver</Text>
+                            </View>
+                            <View style={styles.inputRowContainer}>
+                                <View style={GlobalStyles.iconBack}>
+                                    <UserIcon />
+                                </View>
+                                <View>
+                                    <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Full Name</Text>
+                                    <TextInput value={receiverName} placeholder='Ex: Jose Manuel' style={GlobalStyles.textInput} onChangeText={setReceiverName} />
+                                </View>
+                                {receiverNameError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
+                                    <WarningIcon />
+                                    <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{receiverNameError}</Text></View>
+                                </View>)}
+                            </View>
+                            <View style={styles.inputRowContainer}>
+                                <View style={GlobalStyles.iconBack}>
+                                    <PhoneIcon />
+                                </View>
+                                <View>
+                                    <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Phone Number</Text>
+                                    <TextInput value={receiverPhone} placeholder='82 12 34 567' style={GlobalStyles.textInput} onChangeText={setReceiverPhone} />
+                                </View>
+                                {receiverPhoneError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
+                                    <WarningIcon />
+                                    <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{receiverPhoneError}</Text></View>
+                                </View>)}
+                            </View>
+                            <View style={styles.inputRowContainer}>
+                                <View style={GlobalStyles.iconBack}>
+                                    <HomeIcon />
+                                </View>
+                                <View>
+                                    <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Address Details</Text>
+                                    <TextInput value={toLocationReferBuilding} placeholder='Build Name / No / Flat / Floor - Optional' style={GlobalStyles.textInput} onChangeText={setToLocationReferBuilding} />
+                                </View>
+                            </View>
                         </View>
                         {/* Receiver info section end */}
                         <Divider style={styles.divider} />
+
                         {/* Item detail section start */}
-                        <View style={[styles.locationStrSection, { marginTop: 0 }]}>
-                            <View style={{ flex: 1, marginLeft: 5 }}>
+                        <View style={[styles.locationStrSection, { marginTop: 0, paddingHorizontal: 20 }]}>
+                            <View style={{ flex: 1, }}>
                                 <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.secondary }]}>Item Details</Text>
                             </View>
                             <TouchableOpacity
@@ -267,20 +262,26 @@ const DeliveryDetail = ({ navigation }: {
                                 onPress={() => { navigation.navigate("WeightOption") }}>
                                 <View style={styles.touchableRow}>
                                     <View style={styles.textWithIcon}>
-                                        <Image
-                                            source={require('../../../../assets/images/icons/weight.png')}
-                                            style={styles.iconElement}
-                                        />
-                                        <Text numberOfLines={2} style={GlobalStyles.textDisable}>Weight</Text>
+                                        <View style={GlobalStyles.iconBack}>
+                                            <Image
+                                                source={require('../../../../assets/images/icons/weight.png')}
+                                                style={styles.iconElement}
+                                            />
+                                        </View>
+
+                                        <View style={{ flexDirection: 'column', }}>
+                                            <Text numberOfLines={2} style={GlobalStyles.textDisable}>Weight</Text>
+                                            {
+                                                weight && (
+                                                    <Text style={[GlobalStyles.textDisable]}>{weight}</Text>
+                                                )
+                                            }
+                                        </View>
                                     </View>
-                                    <Icons name="chevron-forward-outline" color={GoDeliveryColors.secondary} size={25} />
+                                    <ForwardLinkIcon />
                                 </View>
                             </TouchableOpacity>
-                            {
-                                weight && (
-                                    <Text style={[GlobalStyles.textDisable, { marginLeft: 20, marginTop: 5 }]}>{weight}</Text>
-                                )
-                            }
+
 
                             <TouchableOpacity
                                 style={[styles.goodsOptionBack, volumeError ? styles.optionError : {}]}
@@ -288,20 +289,26 @@ const DeliveryDetail = ({ navigation }: {
                             >
                                 <View style={styles.touchableRow}>
                                     <View style={styles.textWithIcon}>
-                                        <Image
-                                            source={require('../../../../assets/images/icons/volume.png')}
-                                            style={styles.iconElement}
-                                        />
-                                        <Text numberOfLines={2} style={GlobalStyles.textDisable}>Volume</Text>
+                                        <View style={GlobalStyles.iconBack}>
+                                            <Image
+                                                source={require('../../../../assets/images/icons/volume.png')}
+                                                style={styles.iconElement}
+                                            />
+                                        </View>
+
+                                        <View style={{ flexDirection: 'column', }}>
+                                            <Text numberOfLines={2} style={GlobalStyles.textDisable}>Volume</Text>
+                                            {
+                                                volume && (
+                                                    <Text style={[GlobalStyles.textDisable]}>{volume}</Text>
+                                                )
+                                            }
+                                        </View>
                                     </View>
-                                    <Icons name="chevron-forward-outline" color={GoDeliveryColors.secondary} size={25} />
+                                    <ForwardLinkIcon />
                                 </View>
                             </TouchableOpacity>
-                            {
-                                volume && (
-                                    <Text style={[GlobalStyles.textDisable, { marginLeft: 20, marginTop: 5 }]}>{volume}</Text>
-                                )
-                            }
+
 
                             <TouchableOpacity
                                 style={[styles.goodsOptionBack, goodsTypeError ? styles.optionError : {}]}
@@ -309,48 +316,52 @@ const DeliveryDetail = ({ navigation }: {
                             >
                                 <View style={styles.touchableRow}>
                                     <View style={styles.textWithIcon}>
-                                        <Image
-                                            source={require('../../../../assets/images/icons/goods.png')}
-                                            style={styles.iconElement}
-                                        />
-                                        <Text numberOfLines={2} style={GlobalStyles.textDisable}>Type of Goods</Text>
+                                        <View style={GlobalStyles.iconBack}>
+                                            <Image
+                                                source={require('../../../../assets/images/icons/goods.png')}
+                                                style={styles.iconElement}
+                                            />
+                                        </View>
+
+                                        <View style={{ flexDirection: 'column', }}>
+                                            <Text numberOfLines={2} style={GlobalStyles.textDisable}>Type of Goods</Text>
+                                            {
+                                                goodsType && (
+                                                    <Text style={[GlobalStyles.textDisable]}>{goodsType}</Text>
+                                                )
+                                            }
+                                        </View>
                                     </View>
-                                    <Icons name="chevron-forward-outline" color={GoDeliveryColors.secondary} size={25} />
+                                    <ForwardLinkIcon />
                                 </View>
                             </TouchableOpacity>
-                            {
-                                goodsType && (
-                                    <Text style={[GlobalStyles.textDisable, { marginLeft: 20, marginTop: 5 }]}>{goodsType}</Text>
-                                )
-                            }
-                            <View style={styles.textWithIcon}>
-                                <Icons
-                                    name="reader-outline"
-                                    size={25}
-                                    color={GoDeliveryColors.disabled}
-                                />
-                                <Text numberOfLines={2} style={GlobalStyles.textDisable}>Description</Text>
-                            </View>
-                            <View style={{ marginTop: 10, width: '100%' }}>
-                                <TextInput
-                                    style={{
-                                        marginLeft: 10,
-                                        flex: 1,
-                                        paddingHorizontal: 15,
-                                        borderWidth: 1,
-                                        borderColor: GoDeliveryColors.disabled,
-                                        borderRadius: 5,
-                                        height: 100,
-                                        textAlignVertical: 'top',
-                                        textAlign: 'auto'
-                                    }}
-                                    value={description}
-                                    placeholder="Tell us what you are sending or share specific instructions to the courier."
-                                    onChangeText={setDescription}
-                                    secureTextEntry={false}
-                                    multiline
-                                    maxLength={150}
-                                />
+
+                            <View style={[styles.textWithIcon, { alignItems: 'flex-start' }]}>
+                                <View style={GlobalStyles.iconBack}>
+                                    <TextEditIcon />
+                                </View>
+
+                                <View style={{ flexDirection: 'column', }}>
+                                    <Text numberOfLines={2} style={GlobalStyles.textDisable}>Description</Text>
+                                    <TextInput
+                                        style={{
+                                            flex: 1,
+                                            height: 70,
+                                            textAlignVertical: 'top',
+                                            textAlign: 'auto',
+                                            paddingLeft: 0,
+                                            paddingTop: 4,
+                                            marginRight: 40,
+                                            color: GoDeliveryColors.disabled,
+                                        }}
+                                        value={description}
+                                        placeholder="Tell us what you are sending or share specific instructions to the courier."
+                                        onChangeText={setDescription}
+                                        secureTextEntry={false}
+                                        multiline
+                                        maxLength={150}
+                                    />
+                                </View>
                             </View>
                             <View style={{ width: '100%' }}>
                                 <Text style={[GlobalStyles.textDisable, { textAlign: 'right' }]}>{`Maximum Character: (${description.length}/150)`}</Text>
@@ -359,28 +370,9 @@ const DeliveryDetail = ({ navigation }: {
                         {/* Item detail section end */}
                         <Divider style={styles.divider} />
 
-                        {/* Price info section start */}
-                        <View style={styles.infoLabelBack}>
-                            <Image
-                                source={require('../../../../assets/images/icons/distance.png')}
-                                style={styles.iconImg}
-                            />
-                            <Text style={GlobalStyles.subTitle}>Distance: {distance}Km</Text>
-                        </View>
-                        <View style={styles.infoLabelBack}>
-                            <Image
-                                source={require('../../../../assets/images/icons/price.png')}
-                                style={styles.iconImg}
-                            />
-                            <Text style={GlobalStyles.subTitle}>Price: MZN {price}</Text>
-                        </View>
-                        {/* Price info section end */}
-
-                        <Divider style={styles.divider} />
-
                         {/* Payment option start */}
-                        <View style={[styles.locationStrSection, { marginTop: 0 }]}>
-                            <View style={{ flex: 1, marginLeft: 5 }}>
+                        <View style={[styles.locationStrSection, { marginTop: 0, paddingHorizontal: 20 }]}>
+                            <View style={{ flex: 1, }}>
                                 <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.secondary }]}>Payment Options</Text>
                                 <RadioGroup
                                     containerStyle={{ alignItems: 'flex-start' }}
@@ -414,19 +406,23 @@ const DeliveryDetail = ({ navigation }: {
 
 const styles = StyleSheet.create({
     formArea: {
-        paddingHorizontal: 20,
         paddingVertical: 10,
         flex: 1,
+    },
+    inputRowContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+        marginTop: 5,
     },
     locationStrSection: {
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
-        marginTop: 20,
+        marginTop: 10,
     },
     textWithIcon: {
         flex: 1,
-        marginLeft: 20,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
@@ -445,10 +441,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     divider: {
-        borderColor: GoDeliveryColors.disabled,
+        borderColor: GoDeliveryColors.dividerColor,
         borderWidth: 0.25,
         width: '100%',
-        marginVertical: 30,
+        marginVertical: 10,
     },
     iconElement: {
         width: 25,

@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -47,7 +48,7 @@ const Payment = ({ navigation, route }: {
         <View style={GlobalStyles.container}>
             <View style={[GlobalStyles.headerSection]}>
                 <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
-                    <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
+                    <FontAwesome name="arrow-left-long" size={20} color={GoDeliveryColors.secondary} />
                 </TouchableOpacity>
                 <Text style={GlobalStyles.whiteHeaderTitle}>CHECKOUT</Text>
             </View>

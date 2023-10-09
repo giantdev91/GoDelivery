@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { StyleSheet, TouchableOpacity, View, Text, TextInput } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import Icons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Modal from "react-native-modal";
 
 import GlobalStyles from '../../../styles/style';
 import GoDeliveryColors from '../../../styles/colors';
+import { BackIcon, ClockIcon, ConfirmCheckIcon, FavIcon, FromLocationIcon, SearchIcon, ToLocationIcon } from '../../../common/Icons';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Divider } from 'react-native-paper';
 
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 const RECENT_LOCATIONS_MAX_LENGTH = 3;
@@ -25,9 +28,22 @@ const LocationSearch = ({ route, navigation }: {
     const [showSaveLocationButton, setShowSaveLocationButton] = useState(false);
     const [location, setLocation] = useState({});
     const [predefinedPlaces, setPredefinedPlaces] = useState([]);
+    const [recentLocations, setRecentLocations] = useState([]);
 
     const handleBack = () => {
         navigation.goBack();
+    }
+
+    const handleClickSavedLocation = (savedLocation: any, locationString: string) => {
+        const param = {
+            location: savedLocation,
+            locationString: locationString
+        }
+        if (type == 0) {
+            navigation.navigate("FromLocation", param);
+        } else {
+            navigation.navigate("ToLocation", param);
+        }
     }
 
     const handleConfirm = async () => {
@@ -39,10 +55,11 @@ const LocationSearch = ({ route, navigation }: {
         if (locationData.length >= RECENT_LOCATIONS_MAX_LENGTH) {
             locationData.shift();
         }
-        locationData.push({ description: "Recent Location", geometry: { location: location } });
+        locationData.push({ description: "Recent Location", geometry: { location: location, locationString: locationString } });
         await AsyncStorage.setItem(RECENT_LOCATION_DATA_KEY, JSON.stringify(locationData));
         const param = {
             location: location,
+            locationString: locationString
         }
         if (type == 0) {
             navigation.navigate("FromLocation", param);
@@ -71,9 +88,9 @@ const LocationSearch = ({ route, navigation }: {
             }
             const existingObjectIndex = locationArray.findIndex((obj: { description: string; }) => obj.description === locationName);
             if (existingObjectIndex !== -1) {
-                locationArray[existingObjectIndex].geometry = { location: location };
+                locationArray[existingObjectIndex].geometry = { location: location, locationString: locationString };
             } else {
-                locationArray.push({ description: locationName, geometry: { location: location } });
+                locationArray.push({ description: locationName, geometry: { location: location, locationString: locationString } });
             }
             await AsyncStorage.setItem(LOCATION_DATA_KEY, JSON.stringify(locationArray));
             initializePredefinedLocations();
@@ -84,51 +101,45 @@ const LocationSearch = ({ route, navigation }: {
     const initializePredefinedLocations = async () => {
         const locationDataStr = await AsyncStorage.getItem(LOCATION_DATA_KEY);
         const recentLocationDataStr = await AsyncStorage.getItem(RECENT_LOCATION_DATA_KEY);
-        let locationDataArray: any[] = [];
 
         if (recentLocationDataStr) {
             const recentLocationData = JSON.parse(recentLocationDataStr);
-            locationDataArray = [
-                ...locationDataArray,
-                ...recentLocationData
-            ]
+            setRecentLocations(recentLocationData);
         }
 
         if (locationDataStr) {
             const locationData = JSON.parse(locationDataStr);
-            locationDataArray = [
-                ...locationDataArray,
-                ...locationData
-            ];
-            setPredefinedPlaces(locationDataArray);
+            setPredefinedPlaces(locationData);
         }
     }
 
-    useEffect(() => {
-        initializePredefinedLocations();
-    }, [])
+    useFocusEffect(
+        useCallback(() => {
+            initializePredefinedLocations();
+        }, [])
+    )
 
     return (
         <View style={GlobalStyles.container}>
             <View style={[GlobalStyles.headerSection]}>
                 <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
-                    <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
+                    <BackIcon />
                 </TouchableOpacity>
                 <Text style={GlobalStyles.whiteHeaderTitle}>{type == 0 ? 'PICK UP LOCATION' : 'DROP OFF LOCATION'}</Text>
                 <TouchableOpacity style={GlobalStyles.headerCheckButton} onPress={handleConfirm}>
-                    <Icons name='checkmark-outline' size={30} color={GoDeliveryColors.secondary} />
+                    <ConfirmCheckIcon />
                 </TouchableOpacity>
             </View>
 
             <View>
                 <View style={{ flexDirection: 'row', alignItems: 'flex-start', backgroundColor: GoDeliveryColors.white, paddingHorizontal: 15, borderRadius: 10, marginVertical: 3 }}>
-                    <Icons
-                        name={type == 0 ? "locate-outline" : "location-outline"}
-                        size={24}
-                        color={type == 0 ? GoDeliveryColors.green : GoDeliveryColors.primary}
-                        style={{ marginTop: 10 }} />
+                    <View style={{ marginTop: 10 }}>
+                        {
+                            type == 0 ? <FromLocationIcon /> : <ToLocationIcon />
+                        }
+                    </View>
                     <GooglePlacesAutocomplete
-                        placeholder={type == 0 ? "Pick up location" : "Drop off location"}
+                        placeholder={type == 0 ? "Enter Pick up location" : "Enter Drop off location"}
                         fetchDetails={true}
                         onPress={(data, details = null) => {
                             const location = details?.geometry.location;
@@ -139,7 +150,7 @@ const LocationSearch = ({ route, navigation }: {
                             }
                         }}
                         listViewDisplayed={'auto'}
-                        predefinedPlaces={predefinedPlaces}
+                        // predefinedPlaces={predefinedPlaces}
                         query={{
                             key: GOOGLE_API_KEY,
                             language: 'en',
@@ -148,10 +159,59 @@ const LocationSearch = ({ route, navigation }: {
                     />
                     {
                         showSaveLocationButton && (<TouchableOpacity onPress={toggleModal}>
-                            <Icons name={"heart-outline"} size={24} color={GoDeliveryColors.primary} style={{ marginTop: 10 }} />
+                            <View style={{ marginTop: 10 }}>
+                                <FavIcon />
+                            </View>
                         </TouchableOpacity>)
                     }
+                    {
+                        !showSaveLocationButton && (
+                            <View style={{ marginTop: 10 }}>
+                                <SearchIcon />
+                            </View>
+                        )
+                    }
                 </View>
+                <ScrollView>
+                    {
+                        recentLocations.map((item, key) => (
+                            <View key={key}>
+                                <TouchableOpacity
+                                    style={{ flexDirection: 'row', justifyContent: 'space-between', marginRight: 20 }}
+                                    onPress={() => {
+                                        setLocation(item.geometry.location);
+                                        setLocationString(item.geometry.locationString);
+                                        toggleModal();
+                                    }}
+                                >
+                                    <View style={{ marginLeft: 30, marginVertical: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                                        <ClockIcon />
+                                        <Text style={[GlobalStyles.text, { color: GoDeliveryColors.disabled }]}>{item.description}</Text>
+                                    </View>
+                                    <View style={{ marginTop: 10 }}>
+                                        <FavIcon />
+                                    </View>
+                                </TouchableOpacity>
+                                <Divider style={GlobalStyles.dividerStyle} />
+                            </View>
+                        ))
+                    }
+                    <Divider style={GlobalStyles.dividerStyle} />
+                    <Text style={[GlobalStyles.textMedium, { color: GoDeliveryColors.disabled, marginLeft: 30, marginVertical: 10 }]}>SAVED LOCATION</Text>
+                    {
+                        predefinedPlaces.map((item, key) => (
+                            <View key={key}>
+                                <TouchableOpacity onPress={() => { handleClickSavedLocation(item.geometry.location, item.geometry.locationString) }}>
+                                    <View style={{ marginLeft: 30, marginVertical: 10 }}>
+                                        <Text style={[GlobalStyles.text, { color: GoDeliveryColors.primary }]}>{item.description}</Text>
+                                        <Text style={[GlobalStyles.textDisable]}>{item.geometry.locationString}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <Divider style={GlobalStyles.dividerStyle} />
+                            </View>
+                        ))
+                    }
+                </ScrollView>
             </View>
 
             <Modal isVisible={isModalVisible} onBackdropPress={() => { setModalVisible(false) }}>

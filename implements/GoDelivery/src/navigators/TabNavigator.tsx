@@ -1,12 +1,12 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet, Text } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
-
-import InprogressOrderNavigator from './InprogressOrderNavigation';
 import GoDeliveryColors from '../styles/colors';
-import NewOrderNavigator from './NewOrderNavigation';
-import ProfileStackNavigator from './ProfileStackNavigator';
-import OrderHistoryNavigator from './OrderHistoryNavigator';
+
+import FromLocationScreen from '../screens/home/neworder/FromLocation';
+import InProgress from '../screens/Orders/InProgress';
+import OrderHistory from '../screens/Orders/OrderHistory';
+import ProfileHome from '../screens/profile/ProfileHome';
 
 const Tab = createBottomTabNavigator();
 
@@ -20,7 +20,7 @@ function TabNavigator(): JSX.Element {
         }}>
             <Tab.Screen
                 name="Home"
-                component={NewOrderNavigator}
+                component={FromLocationScreen}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         <Icons
@@ -43,7 +43,7 @@ function TabNavigator(): JSX.Element {
             />
             <Tab.Screen
                 name="InProgress"
-                component={InprogressOrderNavigator}
+                component={InProgress}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         <Icons
@@ -66,7 +66,7 @@ function TabNavigator(): JSX.Element {
             />
             <Tab.Screen
                 name="OrderHistory"
-                component={OrderHistoryNavigator}
+                component={OrderHistory}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         <Icons
@@ -89,7 +89,7 @@ function TabNavigator(): JSX.Element {
             />
             <Tab.Screen
                 name="ProfileHome"
-                component={ProfileStackNavigator}
+                component={ProfileHome}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         <Icons

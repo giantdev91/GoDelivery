@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text, Image, Dimensions, Linking, ActivityIndicator } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import { useFocusEffect } from '@react-navigation/native';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
@@ -9,6 +10,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import Action from '../../service';
 import { UPDATE_INTERVAL } from '../../common/Constant';
 import PrimaryButton from '../../components/PrimaryButton';
+import mapstyle from "../../common/mapStyles";
 
 interface ScreenProps {
     navigation: any;
@@ -207,6 +209,7 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
                 style={{ flex: 1.5, borderColor: 'red', borderWidth: 1 }}
                 provider={PROVIDER_GOOGLE}
                 loadingEnabled
+                customMapStyle={mapstyle}
                 region={{
                     latitude: deliverymanPosition.latitude,
                     longitude: deliverymanPosition.longitude,
@@ -251,7 +254,7 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
 
             </MapView>
             <TouchableOpacity style={[GlobalStyles.headerBackButton, { backgroundColor: '#FFFFFFB0', borderRadius: 100, }]} onPress={handleBack}>
-                <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
+                <FontAwesome name="arrow-left-long" size={20} color={GoDeliveryColors.secondary} />
             </TouchableOpacity>
             {/* <DistanceComponent locationStr={deliverymanPositionStr} estimationTime={estimationTime} /> */}
             <DeliveryManDetailDialog

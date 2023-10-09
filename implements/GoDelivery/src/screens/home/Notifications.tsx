@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
 import { useFocusEffect } from '@react-navigation/native';
@@ -54,7 +55,7 @@ const NotificationsScreen = ({ navigation }: ScreenProps): JSX.Element => {
         <View style={[GlobalStyles.container]}>
             <View style={[GlobalStyles.headerSection]}>
                 <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
-                    <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
+                    <FontAwesome name="arrow-left-long" size={20} color={GoDeliveryColors.secondary} />
                 </TouchableOpacity>
                 <Text style={GlobalStyles.whiteHeaderTitle}>NOTIFICATIONS</Text>
             </View>

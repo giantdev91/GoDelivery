@@ -4,6 +4,7 @@ import GlobalStyles from '../../styles/style';
 import CustomizedInput from '../../components/CustomizedInput';
 import PasswordInput from '../../components/PasswordInput';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import GoDeliveryColors from '../../styles/colors';
 import Modal from 'react-native-modal';
@@ -178,7 +179,7 @@ const ProfileEdit = ({ navigation }: ScreenProps): JSX.Element => {
             <AlertNotificationRoot>
                 <View style={GlobalStyles.headerSection}>
                     <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
-                        <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
+                        <FontAwesome name="arrow-left-long" size={20} color={GoDeliveryColors.secondary} />
                     </TouchableOpacity>
                     <Text style={GlobalStyles.whiteHeaderTitle}>Change Password</Text>
                     <TouchableOpacity style={GlobalStyles.headerCheckButton} onPress={handleSubmit}>

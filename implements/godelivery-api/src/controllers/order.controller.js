@@ -54,14 +54,21 @@ exports.create = async (req, res) => {
         var order = {};
         if (deliveryMans.length == 0) {
             //if there is no delivery man, send notification to the sender 'We are sorry, but there is no delivery man for now. Please try again a little later.'
-            notificationController.sendNotification(
-                [clientFcmToken],
-                "GoDelivery",
-                "We are sorry, but there is no delivery man for now. Please try again a little later.",
-                null,
-                [sender],
-                NOTIFICATION_TYPE_ORDER_CANNOT_CREATE
-            );
+            // notificationController.sendNotification(
+            //     [clientFcmToken],
+            //     "GoDelivery",
+            //     "We are sorry, but there is no delivery man for now. Please try again a little later.",
+            //     null,
+            //     [sender],
+            //     NOTIFICATION_TYPE_ORDER_CANNOT_CREATE
+            // );
+            res.status(200).send({
+                success: false,
+                code: 200,
+                message:
+                    "We are sorry, but there is no delivery man for now. Please try again a little later.",
+                data: order,
+            });
         } else {
             // create order
             order = await Order.create({
@@ -115,13 +122,13 @@ exports.create = async (req, res) => {
                 deliverymanIds,
                 NOTIFICATION_TYPE_ORDER_CREATED
             );
+            res.status(200).send({
+                success: true,
+                code: 200,
+                message: "create success",
+                data: order,
+            });
         }
-        res.status(200).send({
-            success: true,
-            code: 200,
-            message: "create success",
-            data: order,
-        });
     } catch (error) {
         console.error("error: ", error);
         res.status(200).send({

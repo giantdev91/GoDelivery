@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import GoDeliveryColors from '../../styles/colors';
 import GlobalStyles from '../../styles/style';
 import store from '../../redux/store';
@@ -36,7 +37,7 @@ const ProfileSelectLanguage = ({ navigation }: {
             <AlertNotificationRoot>
                 <View style={[GlobalStyles.headerSection]}>
                     <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
-                        <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
+                        <FontAwesome name="arrow-left-long" size={20} color={GoDeliveryColors.secondary} />
                     </TouchableOpacity>
                     <Text style={GlobalStyles.whiteHeaderTitle}>Language</Text>
                     <TouchableOpacity style={GlobalStyles.headerCheckButton} onPress={handleConfirm}>

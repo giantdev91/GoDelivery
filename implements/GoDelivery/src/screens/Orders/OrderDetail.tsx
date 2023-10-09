@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import { View } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -84,7 +85,7 @@ const OrderDetail = ({ route, navigation }: {
             <View style={[GlobalStyles.container, { backgroundColor: GoDeliveryColors.white }]}>
                 <View style={[GlobalStyles.headerSection, { zIndex: 100 }]}>
                     <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
-                        <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
+                        <FontAwesome name="arrow-left-long" size={20} color={GoDeliveryColors.secondary} />
                     </TouchableOpacity>
                     <Text style={GlobalStyles.whiteHeaderTitle}>Order Details</Text>
 

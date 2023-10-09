@@ -23,6 +23,7 @@ import ForgetPasswordScreen from './src/screens/authentication/ForgetPassword';
 import ForgotOTPCheckScreen from './src/screens/authentication/ForgotOTPCheck';
 import ResetPasswordScreen from './src/screens/authentication/ResetPassword';
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import HomeStackNavigator from './src/navigators/HomeStackNavigator';
 
 PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
@@ -61,13 +62,14 @@ function App(): JSX.Element {
               headerShown: false,
             }}>
               <Stack.Screen name="Splash" component={SplashScreen} />
-              <Stack.Screen name="Main" component={TabNavigator} />
+              <Stack.Screen name="Main" component={HomeStackNavigator} />
               <Stack.Screen name="SignIn" component={SignInScreen} />
               <Stack.Screen name="SignUp" component={SignUpScreen} />
               <Stack.Screen name="ForgetPassword" component={ForgetPasswordScreen} />
               <Stack.Screen name="ForgotOTPCheck" component={ForgotOTPCheckScreen} />
               <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
               <Stack.Screen name="OTP" component={OTPScreen} />
+              {/* <Stack.Screen name="HomeStackNavigator" component={HomeStackNavigator} /> */}
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaProvider>
