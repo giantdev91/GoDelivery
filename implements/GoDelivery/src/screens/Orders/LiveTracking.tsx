@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text, Image, Dimensions, Linking, ActivityIndicator } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import { useFocusEffect } from '@react-navigation/native';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
@@ -11,6 +10,7 @@ import Action from '../../service';
 import { UPDATE_INTERVAL } from '../../common/Constant';
 import PrimaryButton from '../../components/PrimaryButton';
 import mapstyle from "../../common/mapStyles";
+import { BackIcon } from '../../common/Icons';
 
 interface ScreenProps {
     navigation: any;
@@ -90,10 +90,6 @@ const DeliveryManDetailDialog = (props: DeliveryManDetailDialogProps) => {
                     props.avartar && (<Image source={{ uri: props.avartar }} style={{ width: 50, height: 50, borderRadius: 100 }} />)
                 }
                 <View style={{ flexDirection: 'column', height: '100%', marginLeft: 10, alignItems: 'flex-start', justifyContent: 'space-evenly' }}>
-                    {/* <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                        <Icons name='star' size={20} color={'gold'} />
-                        <Text style={[GlobalStyles.text, { marginLeft: 10, }]}>{props.rating}</Text>
-                    </View> */}
                     <Text style={GlobalStyles.subTitle}>{props.name}</Text>
                     <Text style={GlobalStyles.text}>{props.motor?.plate}</Text>
                     <Text style={GlobalStyles.text}>Est. time: {Math.ceil(parseFloat(props.estimationTime))} min</Text>
@@ -106,12 +102,6 @@ const DeliveryManDetailDialog = (props: DeliveryManDetailDialogProps) => {
                         <Text style={[GlobalStyles.text, { color: GoDeliveryColors.white, marginLeft: 10 }]}>call</Text>
                     </View>
                 </ControlButton>
-                {/* <ControlButton handler={handleSMS}>
-                    <View style={[{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },]}>
-                        <Icons name='paper-plane-outline' size={15} color={GoDeliveryColors.white} />
-                        <Text style={[GlobalStyles.text, { color: GoDeliveryColors.white, marginLeft: 10 }]}>message</Text>
-                    </View>
-                </ControlButton> */}
             </View>
         </View>
     )
@@ -254,7 +244,7 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
 
             </MapView>
             <TouchableOpacity style={[GlobalStyles.headerBackButton, { backgroundColor: '#FFFFFFB0', borderRadius: 100, }]} onPress={handleBack}>
-                <FontAwesome name="arrow-left-long" size={20} color={GoDeliveryColors.secondary} />
+                <BackIcon />
             </TouchableOpacity>
             {/* <DistanceComponent locationStr={deliverymanPositionStr} estimationTime={estimationTime} /> */}
             <DeliveryManDetailDialog

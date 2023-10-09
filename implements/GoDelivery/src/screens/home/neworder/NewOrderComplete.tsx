@@ -19,10 +19,14 @@ const NewOrderComplete = ({ navigation }: ScreenProps): JSX.Element => {
   const dispatch = useDispatch();
 
   const handleToHome = () => {
-    console.log("this is called!!!!", navigation.getParent());
     dispatch(allActions.OrderAction.setNewOrder({}));
 
-    navigation.getParent().navigate("InProgress");
+    // navigation.getParent().reset({
+    //   index: 0,
+    //   routes: [{ name: 'InProgress' }],
+    // });
+    navigation.navigate("InProgress");
+
   };
 
   return (

@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, Platform } from 'react-native';
 import { View } from 'react-native';
-import Icons from 'react-native-vector-icons/Ionicons';
-import FeatherIcon from 'react-native-vector-icons/Feather';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -11,6 +9,7 @@ import { Image } from 'react-native';
 import Action from '../../service';
 import store from '../../redux/store';
 import CommonFunctions from '../../common/CommonFunctions';
+import { BigDocumentIcon, HeaderOptionIcon, RadioOffIcon, RadioOnIcon } from '../../common/Icons';
 
 const OrderHistory = ({ navigation }: {
     navigation: any;
@@ -80,7 +79,7 @@ const OrderHistory = ({ navigation }: {
             <View style={[GlobalStyles.headerSection, { zIndex: 100 }]}>
                 <Text style={GlobalStyles.whiteHeaderTitle}>{orderStatus == 0 ? 'ORDER HISTORY' : orderStatus == 1 ? 'SENT' : orderStatus == 2 ? 'RECEIVED' : 'CANCELLED'}</Text>
                 <TouchableOpacity style={GlobalStyles.headerCheckButton} onPress={toggleSwitch}>
-                    <FeatherIcon name='more-vertical' size={25} color={GoDeliveryColors.secondary} />
+                    <HeaderOptionIcon />
                 </TouchableOpacity>
                 {
                     switchShow && (
@@ -99,10 +98,10 @@ const OrderHistory = ({ navigation }: {
                         <TouchableOpacity key={key} onPress={() => {
                             navigation.navigate("OrderDetail", { orderID: order["id"] })
                         }}>
-                            <View style={[styles.orderCard, { borderTopWidth: key === 0 ? 0.5 : 0 }]}>
+                            <View style={[styles.orderCard]}>
                                 <View style={styles.textSection}>
                                     <View style={styles.locationTextRow}>
-                                        <Icons name="radio-button-on-outline" size={15} color={GoDeliveryColors.primary} />
+                                        <RadioOnIcon />
                                         <View style={{ width: '90%' }}>
                                             <Text style={GlobalStyles.textBold}>{CommonFunctions.formatDateToString(new Date(order["expectationTime"]))}</Text>
                                             <Text numberOfLines={3} style={GlobalStyles.textDisable}>{order["from"]}</Text>
@@ -110,7 +109,9 @@ const OrderHistory = ({ navigation }: {
                                     </View>
 
                                     <View style={styles.locationTextRow}>
-                                        <Icons name="radio-button-off-outline" size={15} color={GoDeliveryColors.primary} />
+                                        {
+                                            order["status"] == 3 ? <RadioOnIcon /> : <RadioOffIcon />
+                                        }
                                         <View style={{ width: '90%' }}>
                                             <Text numberOfLines={3} style={GlobalStyles.textDisable}>{order["to"]}</Text>
                                         </View>
@@ -137,7 +138,7 @@ const OrderHistory = ({ navigation }: {
                 {
                     orders.length == 0 && (
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: 40, marginTop: 60, paddingVertical: 20 }}>
-                            <Icons name="document-text-outline" size={120} color={'#c7c7c7'} />
+                            <BigDocumentIcon />
                             <Text style={{ textAlign: 'center', fontSize: 18, color: GoDeliveryColors.secondary, marginTop: 50 }}>No history yet</Text>
                         </View>
                     )

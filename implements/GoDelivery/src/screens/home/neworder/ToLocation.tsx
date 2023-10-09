@@ -75,7 +75,6 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
     }
 
     const getCurrentLocation = () => {
-        console.log("this is called!!!!!!!!!!!!");
         if (route.params == undefined) {
             const result = requestLocationPermission();
             result.then(res => {
@@ -182,7 +181,6 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
                 const location = route.params.location;
                 const locationString = route.params.locationString;
 
-                console.log("location ===> ", location, locationString);
                 if (location) {
                     setRegion(prevState => ({
                         ...prevState,

@@ -2,14 +2,13 @@ import React, { useState, useCallback } from 'react';
 import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import Modal from 'react-native-modal';
-import FeatherIcon from 'react-native-vector-icons/Feather';
-import Ionicon from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
 import GoDeliveryColors from '../../styles/colors';
 import GlobalStyles from '../../styles/style';
 import store from '../../redux/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import storage from '@react-native-firebase/storage';
+import { CameraIcon, CameraIconWhite, DocumentIcon, GlobIcon, ImageIcon, LogoutIcon, PasswordIcon, SaveIcon, ShieldCheckIcon, TrashIcon } from '../../common/Icons';
 
 const ProfileHome = ({ navigation }: {
     navigation: any;
@@ -95,7 +94,7 @@ const ProfileHome = ({ navigation }: {
                         {
                             avatarUri && (<Image source={{ uri: avatarUri }} style={styles.avatarImg} />)
                         }
-                        <TouchableOpacity
+                        {/* <TouchableOpacity
                             onPress={() => {
                                 setModalVisible(true);
                             }}
@@ -107,14 +106,8 @@ const ProfileHome = ({ navigation }: {
                                 bottom: 0,
                                 right: 0,
                             }}>
-                            <FeatherIcon
-                                name="camera"
-                                size={25}
-                                style={{
-                                    color: GoDeliveryColors.primary,
-                                }}
-                            />
-                        </TouchableOpacity>
+                            <CameraIcon />
+                        </TouchableOpacity> */}
                     </View>
                 </View>
                 <View style={{ alignItems: 'center' }}>
@@ -124,43 +117,43 @@ const ProfileHome = ({ navigation }: {
                 <View style={styles.subMenuContainer}>
                     <TouchableOpacity onPress={() => { navigation.navigate("ProfileSelectLanguage") }}>
                         <View style={styles.subMenu}>
-                            <Ionicon name="globe-outline" size={25} />
+                            <GlobIcon />
                             <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.disabled }]}>Language</Text>
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => { navigation.navigate("ProfileChangePassword") }}>
                         <View style={styles.subMenu}>
-                            <Ionicon name="lock-closed-outline" size={25} />
+                            <PasswordIcon />
                             <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.disabled }]}>Change Password</Text>
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => { navigation.navigate("ProfileEdit") }}>
                         <View style={styles.subMenu}>
-                            <Ionicon name="save-outline" size={25} />
+                            <SaveIcon />
                             <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.disabled }]}>Edit Profile</Text>
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity>
                         <View style={styles.subMenu}>
-                            <Ionicon name="document-text-outline" size={25} />
+                            <DocumentIcon />
                             <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.disabled }]}>Terms & Conditions</Text>
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity>
                         <View style={styles.subMenu}>
-                            <Ionicon name="shield-checkmark-outline" size={25} />
+                            <ShieldCheckIcon />
                             <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.disabled }]}>Privacy Policy</Text>
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => { navigation.navigate("ProfileDeleteAccount") }}>
                         <View style={styles.subMenu}>
-                            <Ionicon name="trash-outline" size={25} />
+                            <TrashIcon />
                             <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.disabled }]}>Delete Account</Text>
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={logout}>
                         <View style={styles.subMenu}>
-                            <Ionicon name="log-out-outline" size={25} />
+                            <LogoutIcon />
                             <Text style={[GlobalStyles.subTitle, { color: GoDeliveryColors.disabled }]}>Logout</Text>
                         </View>
                     </TouchableOpacity>
@@ -193,20 +186,12 @@ const ProfileHome = ({ navigation }: {
                         <TouchableOpacity
                             style={styles.modalButtonBack}
                             onPress={onImageLibraryPress}>
-                            <FeatherIcon
-                                name="image"
-                                color={GoDeliveryColors.white}
-                                size={30}
-                            />
+                            <ImageIcon />
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.modalButtonBack}
                             onPress={onCameraPress}>
-                            <FeatherIcon
-                                name="camera"
-                                color={GoDeliveryColors.white}
-                                size={30}
-                            />
+                            <CameraIconWhite />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -246,8 +231,8 @@ const styles = StyleSheet.create({
     },
     subMenuContainer: {
         marginTop: 10,
-        borderTopWidth: 0.5,
-        borderTopColor: GoDeliveryColors.disabled,
+        borderTopWidth: 0.25,
+        borderTopColor: GoDeliveryColors.dividerColor,
     },
     subMenu: {
         display: 'flex',
@@ -257,8 +242,8 @@ const styles = StyleSheet.create({
         paddingLeft: 30,
         gap: 20,
         paddingVertical: 10,
-        borderBottomWidth: 0.5,
-        borderColor: GoDeliveryColors.disabled
+        borderBottomWidth: 0.25,
+        borderColor: GoDeliveryColors.dividerColor
     }
 });
 

@@ -3,11 +3,11 @@ import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, } from 're
 import GoDeliveryColors from '../../styles/colors';
 import GlobalStyles from '../../styles/style';
 import store from '../../redux/store';
-import Icons from 'react-native-vector-icons/Ionicons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import PasswordInput from '../../components/PasswordInput';
 import Action from '../../service';
+import { BackIcon, ConfirmCheckIcon, PasswordIcon, WarningIcon } from '../../common/Icons';
+import { TextInput } from 'react-native-gesture-handler';
 
 const ProfileChangePassword = ({ navigation }: {
     navigation: any;
@@ -95,60 +95,78 @@ const ProfileChangePassword = ({ navigation }: {
             <AlertNotificationRoot>
                 <View style={[GlobalStyles.headerSection]}>
                     <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
-                        <FontAwesome name="arrow-left-long" size={20} color={GoDeliveryColors.secondary} />
+                        <BackIcon />
                     </TouchableOpacity>
                     <Text style={GlobalStyles.whiteHeaderTitle}>Change Password</Text>
                     <TouchableOpacity style={GlobalStyles.headerCheckButton} onPress={handleConfirm}>
-                        <Icons name='checkmark-outline' size={30} color={GoDeliveryColors.secondary} />
+                        <ConfirmCheckIcon />
                     </TouchableOpacity>
                 </View>
-                <View style={[GlobalStyles.container, { padding: 30 }]}>
+                <View style={{ marginTop: 30 }}>
                     <View style={[styles.inputContainer, { zIndex: 3 }]}>
-                        <Text style={GlobalStyles.textDisable}>New Password</Text>
-                        <PasswordInput handler={(val) => {
-                            if (val) {
-                                setPasswordError('')
-                            }
-                            setPassword(val)
-                        }}
-                            error={passwordError.length > 0}
-                        />
-                        {passwordError && (<View style={GlobalStyles.errorTooltip}>
-                            <Icons name="alert-outline" size={20} color={GoDeliveryColors.white} style={GlobalStyles.errorIcon} />
-                            <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{passwordError}</Text></View>
-                        </View>)}
+                        <PasswordIcon />
+                        <View style={{ flex: 1, }}>
+                            <Text style={GlobalStyles.textDisable}>New Password</Text>
+                            <TextInput
+                                value={password}
+                                placeholder='******'
+                                style={GlobalStyles.textInput}
+                                secureTextEntry={true}
+                                onChangeText={(val) => {
+                                    if (val) {
+                                        setPasswordError('')
+                                    }
+                                    setPassword(val)
+                                }} />
+                            {passwordError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
+                                <WarningIcon />
+                                <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{passwordError}</Text></View>
+                            </View>)}
+                        </View>
                     </View>
 
                     <View style={[styles.inputContainer, { zIndex: 2 }]}>
-                        <Text style={GlobalStyles.textDisable}>Confirm Password</Text>
-                        <PasswordInput handler={(val) => {
-                            if (val) {
-                                setConfirmPasswordError('')
-                            }
-                            setConfirmPassword(val)
-                        }}
-                            error={confirmPasswordError.length > 0}
-                        />
-                        {confirmPasswordError && (<View style={GlobalStyles.errorTooltip}>
-                            <Icons name="alert-outline" size={20} color={GoDeliveryColors.white} style={GlobalStyles.errorIcon} />
-                            <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{confirmPasswordError}</Text></View>
-                        </View>)}
+                        <PasswordIcon />
+                        <View style={{ flex: 1, }}>
+                            <Text style={GlobalStyles.textDisable}>Confirm Password</Text>
+                            <TextInput
+                                value={confirmPassword}
+                                placeholder='******'
+                                style={GlobalStyles.textInput}
+                                secureTextEntry={true}
+                                onChangeText={(val) => {
+                                    if (val) {
+                                        setConfirmPasswordError('')
+                                    }
+                                    setConfirmPassword(val)
+                                }} />
+                            {confirmPasswordError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
+                                <WarningIcon />
+                                <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{confirmPasswordError}</Text></View>
+                            </View>)}
+                        </View>
                     </View>
 
                     <View style={[styles.inputContainer, { zIndex: 1 }]}>
-                        <Text style={GlobalStyles.textDisable}>Old Password</Text>
-                        <PasswordInput handler={(val) => {
-                            if (val) {
-                                setOldPasswordError('')
-                            }
-                            setOldPassword(val)
-                        }}
-                            error={oldPasswordError.length > 0}
-                        />
-                        {oldPasswordError && (<View style={GlobalStyles.errorTooltip}>
-                            <Icons name="alert-outline" size={20} color={GoDeliveryColors.white} style={GlobalStyles.errorIcon} />
-                            <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{oldPasswordError}</Text></View>
-                        </View>)}
+                        <PasswordIcon />
+                        <View style={{ flex: 1, }}>
+                            <Text style={GlobalStyles.textDisable}>Old Password</Text>
+                            <TextInput
+                                value={oldPassword}
+                                placeholder='******'
+                                style={GlobalStyles.textInput}
+                                secureTextEntry={true}
+                                onChangeText={(val) => {
+                                    if (val) {
+                                        setOldPasswordError('')
+                                    }
+                                    setOldPassword(val)
+                                }} />
+                            {oldPasswordError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
+                                <WarningIcon />
+                                <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{oldPasswordError}</Text></View>
+                            </View>)}
+                        </View>
                     </View>
                     {activityIndicator && (
                         <ActivityIndicator
@@ -175,7 +193,12 @@ const styles = StyleSheet.create({
         color: GoDeliveryColors.labelColor,
     },
     inputContainer: {
-        marginVertical: 20,
+        marginVertical: 5,
+        paddingHorizontal: 30,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        gap: 10,
     },
 });
 

@@ -1,10 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { StyleSheet, TouchableOpacity, View, Image, ScrollView, Text } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Image, ScrollView, Text, TextInput } from 'react-native';
 import GlobalStyles from '../../styles/style';
-import CustomizedInput from '../../components/CustomizedInput';
-import PasswordInput from '../../components/PasswordInput';
-import FeatherIcon from 'react-native-vector-icons/Feather';
-import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import GoDeliveryColors from '../../styles/colors';
 import Modal from 'react-native-modal';
@@ -16,9 +12,8 @@ import Action from '../../service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import allActions from '../../redux/actions';
 import { useDispatch } from 'react-redux';
-import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
-import Icons from 'react-native-vector-icons/Ionicons';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
+import { BackIcon, CameraIcon, CameraIconWhite, ConfirmCheckIcon, ImageIcon, PasswordIcon, PhoneIcon, UserIcon, WarningIcon } from '../../common/Icons';
 
 interface ScreenProps {
     navigation: any;
@@ -179,14 +174,14 @@ const ProfileEdit = ({ navigation }: ScreenProps): JSX.Element => {
             <AlertNotificationRoot>
                 <View style={GlobalStyles.headerSection}>
                     <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
-                        <FontAwesome name="arrow-left-long" size={20} color={GoDeliveryColors.secondary} />
+                        <BackIcon />
                     </TouchableOpacity>
-                    <Text style={GlobalStyles.whiteHeaderTitle}>Change Password</Text>
+                    <Text style={GlobalStyles.whiteHeaderTitle}>Edit Profile</Text>
                     <TouchableOpacity style={GlobalStyles.headerCheckButton} onPress={handleSubmit}>
-                        <Icons name='checkmark-outline' size={30} color={GoDeliveryColors.secondary} />
+                        <ConfirmCheckIcon />
                     </TouchableOpacity>
                 </View>
-                <ScrollView style={GlobalStyles.container}>
+                <ScrollView >
                     <View style={styles.avatarArea}>
                         <View style={{ width: 120, height: 120 }}>
                             {
@@ -207,47 +202,48 @@ const ProfileEdit = ({ navigation }: ScreenProps): JSX.Element => {
                                     bottom: 0,
                                     right: 0,
                                 }}>
-                                <FeatherIcon
-                                    name="camera"
-                                    size={25}
-                                    style={{
-                                        color: GoDeliveryColors.primary,
-                                    }}
-                                />
+                                <CameraIcon />
                             </TouchableOpacity>
                         </View>
                     </View>
                     <View style={styles.profileFormArea}>
                         <View style={{ marginTop: 20 }}>
+
                             <View style={[styles.inputContainer, { zIndex: 3 }]}>
-                                <Text style={GlobalStyles.textDisable}>Full Name</Text>
-                                <CustomizedInput icon='person-outline' placeHolder='Username' handler={setUsername} val={username} error={usernameError.length > 0} />
-                                {usernameError && (<View style={GlobalStyles.errorTooltip}>
-                                    <Icons name="alert-outline" size={20} color={GoDeliveryColors.white} style={GlobalStyles.errorIcon} />
+                                <View style={GlobalStyles.iconBack}>
+                                    <UserIcon />
+                                </View>
+                                <View>
+                                    <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Full Name</Text>
+                                    <TextInput value={username} placeholder='Ex: Jose Manuel' style={GlobalStyles.textInput} onChangeText={setUsername} />
+                                </View>
+                                {usernameError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
+                                    <WarningIcon />
                                     <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{usernameError}</Text></View>
                                 </View>)}
                             </View>
 
                             <View style={[styles.inputContainer, { zIndex: 2 }]}>
-                                <Text style={GlobalStyles.textDisable}>Phone Number</Text>
-                                <View
-                                    style={{
-                                        flexDirection: 'row',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                    }}>
-                                    <View style={{ flex: 1, }}>
-                                        <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
-                                    </View>
+                                <View style={GlobalStyles.iconBack}>
+                                    <PhoneIcon />
                                 </View>
-                                {phoneError && (<View style={GlobalStyles.errorTooltip}>
-                                    <Icons name="alert-outline" size={20} color={GoDeliveryColors.white} style={GlobalStyles.errorIcon} />
+                                <View>
+                                    <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Phone Number</Text>
+                                    <TextInput value={phone} placeholder='82 12 34 567' style={GlobalStyles.textInput} onChangeText={setPhone} keyboardType='number-pad' />
+                                </View>
+                                {phoneError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
+                                    <WarningIcon />
                                     <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{phoneError}</Text></View>
                                 </View>)}
                             </View>
                             <View style={[styles.inputContainer, { zIndex: 1 }]}>
-                                <Text style={GlobalStyles.textDisable}>Password</Text>
-                                <PasswordInput handler={(val) => { setPassword(val) }} />
+                                <View style={GlobalStyles.iconBack}>
+                                    <PasswordIcon />
+                                </View>
+                                <View>
+                                    <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Password</Text>
+                                    <TextInput value={password} placeholder='******' style={GlobalStyles.textInput} onChangeText={setPassword} secureTextEntry={true} />
+                                </View>
                             </View>
                         </View>
                     </View>
@@ -283,20 +279,12 @@ const ProfileEdit = ({ navigation }: ScreenProps): JSX.Element => {
                         <TouchableOpacity
                             style={styles.modalButtonBack}
                             onPress={onImageLibraryPress}>
-                            <FeatherIcon
-                                name="image"
-                                color={GoDeliveryColors.white}
-                                size={30}
-                            />
+                            <ImageIcon />
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.modalButtonBack}
                             onPress={onCameraPress}>
-                            <FeatherIcon
-                                name="camera"
-                                color={GoDeliveryColors.white}
-                                size={30}
-                            />
+                            <CameraIconWhite />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -339,7 +327,11 @@ const styles = StyleSheet.create({
         borderRadius: 100,
     },
     inputContainer: {
-        marginVertical: 20,
+        marginVertical: 5,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        gap: 10,
     },
 
 });

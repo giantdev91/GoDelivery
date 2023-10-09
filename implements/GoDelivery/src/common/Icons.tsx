@@ -117,6 +117,103 @@ const CheckRectangle = () => {
     )
 }
 
+const CameraIcon = () => {
+    return (
+        <Feather
+            name="camera"
+            size={25}
+            style={{
+                color: GoDeliveryColors.primary,
+            }}
+        />
+    )
+}
+
+const ImageIcon = () => {
+    return (
+        <Feather
+            name="image"
+            color={GoDeliveryColors.white}
+            size={30}
+        />
+    )
+}
+
+const CameraIconWhite = () => {
+    return (
+        <Feather
+            name="camera"
+            color={GoDeliveryColors.white}
+            size={30}
+        />
+    )
+}
+
+const GlobIcon = () => {
+    return (
+        <Ionicons name="globe-outline" size={25} color={GoDeliveryColors.disabled} />
+    )
+}
+
+const PasswordIcon = () => {
+    return (
+        <Ionicons name="lock-closed-outline" size={25} color={GoDeliveryColors.disabled} />
+    )
+}
+
+const SaveIcon = () => {
+    return (
+        <Ionicons name="save-outline" size={25} color={GoDeliveryColors.disabled} />
+    )
+}
+
+const DocumentIcon = () => {
+    return (
+        <Ionicons name="document-text-outline" size={25} color={GoDeliveryColors.disabled} />
+    )
+}
+
+const ShieldCheckIcon = () => {
+    return (
+        <Ionicons name="shield-checkmark-outline" size={25} color={GoDeliveryColors.disabled} />
+    )
+}
+
+const TrashIcon = () => {
+    return (
+        <Ionicons name="trash-outline" size={25} color={GoDeliveryColors.disabled} />
+    )
+}
+
+const LogoutIcon = () => {
+    return (
+        <Ionicons name="log-out-outline" size={25} color={GoDeliveryColors.disabled} />
+    )
+}
+
+const RadioOnIcon = () => {
+    return (
+        <Ionicons name={"radio-button-on-outline"} size={15} color={GoDeliveryColors.primary} />
+    )
+}
+
+const RadioOffIcon = () => {
+    return (
+        <Ionicons name={"radio-button-off-outline"} size={15} color={GoDeliveryColors.primary} />
+    )
+}
+
+const HeaderOptionIcon = () => {
+    return (
+        <Feather name='more-vertical' size={25} color={GoDeliveryColors.secondary} />
+    )
+}
+
+const BigDocumentIcon = () => {
+    return (
+        <Ionicons name="document-text-outline" size={120} color={'#c7c7c7'} />
+    )
+}
 
 export {
     BackIcon,
@@ -134,5 +231,19 @@ export {
     HomeIcon,
     PhoneIcon,
     TextEditIcon,
-    CheckRectangle
+    CheckRectangle,
+    CameraIcon,
+    ImageIcon,
+    CameraIconWhite,
+    GlobIcon,
+    PasswordIcon,
+    SaveIcon,
+    DocumentIcon,
+    ShieldCheckIcon,
+    TrashIcon,
+    LogoutIcon,
+    RadioOnIcon,
+    RadioOffIcon,
+    HeaderOptionIcon,
+    BigDocumentIcon
 }
