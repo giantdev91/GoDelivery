@@ -13,7 +13,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import storage from '@react-native-firebase/storage';
 import GlobalStyles from '../../../styles/style';
 import GoDeliveryColors from '../../../styles/colors';
-import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Marker, Polyline, Circle } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import MapViewDirections from 'react-native-maps-directions';
 import ViewShot from "react-native-view-shot";
@@ -27,6 +27,8 @@ import allActions from '../../../redux/actions';
 import mapstyle from "../../../common/mapStyles";
 import { Divider } from 'react-native-paper';
 import { BackIcon, FromLocationIcon, MyLocationIcon, ToLocationIcon } from '../../../common/Icons';
+import CommonFunctions from '../../../common/CommonFunctions';
+import AnimatingPolylineComponent from '../../../common/AnimatedPolylineComponent';
 
 const MAP_WIDTH = Dimensions.get('screen').width - 40;
 const MAP_HEIGHT = 350;
@@ -45,6 +47,7 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
     });
+    const mapViewRef = useRef<MapView>(null);
 
     const [toStr, setToStr] = useState('DropOff Location');
     const [clickedConfirm, setClickedConfirm] = useState(false);
@@ -54,6 +57,7 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
     const [setting, setSetting] = useState({});
     const [activityIndicator, setActivityIndicator] = useState(false);
     const [screenShotUrl, setScreenShotUrl] = useState("");
+    const [directions, setDirections] = useState([]);
 
     const ref = useRef();
 
@@ -80,14 +84,22 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
             result.then(res => {
                 if (res) {
                     Geolocation.getCurrentPosition(
-                        region => {
-                            const crd = region.coords;
-                            setRegion({
+                        regionInfo => {
+                            const crd = regionInfo.coords;
+                            if (region.latitude == null) {
+                                setRegion({
+                                    latitude: crd.latitude,
+                                    longitude: crd.longitude,
+                                    latitudeDelta: LATITUDE_DELTA,
+                                    longitudeDelta: LONGITUDE_DELTA,
+                                });
+                            }
+                            mapViewRef.current?.animateToRegion({
                                 latitude: crd.latitude,
                                 longitude: crd.longitude,
                                 latitudeDelta: LATITUDE_DELTA,
                                 longitudeDelta: LONGITUDE_DELTA,
-                            });
+                            })
                             setlocationStringFromGeoLocationInfo(crd.latitude, crd.longitude);
                         },
                         error => {
@@ -155,6 +167,7 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
     const handleRegionChange = (region: any) => {
         if (!clickedConfirm) {
             setRegion(region);
+            mapViewRef.current?.animateToRegion(region);
             setlocationStringFromGeoLocationInfo(region.latitude, region.longitude);
         }
     }
@@ -187,6 +200,12 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
                         latitude: location.lat,
                         longitude: location.lng,
                     }))
+                    mapViewRef.current?.animateToRegion({
+                        latitude: location.lat,
+                        longitude: location.lng,
+                        latitudeDelta: LATITUDE_DELTA,
+                        longitudeDelta: LONGITUDE_DELTA,
+                    })
                 }
                 if (locationString) {
                     setToStr(locationString);
@@ -194,7 +213,7 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
             }
         }, [])
     );
-
+    const DirectionRoutes = [...directions].reverse();
     return (
         <View style={GlobalStyles.container}>
             {/* header section start */}
@@ -202,7 +221,7 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
                 <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
                     <BackIcon />
                 </TouchableOpacity>
-                <Text style={GlobalStyles.whiteHeaderTitle}>DROP OFF YOUR DELIVERY</Text>
+                <Text style={GlobalStyles.whiteHeaderTitle}>Drop Off Location</Text>
             </View>
             {/* header section end */}
             <View style={{ flex: 1 }}>
@@ -211,6 +230,7 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
                     {
                         region.latitude != null && (
                             <MapView
+                                ref={mapViewRef}
                                 style={{ flex: 1.5, borderColor: 'red', borderWidth: 1 }}
                                 provider={PROVIDER_GOOGLE}
                                 loadingEnabled
@@ -241,7 +261,7 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
                                 }
 
                                 {
-                                    clickedConfirm && (
+                                    directions.length == 0 && clickedConfirm && (
                                         <MapViewDirections
                                             origin={orderInfo["fromLocation"]}
                                             destination={region}
@@ -249,6 +269,7 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
                                             strokeWidth={4}
                                             strokeColor={GoDeliveryColors.primary}
                                             onReady={result => {
+                                                setDirections(result.coordinates);
                                                 setEstimationTime(`${Math.ceil(result.duration + DEFAULT_ARRIVAL_TIME).toString()}`);
                                                 const distanceVal = result.distance.toFixed(2).toString();
                                                 setDistance(distanceVal);
@@ -258,11 +279,41 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
                                         />
                                     )
                                 }
+                                {
+                                    directions.length > 0 && (<Polyline
+                                        coordinates={directions}
+                                        strokeColor={GoDeliveryColors.primary}
+                                        strokeWidth={5}
+
+                                    />)
+                                }
+                                {/* Animating polyline */}
+                                {
+                                    directions.length > 0 && (
+                                        <AnimatingPolylineComponent Direction={DirectionRoutes} />
+                                    )
+                                }
+                                {/* <Circle
+                                    center={orderInfo["fromLocation"]}
+                                    radius={5}
+                                    strokeColor={"#484848"}
+                                    strokeWidth={5}
+                                    fillColor={"#fff"}
+                                    zIndex={1}
+                                /> */}
+
+                                {/* Destination Circle */}
+                                {/* <Circle
+                                    center={region}
+                                    radius={5}
+                                    strokeColor={"#484848"}
+                                    strokeWidth={5}
+                                    fillColor={"#fff"}
+                                    zIndex={1}
+                                /> */}
                             </MapView>
                         )
                     }
-
-
 
                 </ViewShot>
                 {/* map marker start */}
@@ -314,11 +365,26 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
                     </View>
                 }
 
+                {clickedConfirm && (
+                    <View style={styles.informationPad}>
+                        <View style={{ flexDirection: 'row', gap: 5 }}>
+                            <Text style={GlobalStyles.textBold}>Distance:</Text>
+                            <Text style={GlobalStyles.text}>{distance}Km</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', gap: 5 }}>
+                            <Text style={GlobalStyles.textBold}>Price:</Text>
+                            <Text style={GlobalStyles.text}>{CommonFunctions.getLocalNumberValue(price)}</Text>
+                        </View>
+                    </View>
+                )}
+
                 {
                     clickedConfirm && <View style={styles.buttonRow}>
                         <PrimaryButton buttonText="Next" handler={handleNextButton} />
                     </View>
                 }
+
+
 
                 {activityIndicator && (
                     <ActivityIndicator
@@ -351,7 +417,29 @@ const styles = StyleSheet.create({
         borderColor: GoDeliveryColors.disabled,
         borderWidth: 0.3,
         alignSelf: 'center',
+        marginLeft: 25,
         width: '80%',
+    },
+    informationPad: {
+        position: 'absolute',
+        left: 0,
+        bottom: 80,
+        backgroundColor: GoDeliveryColors.white,
+        width: 150,
+        height: 35,
+        borderRadius: 5,
+        opacity: 0.7,
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        paddingLeft: 10,
+
+    },
+    informationStr: {
+        color: GoDeliveryColors.secondary,
+        fontSize: 16,
+        fontWeight: '600',
+        marginLeft: 10,
     },
 });
 

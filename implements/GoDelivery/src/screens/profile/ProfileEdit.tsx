@@ -215,7 +215,12 @@ const ProfileEdit = ({ navigation }: ScreenProps): JSX.Element => {
                                 </View>
                                 <View>
                                     <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Full Name</Text>
-                                    <TextInput value={username} placeholder='Ex: Jose Manuel' style={GlobalStyles.textInput} onChangeText={setUsername} />
+                                    <TextInput
+                                        value={username}
+                                        placeholder='Ex: Jose Manuel'
+                                        style={GlobalStyles.textInput}
+                                        placeholderTextColor={GoDeliveryColors.placeHolder}
+                                        onChangeText={setUsername} />
                                 </View>
                                 {usernameError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
                                     <WarningIcon />
@@ -229,7 +234,13 @@ const ProfileEdit = ({ navigation }: ScreenProps): JSX.Element => {
                                 </View>
                                 <View>
                                     <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Phone Number</Text>
-                                    <TextInput value={phone} placeholder='82 12 34 567' style={GlobalStyles.textInput} onChangeText={setPhone} keyboardType='number-pad' />
+                                    <TextInput
+                                        value={phone}
+                                        placeholder='82 12 34 567'
+                                        style={GlobalStyles.textInput}
+                                        onChangeText={setPhone}
+                                        placeholderTextColor={GoDeliveryColors.placeHolder}
+                                        keyboardType='number-pad' />
                                 </View>
                                 {phoneError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
                                     <WarningIcon />
@@ -242,7 +253,13 @@ const ProfileEdit = ({ navigation }: ScreenProps): JSX.Element => {
                                 </View>
                                 <View>
                                     <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Password</Text>
-                                    <TextInput value={password} placeholder='******' style={GlobalStyles.textInput} onChangeText={setPassword} secureTextEntry={true} />
+                                    <TextInput
+                                        value={password}
+                                        placeholder='******'
+                                        style={GlobalStyles.textInput}
+                                        onChangeText={setPassword}
+                                        placeholderTextColor={GoDeliveryColors.placeHolder}
+                                        secureTextEntry={true} />
                                 </View>
                             </View>
                         </View>

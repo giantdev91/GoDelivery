@@ -6,6 +6,7 @@ import {
   Text,
   Image,
   ImageBackground,
+  StatusBar,
 } from 'react-native';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
@@ -76,6 +77,11 @@ const SplashScreen = ({ navigation }: { navigation: any }): JSX.Element => {
     <ImageBackground
       source={require('../../../assets/images/splash.png')}
       style={GlobalStyles.container}>
+      <StatusBar
+        animated={true}
+        backgroundColor="#FFFFFF"
+        hidden={true}
+      />
       <View style={styles.logoSection}>
         <View style={styles.logoBack}>
           <Text style={styles.headerTitle}>Let's Go</Text>

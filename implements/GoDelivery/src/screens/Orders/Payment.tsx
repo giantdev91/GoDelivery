@@ -107,7 +107,10 @@ const Payment = ({ navigation, route }: {
                             </View>
                             <View>
                                 <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Phone Number</Text>
-                                <TextInput placeholder='84/86 12 34 567' style={GlobalStyles.textInput} />
+                                <TextInput
+                                    placeholder='84/86 12 34 567'
+                                    placeholderTextColor={GoDeliveryColors.placeHolder}
+                                    style={GlobalStyles.textInput} />
                             </View>
                             {phoneError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
                                 <WarningIcon />

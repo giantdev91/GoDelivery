@@ -134,25 +134,27 @@ const GlobalStyles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     backgroundColor: GoDeliveryColors.white,
-    ...Platform.select({
-      ios: {
-        shadowColor: GoDeliveryColors.secondary,
-        shadowOffset: {
-          width: 0,
-          height: 8,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-      },
-      android: {
-        elevation: 8,
-        shadowOffset: {
-          width: 0,
-          height: 8,
-        },
-        shadowColor: GoDeliveryColors.secondary,
-      },
-    }),
+    borderBottomWidth: 0.5,
+    borderBottomColor: GoDeliveryColors.darkDisabled,
+    // ...Platform.select({
+    //   ios: {
+    //     shadowColor: GoDeliveryColors.secondary,
+    //     shadowOffset: {
+    //       width: 0,
+    //       height: 8,
+    //     },
+    //     shadowOpacity: 0.25,
+    //     shadowRadius: 3.84,
+    //   },
+    //   android: {
+    //     elevation: 8,
+    //     shadowOffset: {
+    //       width: 0,
+    //       height: 8,
+    //     },
+    //     shadowColor: GoDeliveryColors.secondary,
+    //   },
+    // }),
   },
   whiteHeaderTitle: {
     fontSize: 14,
@@ -161,12 +163,12 @@ const GlobalStyles = StyleSheet.create({
   },
   headerBackButton: {
     position: 'absolute',
-    left: 20,
+    left: 15,
     padding: 10,
   },
   headerCheckButton: {
     position: 'absolute',
-    right: 20,
+    right: 15,
     padding: 10,
   },
   errorTooltip: {
@@ -201,7 +203,7 @@ const GlobalStyles = StyleSheet.create({
     backgroundColor: GoDeliveryColors.white,
     paddingHorizontal: 15,
     borderRadius: 5,
-    paddingVertical: 7,
+    paddingVertical: 15,
     gap: 10,
   },
   locationStr: {

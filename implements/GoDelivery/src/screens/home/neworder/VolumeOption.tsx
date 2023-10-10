@@ -109,14 +109,14 @@ const VolumeOption = ({ navigation }: {
                     <ConfirmCheckIcon />
                 </TouchableOpacity>
             </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, paddingHorizontal: 20 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, paddingHorizontal: 25 }}>
                 {
                     defaultOptions.map((option, index) => (
                         <TouchableOpacity key={index} onPress={() => {
                             handleClick(option);
                         }}>
                             <View style={[styles.optionCard, (selectedOption && selectedOption.split("-")[0] == option["name"]) ? { borderColor: GoDeliveryColors.primary } : {}]}>
-                                <Image source={require("../../../../assets/images/icons/goods-dark.png")} />
+                                <Image source={require("../../../../assets/images/icons/goods-dark.png")} style={styles.boxImage} />
                                 <Text style={GlobalStyles.subTitle}>{option["name"]}</Text>
                                 <Text style={GlobalStyles.textDisable}>{option["value"]}</Text>
                             </View>
@@ -124,10 +124,10 @@ const VolumeOption = ({ navigation }: {
                     ))
                 }
             </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, paddingHorizontal: 20, alignItems: 'center', gap: 20 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, paddingHorizontal: 25, alignItems: 'center', gap: 20 }}>
                 <TouchableOpacity onPress={() => setSelectedOption("Custom")} >
                     <View style={[styles.optionCard, selectedOption && selectedOption.includes("Custom") ? { borderColor: GoDeliveryColors.primary } : {}]}>
-                        <Image source={require("../../../../assets/images/icons/goods-dark.png")} />
+                        <Image source={require("../../../../assets/images/icons/goods-dark.png")} style={styles.boxImage} />
                         <Text style={GlobalStyles.subTitle}>Custom</Text>
                         <Text style={GlobalStyles.textDisable}>LxWxH</Text>
                     </View>
@@ -139,6 +139,7 @@ const VolumeOption = ({ navigation }: {
                             style={[styles.inputBox, customLengthError ? { borderColor: GoDeliveryColors.primary } : {}]}
                             value={customLength}
                             onChangeText={setCustomLength}
+                            placeholderTextColor={GoDeliveryColors.placeHolder}
                             keyboardType='number-pad' />
                         {customLengthError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
                             <WarningIcon />
@@ -151,6 +152,7 @@ const VolumeOption = ({ navigation }: {
                             style={[styles.inputBox, customWidthError ? { borderColor: GoDeliveryColors.primary } : {}]}
                             value={customWidth}
                             onChangeText={setCustomWidth}
+                            placeholderTextColor={GoDeliveryColors.placeHolder}
                             keyboardType='number-pad' />
                         {customWidthError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
                             <WarningIcon />
@@ -164,6 +166,7 @@ const VolumeOption = ({ navigation }: {
                             style={[styles.inputBox, customHeightError ? { borderColor: GoDeliveryColors.primary } : {}]}
                             value={customHeight}
                             onChangeText={setCustomHeight}
+                            placeholderTextColor={GoDeliveryColors.placeHolder}
                             keyboardType='number-pad' />
                         {customHeightError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
                             <WarningIcon />
@@ -195,6 +198,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         paddingVertical: 5,
         marginTop: 10,
+    },
+    boxImage: {
+        width: 50,
+        height: 50,
+        resizeMode: 'contain'
     }
 });
 

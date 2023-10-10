@@ -10,6 +10,7 @@ import Action from '../../service';
 import store from '../../redux/store';
 import CommonFunctions from '../../common/CommonFunctions';
 import { BigDocumentIcon, HeaderOptionIcon, RadioOffIcon, RadioOnIcon } from '../../common/Icons';
+import { Divider } from 'react-native-paper';
 
 const InProgress = ({ navigation }: {
     navigation: any;
@@ -59,7 +60,7 @@ const InProgress = ({ navigation }: {
     return (
         <View style={[GlobalStyles.container, { backgroundColor: GoDeliveryColors.white }]}>
             <View style={[GlobalStyles.headerSection, { zIndex: 100 }]}>
-                <Text style={GlobalStyles.whiteHeaderTitle}>{orderStatus == 0 ? 'IN PROGRESS' : orderStatus == 1 ? 'PICK UP' : 'DROP OFF'}</Text>
+                <Text style={GlobalStyles.whiteHeaderTitle}>{orderStatus == 0 ? 'In Progress' : orderStatus == 1 ? 'Pick Up' : 'Drop Off'}</Text>
                 <TouchableOpacity style={GlobalStyles.headerCheckButton} onPress={toggleSwitch}>
                     <HeaderOptionIcon />
                 </TouchableOpacity>
@@ -115,6 +116,7 @@ const InProgress = ({ navigation }: {
                                     </View>
                                 </View>
                             </View>
+                            <Divider style={GlobalStyles.dividerStyle} />
                         </TouchableOpacity>
                     ))
                 }
@@ -173,25 +175,6 @@ const styles = StyleSheet.create({
         backgroundColor: GoDeliveryColors.white,
         marginHorizontal: 10,
         marginVertical: 7,
-        ...Platform.select({
-            ios: {
-                shadowColor: GoDeliveryColors.secondary,
-                shadowOffset: {
-                    width: 0,
-                    height: 8,
-                },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-            },
-            android: {
-                elevation: 8,
-                shadowOffset: {
-                    width: 0,
-                    height: 8,
-                },
-                shadowColor: GoDeliveryColors.secondary,
-            },
-        }),
     },
     textSection: {
         flex: 1,

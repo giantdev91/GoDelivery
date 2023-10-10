@@ -77,7 +77,7 @@ const OrderHistory = ({ navigation }: {
     return (
         <View style={[GlobalStyles.container, { backgroundColor: GoDeliveryColors.white }]}>
             <View style={[GlobalStyles.headerSection, { zIndex: 100 }]}>
-                <Text style={GlobalStyles.whiteHeaderTitle}>{orderStatus == 0 ? 'ORDER HISTORY' : orderStatus == 1 ? 'SENT' : orderStatus == 2 ? 'RECEIVED' : 'CANCELLED'}</Text>
+                <Text style={GlobalStyles.whiteHeaderTitle}>{orderStatus == 0 ? 'Order History' : orderStatus == 1 ? 'Sent' : orderStatus == 2 ? 'Received' : 'Cancelled'}</Text>
                 <TouchableOpacity style={GlobalStyles.headerCheckButton} onPress={toggleSwitch}>
                     <HeaderOptionIcon />
                 </TouchableOpacity>

@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { StyleSheet, TouchableOpacity, View, Image, ScrollView, Text, TextInput } from 'react-native';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { StyleSheet, TouchableOpacity, View, Image, ScrollView, Text, TextInput, BackHandler } from 'react-native';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import RadioGroup from 'react-native-radio-buttons-group';
 import { useFocusEffect } from '@react-navigation/native';
@@ -21,10 +21,11 @@ const DeliveryDetail = ({ navigation }: {
 }): JSX.Element => {
     const orderInfo = store.getState().NewOrder.orderInfo;
     const currentUser = store.getState().CurrentUser.user;
-    const [senderPhone, setSenderPhone] = useState(
-        currentUser.phone,
-    );
-    const [senderPhoneError, setSenderPhoneError] = useState('');
+
+    const [senderName, setSenderName] = useState(currentUser.name);
+    const [senderNameError, setSenderNameError] = useState("");
+    const [senderPhone, setSenderPhone] = useState(currentUser.phone.slice(3));
+    const [senderPhoneError, setSenderPhoneError] = useState("");
     const [fromStr, setFromStr] = useState("");
     const [fromLocationReferBuilding, setFromLocationReferBuilding] =
         useState('');
@@ -43,8 +44,11 @@ const DeliveryDetail = ({ navigation }: {
     const [distance, setDistance] = useState(orderInfo["distance"]);
     const [price, setPrice] = useState(orderInfo["price"]);
     const [description, setDescription] = useState("");
+    const [descriptionError, setDescriptionError] = useState("");
     const [payOption, setPayOption] = useState('1');
     const [isModalVisible, setModalVisible] = useState(false);
+    const [isValidateModalVisiable, setValidateModalVisible] = useState(false);
+    const [validateAlertMessage, setValidateAlertMessage] = useState("");
 
     const radioButtons = useMemo(() => ([
         {
@@ -63,12 +67,24 @@ const DeliveryDetail = ({ navigation }: {
 
     const formValidate = () => {
         var returnVal = true;
-        // if (senderPhone.length != 9) {
-        //   setSenderPhoneError('Please insert valid phone number');
-        //   returnVal = false;
-        // } else {
-        //   setSenderPhoneError('');
-        // }
+        if (!senderName) {
+            setSenderNameError("Can't be Empty.");
+            returnVal = false;
+        } else {
+            setSenderNameError('');
+        }
+        if (senderPhone.length != 9) {
+            setSenderPhoneError('Insert valid phone number');
+            returnVal = false;
+        } else {
+            const prefix = Number.parseInt(senderPhone.substring(0, 2));
+            if (prefix > 81 && prefix < 88) {
+                setSenderPhoneError('');
+            } else {
+                setSenderPhoneError('Insert valid phone number');
+                returnVal = false;
+            }
+        }
         if (receiverPhone.length != 9) {
             setReceiverPhoneError('Insert valid phone number');
             returnVal = false;
@@ -87,51 +103,70 @@ const DeliveryDetail = ({ navigation }: {
         } else {
             setReceiverNameError('');
         }
-        if (!weight) {
-            setWeightError("Can't be Empty.");
+        if (!description) {
+            setDescriptionError("Can't be Empty.");
             returnVal = false;
         } else {
-            setWeightError('');
+            setDescriptionError('');
         }
-        if (!goodsType) {
-            setGoodsTypeError("Can't be Empty.");
-        } else {
-            setGoodsTypeError("");
+
+        if (senderPhone.length == 9 && receiverPhone.length == 9) {
+            if (senderPhone == receiverPhone) {
+                setReceiverPhoneError("Can't be same as sender phone");
+                returnVal = false;
+            }
         }
-        if (!volume) {
-            setVolumeError("Can't be Empty.");
-            returnVal = false;
-        } else {
-            setVolumeError('');
-        }
+
         return returnVal;
     };
 
+    const navigateToConfirm = () => {
+        const param = {
+            sender: store.getState().CurrentUser.user.id,
+            senderName: senderName,
+            senderPhone: `258${senderPhone}`,
+            receiver: `258${receiverPhone}`,
+            receiverName: receiverName,
+            from: fromStr,
+            fromLocationReferBuilding: fromLocationReferBuilding,
+            fromX: orderInfo["fromLocation"].latitude,
+            fromY: orderInfo["fromLocation"].longitude,
+            to: toStr,
+            toLocationReferBuilding: toLocationReferBuilding,
+            toX: orderInfo["toLocation"].latitude,
+            toY: orderInfo["toLocation"].longitude,
+            goodsVolumn: volume,
+            goodsWeight: weight,
+            goodsType: goodsType,
+            distance: distance,
+            price: price,
+            description: description,
+            payOption: payOption,
+            screenShot: orderInfo["screenShot"],
+        };
+        navigation.navigate('DeliveryConfirmation', param);
+    }
+
+    const showValidateDialog = (message: string) => {
+        setValidateAlertMessage(message);
+        setValidateModalVisible(true);
+    }
+
     const handleNext = () => {
         if (formValidate()) {
-            const param = {
-                sender: store.getState().CurrentUser.user.id,
-                senderPhone: senderPhone,
-                receiver: `258${receiverPhone}`,
-                receiverName: receiverName,
-                from: fromStr,
-                fromLocationReferBuilding: fromLocationReferBuilding,
-                fromX: orderInfo["fromLocation"].latitude,
-                fromY: orderInfo["fromLocation"].longitude,
-                to: toStr,
-                toLocationReferBuilding: toLocationReferBuilding,
-                toX: orderInfo["toLocation"].latitude,
-                toY: orderInfo["toLocation"].longitude,
-                goodsVolumn: volume,
-                goodsWeight: weight,
-                goodsType: goodsType,
-                distance: distance,
-                price: price,
-                description: description,
-                payOption: payOption,
-                screenShot: orderInfo["screenShot"],
-            };
-            navigation.navigate('DeliveryConfirmation', param);
+            if (!weight) {
+                showValidateDialog("Please select weight option.");
+                return;
+            }
+            if (!volume) {
+                showValidateDialog("Please select volume option.");
+                return;
+            }
+            if (!goodsType) {
+                showValidateDialog("Please select goods type.");
+                return;
+            }
+            navigateToConfirm();
         }
     }
 
@@ -153,6 +188,19 @@ const DeliveryDetail = ({ navigation }: {
         setToStr(orderInfo["toStr"]);
     }
 
+    const backAction = () => {
+        setModalVisible(true);
+        return true;
+    }
+
+    useEffect(() => {
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction,
+        );
+        return () => backHandler.remove();
+    }, []);
+
     useFocusEffect(
         useCallback(() => {
             initializeParameters();
@@ -166,7 +214,7 @@ const DeliveryDetail = ({ navigation }: {
                     <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={() => setModalVisible(true)}>
                         <BackIcon />
                     </TouchableOpacity>
-                    <Text style={GlobalStyles.whiteHeaderTitle}>DELIVERY DETAILS</Text>
+                    <Text style={GlobalStyles.whiteHeaderTitle}>Delivery Details</Text>
                 </View>
                 <ScrollView >
                     <View style={styles.formArea}>
@@ -181,8 +229,18 @@ const DeliveryDetail = ({ navigation }: {
                                 </View>
                                 <View>
                                     <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Full Name</Text>
-                                    <TextInput value={currentUser.name} placeholder='Ex: Jose Manuel' style={GlobalStyles.textInput} editable={false} />
+                                    <TextInput
+                                        value={senderName}
+                                        placeholder='Ex: Jose Manuel'
+                                        style={GlobalStyles.textInput}
+                                        placeholderTextColor={GoDeliveryColors.placeHolder}
+                                        onChangeText={setSenderName}
+                                    />
                                 </View>
+                                {senderNameError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
+                                    <WarningIcon />
+                                    <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{senderNameError}</Text></View>
+                                </View>)}
                             </View>
                             <View style={styles.inputRowContainer}>
                                 <View style={GlobalStyles.iconBack}>
@@ -190,8 +248,20 @@ const DeliveryDetail = ({ navigation }: {
                                 </View>
                                 <View>
                                     <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Phone Number</Text>
-                                    <TextInput value={senderPhone.slice(3)} placeholder='82 12 34 567' style={GlobalStyles.textInput} editable={false} />
+                                    <TextInput
+                                        value={senderPhone}
+                                        placeholder='82/84/86 xx xx xxx'
+                                        style={GlobalStyles.textInput}
+                                        placeholderTextColor={GoDeliveryColors.placeHolder}
+                                        keyboardType='number-pad'
+                                        maxLength={9}
+                                        onChangeText={setSenderPhone}
+                                        editable={true} />
                                 </View>
+                                {senderPhoneError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
+                                    <WarningIcon />
+                                    <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{senderPhoneError}</Text></View>
+                                </View>)}
                             </View>
                             <View style={styles.inputRowContainer}>
                                 <View style={GlobalStyles.iconBack}>
@@ -199,7 +269,12 @@ const DeliveryDetail = ({ navigation }: {
                                 </View>
                                 <View>
                                     <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Address Details</Text>
-                                    <TextInput value={fromLocationReferBuilding} placeholder='Build Name / No / Flat / Floor - Optional' style={GlobalStyles.textInput} onChangeText={setFromLocationReferBuilding} />
+                                    <TextInput
+                                        value={fromLocationReferBuilding}
+                                        placeholder='Build Name / No / Flat / Floor - Optional'
+                                        style={GlobalStyles.textInput}
+                                        placeholderTextColor={GoDeliveryColors.placeHolder}
+                                        onChangeText={setFromLocationReferBuilding} />
                                 </View>
                             </View>
                         </View>
@@ -219,7 +294,12 @@ const DeliveryDetail = ({ navigation }: {
                                 </View>
                                 <View>
                                     <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Full Name</Text>
-                                    <TextInput value={receiverName} placeholder='Ex: Jose Manuel' style={GlobalStyles.textInput} onChangeText={setReceiverName} />
+                                    <TextInput
+                                        value={receiverName}
+                                        placeholder='Ex: Jose Manuel'
+                                        style={GlobalStyles.textInput}
+                                        placeholderTextColor={GoDeliveryColors.placeHolder}
+                                        onChangeText={setReceiverName} />
                                 </View>
                                 {receiverNameError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
                                     <WarningIcon />
@@ -232,7 +312,14 @@ const DeliveryDetail = ({ navigation }: {
                                 </View>
                                 <View>
                                     <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Phone Number</Text>
-                                    <TextInput value={receiverPhone} placeholder='82 12 34 567' style={GlobalStyles.textInput} onChangeText={setReceiverPhone} />
+                                    <TextInput
+                                        value={receiverPhone}
+                                        placeholder='82/84/86 xx xx xxx'
+                                        style={GlobalStyles.textInput}
+                                        placeholderTextColor={GoDeliveryColors.placeHolder}
+                                        maxLength={9}
+                                        keyboardType='number-pad'
+                                        onChangeText={setReceiverPhone} />
                                 </View>
                                 {receiverPhoneError && (<View style={[GlobalStyles.errorTooltip, { top: 0 }]}>
                                     <WarningIcon />
@@ -245,7 +332,12 @@ const DeliveryDetail = ({ navigation }: {
                                 </View>
                                 <View>
                                     <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Address Details</Text>
-                                    <TextInput value={toLocationReferBuilding} placeholder='Build Name / No / Flat / Floor - Optional' style={GlobalStyles.textInput} onChangeText={setToLocationReferBuilding} />
+                                    <TextInput
+                                        value={toLocationReferBuilding}
+                                        placeholder='Build Name / No / Flat / Floor - Optional'
+                                        style={GlobalStyles.textInput}
+                                        placeholderTextColor={GoDeliveryColors.placeHolder}
+                                        onChangeText={setToLocationReferBuilding} />
                                 </View>
                             </View>
                         </View>
@@ -270,7 +362,7 @@ const DeliveryDetail = ({ navigation }: {
                                         </View>
 
                                         <View style={{ flexDirection: 'column', }}>
-                                            <Text numberOfLines={2} style={GlobalStyles.textDisable}>Weight</Text>
+                                            <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Weight</Text>
                                             {
                                                 weight && (
                                                     <Text style={[GlobalStyles.textDisable]}>{weight}</Text>
@@ -297,7 +389,7 @@ const DeliveryDetail = ({ navigation }: {
                                         </View>
 
                                         <View style={{ flexDirection: 'column', }}>
-                                            <Text numberOfLines={2} style={GlobalStyles.textDisable}>Volume</Text>
+                                            <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Volume</Text>
                                             {
                                                 volume && (
                                                     <Text style={[GlobalStyles.textDisable]}>{volume}</Text>
@@ -324,7 +416,7 @@ const DeliveryDetail = ({ navigation }: {
                                         </View>
 
                                         <View style={{ flexDirection: 'column', }}>
-                                            <Text numberOfLines={2} style={GlobalStyles.textDisable}>Type of Goods</Text>
+                                            <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Type of Goods</Text>
                                             {
                                                 goodsType && (
                                                     <Text style={[GlobalStyles.textDisable]}>{goodsType}</Text>
@@ -341,8 +433,8 @@ const DeliveryDetail = ({ navigation }: {
                                     <TextEditIcon />
                                 </View>
 
-                                <View style={{ flexDirection: 'column', }}>
-                                    <Text numberOfLines={2} style={GlobalStyles.textDisable}>Description</Text>
+                                <View style={{ flexDirection: 'column', marginRight: 40 }}>
+                                    <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Description</Text>
                                     <TextInput
                                         style={{
                                             flex: 1,
@@ -351,17 +443,22 @@ const DeliveryDetail = ({ navigation }: {
                                             textAlign: 'auto',
                                             paddingLeft: 0,
                                             paddingTop: 4,
-                                            marginRight: 40,
                                             color: GoDeliveryColors.disabled,
                                         }}
                                         value={description}
                                         placeholder="Tell us what you are sending or share specific instructions to the courier."
+                                        placeholderTextColor={GoDeliveryColors.placeHolder}
                                         onChangeText={setDescription}
                                         secureTextEntry={false}
                                         multiline
                                         maxLength={150}
                                     />
+                                    {descriptionError && (<View style={[GlobalStyles.errorTooltip, { top: 20 }]}>
+                                        <WarningIcon />
+                                        <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{descriptionError}</Text></View>
+                                    </View>)}
                                 </View>
+
                             </View>
                             <View style={{ width: '100%' }}>
                                 <Text style={[GlobalStyles.textDisable, { textAlign: 'right' }]}>{`Maximum Character: (${description.length}/150)`}</Text>
@@ -385,7 +482,7 @@ const DeliveryDetail = ({ navigation }: {
                         {/* Payment option end */}
                     </View>
                     <View style={styles.buttonRow}>
-                        <PrimaryButton buttonText="NEXT" handler={handleNext} />
+                        <PrimaryButton buttonText="Next" handler={handleNext} />
                     </View>
                 </ScrollView>
 
@@ -396,6 +493,18 @@ const DeliveryDetail = ({ navigation }: {
                         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 40, marginTop: 30 }}>
                             <TouchableOpacity onPress={() => setModalVisible(false)}><Text style={[GlobalStyles.textMedium, { color: GoDeliveryColors.primary }]}>No</Text></TouchableOpacity>
                             <TouchableOpacity onPress={() => { setModalVisible(false); handleBack() }}><Text style={[GlobalStyles.textMedium, { color: GoDeliveryColors.primary }]}>Yes</Text></TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+
+                <Modal isVisible={isValidateModalVisiable}>
+                    <View style={styles.alertDialog}>
+                        <Text style={GlobalStyles.subTitle}>Go Delivery</Text>
+                        <Text style={[GlobalStyles.textMedium, { marginTop: 10 }]}>{validateAlertMessage}</Text>
+                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 40, marginTop: 30 }}>
+                            <TouchableOpacity onPress={() => setValidateModalVisible(false)}>
+                                <Text style={[GlobalStyles.textMedium, { color: GoDeliveryColors.primary }]}>Ok</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </Modal>

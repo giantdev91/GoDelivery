@@ -117,8 +117,14 @@ function formatDateToString(date: Date) {
     return formattedString;
 }
 
+const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'MZN'
+})
+
 const getLocalNumberValue = (value) => {
-    return Number(Number(value).toFixed(2));
+    return formatter.format(value)
+    // return Number(Number(value).toFixed(2));
 }
 
 export default {

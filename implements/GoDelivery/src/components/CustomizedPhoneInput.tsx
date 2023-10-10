@@ -24,6 +24,7 @@ const CustomizedPhoneInput = ({ handler, value, disabled, placeholder, error }: 
                 maxLength={9}
                 editable={!disabled}
                 placeholder={placeholder}
+                placeholderTextColor={GoDeliveryColors.placeHolder}
             />
         </View>
     )

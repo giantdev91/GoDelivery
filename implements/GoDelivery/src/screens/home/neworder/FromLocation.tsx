@@ -11,7 +11,8 @@ import { useDispatch } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import GlobalStyles from '../../../styles/style';
 import GoDeliveryColors from '../../../styles/colors';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, AnimatedRegion } from 'react-native-maps';
+import Animated from 'react-native-reanimated';
 import Geolocation from 'react-native-geolocation-service';
 import { requestLocationPermission } from '../../../common/RequestPermission';
 import PrimaryButton from '../../../components/PrimaryButton';
@@ -36,6 +37,7 @@ const FromLocation = ({ route, navigation }: { route: any, navigation: any }) =>
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
     });
+    const mapViewRef = useRef<MapView>(null);
 
     const [fromStr, setFromStr] = useState('Pickup Location');
 
@@ -53,9 +55,18 @@ const FromLocation = ({ route, navigation }: { route: any, navigation: any }) =>
             result.then(res => {
                 if (res) {
                     Geolocation.getCurrentPosition(
-                        region => {
-                            const crd = region.coords;
-                            setRegion({
+                        regionInfo => {
+                            const crd = regionInfo.coords;
+                            if (region.latitude == null) {
+                                setRegion({
+                                    latitude: crd.latitude,
+                                    longitude: crd.longitude,
+                                    latitudeDelta: LATITUDE_DELTA,
+                                    longitudeDelta: LONGITUDE_DELTA,
+                                });
+                            }
+
+                            mapViewRef.current?.animateToRegion({
                                 latitude: crd.latitude,
                                 longitude: crd.longitude,
                                 latitudeDelta: LATITUDE_DELTA,
@@ -97,6 +108,7 @@ const FromLocation = ({ route, navigation }: { route: any, navigation: any }) =>
 
     const handleRegionChange = (region: any) => {
         setRegion(region);
+        mapViewRef.current?.animateToRegion(region);
         setlocationStringFromGeoLocationInfo(region.latitude, region.longitude);
 
     }
@@ -117,6 +129,12 @@ const FromLocation = ({ route, navigation }: { route: any, navigation: any }) =>
                         latitude: location.lat,
                         longitude: location.lng,
                     }))
+                    mapViewRef.current?.animateToRegion({
+                        latitude: location.lat,
+                        longitude: location.lng,
+                        latitudeDelta: LATITUDE_DELTA,
+                        longitudeDelta: LONGITUDE_DELTA,
+                    })
                 }
                 if (locationString) {
                     setFromStr(locationString);
@@ -129,7 +147,7 @@ const FromLocation = ({ route, navigation }: { route: any, navigation: any }) =>
         <View style={GlobalStyles.container}>
             {/* header section start */}
             <View style={[GlobalStyles.headerSection]}>
-                <Text style={GlobalStyles.whiteHeaderTitle}>PICK UP YOUR DELIVERY</Text>
+                <Text style={GlobalStyles.whiteHeaderTitle}>Home</Text>
                 <TouchableOpacity style={GlobalStyles.headerCheckButton} onPress={toNotifications}>
                     <NotificationIcon />
                 </TouchableOpacity>
@@ -139,6 +157,7 @@ const FromLocation = ({ route, navigation }: { route: any, navigation: any }) =>
                 {
                     region.latitude != null && (
                         <MapView
+                            ref={mapViewRef}
                             style={{ flex: 1.5, borderColor: 'red', borderWidth: 1 }}
                             provider={PROVIDER_GOOGLE}
                             loadingEnabled

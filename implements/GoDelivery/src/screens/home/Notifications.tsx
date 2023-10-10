@@ -57,7 +57,7 @@ const NotificationsScreen = ({ navigation }: ScreenProps): JSX.Element => {
                 <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
                     <FontAwesome name="arrow-left-long" size={20} color={GoDeliveryColors.secondary} />
                 </TouchableOpacity>
-                <Text style={GlobalStyles.whiteHeaderTitle}>NOTIFICATIONS</Text>
+                <Text style={GlobalStyles.whiteHeaderTitle}>Notifications</Text>
             </View>
             <ScrollView style={styles.scrollArea}>
                 {

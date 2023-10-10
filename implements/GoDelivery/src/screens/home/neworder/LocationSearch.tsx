@@ -125,14 +125,14 @@ const LocationSearch = ({ route, navigation }: {
                 <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
                     <BackIcon />
                 </TouchableOpacity>
-                <Text style={GlobalStyles.whiteHeaderTitle}>{type == 0 ? 'PICK UP LOCATION' : 'DROP OFF LOCATION'}</Text>
+                <Text style={GlobalStyles.whiteHeaderTitle}>{type == 0 ? 'Pick Up Location' : 'Drop Off Location'}</Text>
                 <TouchableOpacity style={GlobalStyles.headerCheckButton} onPress={handleConfirm}>
                     <ConfirmCheckIcon />
                 </TouchableOpacity>
             </View>
 
             <View>
-                <View style={{ flexDirection: 'row', alignItems: 'flex-start', backgroundColor: GoDeliveryColors.white, paddingHorizontal: 15, borderRadius: 10, marginVertical: 3 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'flex-start', backgroundColor: GoDeliveryColors.white, paddingHorizontal: 25, borderRadius: 10, marginVertical: 3 }}>
                     <View style={{ marginTop: 10 }}>
                         {
                             type == 0 ? <FromLocationIcon /> : <ToLocationIcon />
@@ -154,7 +154,7 @@ const LocationSearch = ({ route, navigation }: {
                         query={{
                             key: GOOGLE_API_KEY,
                             language: 'en',
-                            // components: 'country:mz'
+                            components: 'country:mz'
                         }}
                     />
                     {
@@ -173,36 +173,12 @@ const LocationSearch = ({ route, navigation }: {
                     }
                 </View>
                 <ScrollView>
-                    {
-                        recentLocations.map((item, key) => (
-                            <View key={key}>
-                                <TouchableOpacity
-                                    style={{ flexDirection: 'row', justifyContent: 'space-between', marginRight: 20 }}
-                                    onPress={() => {
-                                        setLocation(item.geometry.location);
-                                        setLocationString(item.geometry.locationString);
-                                        toggleModal();
-                                    }}
-                                >
-                                    <View style={{ marginLeft: 30, marginVertical: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                                        <ClockIcon />
-                                        <Text style={[GlobalStyles.text, { color: GoDeliveryColors.disabled }]}>{item.description}</Text>
-                                    </View>
-                                    <View style={{ marginTop: 10 }}>
-                                        <FavIcon />
-                                    </View>
-                                </TouchableOpacity>
-                                <Divider style={GlobalStyles.dividerStyle} />
-                            </View>
-                        ))
-                    }
-                    <Divider style={GlobalStyles.dividerStyle} />
-                    <Text style={[GlobalStyles.textMedium, { color: GoDeliveryColors.disabled, marginLeft: 30, marginVertical: 10 }]}>SAVED LOCATION</Text>
+                    <Text style={[GlobalStyles.textMedium, { color: GoDeliveryColors.disabled, marginLeft: 25, marginVertical: 10 }]}>SAVED LOCATION</Text>
                     {
                         predefinedPlaces.map((item, key) => (
                             <View key={key}>
                                 <TouchableOpacity onPress={() => { handleClickSavedLocation(item.geometry.location, item.geometry.locationString) }}>
-                                    <View style={{ marginLeft: 30, marginVertical: 10 }}>
+                                    <View style={{ marginHorizontal: 25, marginVertical: 10 }}>
                                         <Text style={[GlobalStyles.text, { color: GoDeliveryColors.primary }]}>{item.description}</Text>
                                         <Text style={[GlobalStyles.textDisable]}>{item.geometry.locationString}</Text>
                                     </View>
@@ -217,7 +193,11 @@ const LocationSearch = ({ route, navigation }: {
             <Modal isVisible={isModalVisible} onBackdropPress={() => { setModalVisible(false) }}>
                 <View style={styles.saveLocationNameDialog}>
                     <Text style={GlobalStyles.subTitle}>Title</Text>
-                    <TextInput value={locationName} onChangeText={value => setLocationName(value)} style={[styles.locationNameInput, { borderColor: locationNameError ? GoDeliveryColors.primary : GoDeliveryColors.disabled }]} />
+                    <TextInput
+                        value={locationName}
+                        onChangeText={value => setLocationName(value)}
+                        placeholderTextColor={GoDeliveryColors.placeHolder}
+                        style={[styles.locationNameInput, { borderColor: locationNameError ? GoDeliveryColors.primary : GoDeliveryColors.disabled }]} />
                     <View style={{ height: 100, marginTop: 10, }}>
                         <Text style={GlobalStyles.textDisable}>{locationString}</Text>
                     </View>

@@ -1,16 +1,17 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text, Image, Dimensions, Linking, ActivityIndicator } from 'react-native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
-import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
+import MapView, { MapMarker, Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import Action from '../../service';
 import { UPDATE_INTERVAL } from '../../common/Constant';
 import PrimaryButton from '../../components/PrimaryButton';
 import mapstyle from "../../common/mapStyles";
 import { BackIcon } from '../../common/Icons';
+import AnimatingPolylineComponent from '../../common/AnimatedPolylineComponent';
 
 interface ScreenProps {
     navigation: any;
@@ -116,6 +117,10 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
     const [deliveryman, setDeliveryman] = useState({});
     const [estimationTime, setEstimationTime] = useState('');
     const [activityIndicator, setActivityIndicator] = useState(false);
+    const [directions, setDirections] = useState([]);
+
+    const mapViewRef = useRef<MapView>(null);
+    const markerRef = useRef<MapMarker>(null);
 
     const getDeliveryMansInfo = () => {
         Action.deliveryman.getById(deliverymanID)
@@ -124,10 +129,22 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
                 setDeliveryman(response.data);
                 const latitude = parseFloat(response.data.locationLatitude);
                 const longitude = parseFloat(response.data.locationLongitude);
+                mapViewRef.current?.animateToRegion({
+                    latitude: latitude,
+                    longitude: longitude,
+                    latitudeDelta: LATITUDE_DELTA,
+                    longitudeDelta: LONGITUDE_DELTA,
+                });
+                markerRef.current?.animateMarkerToCoordinate({
+                    latitude: latitude,
+                    longitude: longitude,
+                });
+
                 setDeliverymanPosition({
                     latitude: latitude,
                     longitude: longitude
                 })
+
                 fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)
                     .then(response => response.json())
                     .then(data => {
@@ -170,6 +187,11 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
             })
     }
 
+    const handleRegionChange = (region: any) => {
+        setDeliverymanPosition(region);
+        mapViewRef.current?.animateToRegion(region);
+    }
+
     const refreshStatus = () => {
         checkOrderStatus();
         getDeliveryMansInfo();
@@ -192,14 +214,16 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
             clearInterval(interval);
         }
     }, []);
-
+    const DirectionRoutes = [...directions].reverse();
     return (
         <View style={[GlobalStyles.container]}>
             <MapView
+                ref={mapViewRef}
                 style={{ flex: 1.5, borderColor: 'red', borderWidth: 1 }}
                 provider={PROVIDER_GOOGLE}
                 loadingEnabled
                 customMapStyle={mapstyle}
+                // onRegionChangeComplete={handleRegionChange}
                 region={{
                     latitude: deliverymanPosition.latitude,
                     longitude: deliverymanPosition.longitude,
@@ -216,18 +240,20 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
                     title={'receiver'}
                 />
                 <Marker
+                    ref={markerRef}
                     coordinate={deliverymanPosition}
                     title={'delivery man'}
                 >
-                    <Image source={require("../../../assets/images/motor.png")} style={{ width: 40, height: 40, }} />
+                    {/* <Image source={require("../../../assets/images/delivery-man-location.gif")} style={{ width: 40, height: 40, justifyContent: 'center', alignItems: 'center', backgroundColor: 'yellow', padding: 0 }} /> */}
                 </Marker>
                 {orderStatus == 1 && (<MapViewDirections
                     origin={deliverymanPosition}
                     destination={senderLocation}
                     apikey={GOOGLE_API_KEY} // insert your API Key here
-                    strokeWidth={4}
+                    strokeWidth={5}
                     strokeColor={GoDeliveryColors.primary}
                     onReady={result => {
+                        setDirections(result.coordinates);
                         setEstimationTime(result.duration.toString());
                     }}
                 />)}
@@ -235,12 +261,28 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
                     origin={deliverymanPosition}
                     destination={receiverLocation}
                     apikey={GOOGLE_API_KEY} // insert your API Key here
-                    strokeWidth={4}
+                    strokeWidth={5}
                     strokeColor={GoDeliveryColors.primary}
                     onReady={result => {
+                        setDirections(result.coordinates);
                         setEstimationTime(result.duration.toString());
                     }}
                 />)}
+
+                {
+                    directions.length > 0 && (<Polyline
+                        coordinates={directions}
+                        strokeColor={GoDeliveryColors.primary}
+                        strokeWidth={5}
+
+                    />)
+                }
+
+                {
+                    directions.length > 0 && (
+                        <AnimatingPolylineComponent Direction={DirectionRoutes} />
+                    )
+                }
 
             </MapView>
             <TouchableOpacity style={[GlobalStyles.headerBackButton, { backgroundColor: '#FFFFFFB0', borderRadius: 100, }]} onPress={handleBack}>

@@ -112,6 +112,7 @@ const ProfileChangePassword = ({ navigation }: {
                                 placeholder='******'
                                 style={GlobalStyles.textInput}
                                 secureTextEntry={true}
+                                placeholderTextColor={GoDeliveryColors.placeHolder}
                                 onChangeText={(val) => {
                                     if (val) {
                                         setPasswordError('')
@@ -134,6 +135,7 @@ const ProfileChangePassword = ({ navigation }: {
                                 placeholder='******'
                                 style={GlobalStyles.textInput}
                                 secureTextEntry={true}
+                                placeholderTextColor={GoDeliveryColors.placeHolder}
                                 onChangeText={(val) => {
                                     if (val) {
                                         setConfirmPasswordError('')
@@ -156,6 +158,7 @@ const ProfileChangePassword = ({ navigation }: {
                                 placeholder='******'
                                 style={GlobalStyles.textInput}
                                 secureTextEntry={true}
+                                placeholderTextColor={GoDeliveryColors.placeHolder}
                                 onChangeText={(val) => {
                                     if (val) {
                                         setOldPasswordError('')

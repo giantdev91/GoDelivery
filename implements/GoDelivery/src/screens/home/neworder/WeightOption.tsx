@@ -8,7 +8,7 @@ import { Divider } from 'react-native-paper';
 import Action from '../../../service';
 import store from '../../../redux/store';
 import allActions from '../../../redux/actions';
-import { BackIcon, ConfirmCheckIcon } from '../../../common/Icons';
+import { BackIcon, ConfirmCheckIcon, RedCheckMarker } from '../../../common/Icons';
 
 const WeightOption = ({ navigation }: {
     navigation: any,
@@ -63,11 +63,11 @@ const WeightOption = ({ navigation }: {
                 {
                     options.map((option, index) => (
                         <View key={index} style={{}}>
-                            <TouchableOpacity style={styles.selectRow} activeOpacity={0.5} onPress={() => { setSelectedOption(option["weight"]) }} >
+                            <TouchableOpacity style={[styles.selectRow, { paddingVertical: selectedOption == option["weight"] ? 20 : 10 }]} activeOpacity={0.5} onPress={() => { setSelectedOption(option["weight"]) }} >
                                 <Text style={styles.title}>{option["weight"]}</Text>
                                 {
                                     (selectedOption == option["weight"]) && (
-                                        <Icons name="checkmark-outline" size={25} color={GoDeliveryColors.primary} />
+                                        <RedCheckMarker />
                                     )
                                 }
                             </TouchableOpacity>

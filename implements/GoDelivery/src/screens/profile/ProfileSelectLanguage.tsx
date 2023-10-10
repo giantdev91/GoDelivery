@@ -3,10 +3,9 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import GoDeliveryColors from '../../styles/colors';
 import GlobalStyles from '../../styles/style';
 import store from '../../redux/store';
-import Icons from 'react-native-vector-icons/Ionicons';
 import { Divider } from 'react-native-paper';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
-import { BackIcon, ConfirmCheckIcon } from '../../common/Icons';
+import { BackIcon, ConfirmCheckIcon, RedCheckMarker } from '../../common/Icons';
 
 const ProfileSelectLanguage = ({ navigation }: {
     navigation: any;
@@ -48,18 +47,14 @@ const ProfileSelectLanguage = ({ navigation }: {
                     <TouchableOpacity style={[styles.selectRow, { marginTop: 10 }]} onPress={() => { languageSelect('Portuguese') }}>
                         <Text style={styles.title}>Portuguese</Text>
                         {
-                            lang == 'Portuguese' && (<Icons name="checkmark-outline"
-                                size={25}
-                                color={GoDeliveryColors.primary} />)
+                            lang == 'Portuguese' && (<RedCheckMarker />)
                         }
                     </TouchableOpacity>
                     <Divider style={GlobalStyles.dividerStyle} />
                     <TouchableOpacity style={styles.selectRow} onPress={() => { languageSelect('English') }}>
                         <Text style={styles.title}>English</Text>
                         {
-                            lang == 'English' && (<Icons name="checkmark-outline"
-                                size={25}
-                                color={GoDeliveryColors.primary} />)
+                            lang == 'English' && (<RedCheckMarker />)
                         }
                     </TouchableOpacity>
                     <Divider style={GlobalStyles.dividerStyle} />

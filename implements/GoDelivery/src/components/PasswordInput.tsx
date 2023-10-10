@@ -31,6 +31,7 @@ const PasswordInput = (props: PasswordInputProps): JSX.Element => {
           placeholder={props.placeholder ?? 'Password'}
           onChangeText={val => handleValue(val)}
           secureTextEntry={secureTextEntry}
+          placeholderTextColor={GoDeliveryColors.placeHolder}
         />
         <TouchableOpacity
           onPress={() => {

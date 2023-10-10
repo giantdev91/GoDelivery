@@ -1,8 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   PermissionsAndroid,
   useColorScheme,
   Alert,
+  BackHandler,
+  StatusBar,
+  StyleSheet,
+  StatusBarStyle
 } from 'react-native';
 import {
   Colors,
@@ -24,6 +28,7 @@ import ForgotOTPCheckScreen from './src/screens/authentication/ForgotOTPCheck';
 import ResetPasswordScreen from './src/screens/authentication/ResetPassword';
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import HomeStackNavigator from './src/navigators/HomeStackNavigator';
+import GoDeliveryColors from './src/styles/colors';
 
 PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
@@ -34,8 +39,16 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 
 const Stack = createNativeStackNavigator();
 
-function App(): JSX.Element {
+const STYLES = ['default', 'dark-content', 'light-content'] as const;
+const TRANSITIONS = ['fade', 'slide', 'none'] as const;
 
+function App(): JSX.Element {
+  const [statusBarStyle, setStatusBarStyle] = useState<StatusBarStyle>(
+    STYLES[1],
+  );
+  const [statusBarTransition, setStatusBarTransition] = useState<
+    'fade' | 'slide' | 'none'
+  >(TRANSITIONS[0]);
   enableLatestRenderer();
 
   const isDarkMode = useColorScheme() === 'dark';
@@ -44,19 +57,45 @@ function App(): JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  const backAction = () => {
+    Alert.alert("Hold on!", "Are you sure you want to exit?", [
+      {
+        text: "Cancel",
+        onPress: () => null,
+        style: "cancel"
+      },
+      { text: "YES", onPress: () => BackHandler.exitApp() }
+    ]);
+    return true;
+  };
+
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       console.log("message received!");
       Alert.alert(remoteMessage?.notification?.title ?? "", remoteMessage?.notification?.body);
     });
 
-    return unsubscribe;
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => {
+      unsubscribe;
+      backHandler.remove();
+    }
   }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Provider store={store}>
         <SafeAreaProvider>
+          <StatusBar
+            animated={true}
+            backgroundColor={GoDeliveryColors.white}
+            barStyle={statusBarStyle}
+            showHideTransition={statusBarTransition}
+          />
           <NavigationContainer>
             <Stack.Navigator screenOptions={{
               headerShown: false,
@@ -77,5 +116,20 @@ function App(): JSX.Element {
     </GestureHandlerRootView >
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: '#ECF0F1',
+  },
+  buttonsContainer: {
+    padding: 10,
+  },
+  textStyle: {
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+});
 
 export default App;

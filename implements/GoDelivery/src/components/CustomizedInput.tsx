@@ -38,6 +38,7 @@ const CustomizedInput = (props: CustomizedInputProps): JSX.Element => {
           onChangeText={value => handleValue(value)}
           secureTextEntry={false}
           editable={!props.disabled}
+          placeholderTextColor={GoDeliveryColors.placeHolder}
         />
       </View>
     </View>

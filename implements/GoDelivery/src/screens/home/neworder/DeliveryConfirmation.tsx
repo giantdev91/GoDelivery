@@ -18,6 +18,7 @@ import store from '../../../redux/store';
 import { Divider } from 'react-native-paper';
 import PrimaryButton from '../../../components/PrimaryButton';
 import { BackIcon, CheckRectangle, FromLocationIcon, HomeIcon, PhoneIcon, ToLocationIcon, UserIcon } from '../../../common/Icons';
+import CommonFunctions from '../../../common/CommonFunctions';
 
 // Function to get the day suffix (e.g., 1st, 2nd, 3rd, etc.)
 function getDaySuffix(day: number) {
@@ -219,7 +220,7 @@ const DeliveryConfirmation = ({
           <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
             <BackIcon />
           </TouchableOpacity>
-          <Text style={GlobalStyles.whiteHeaderTitle}>DELIVERY CONFIRMATION</Text>
+          <Text style={GlobalStyles.whiteHeaderTitle}>Delivery Confirmation</Text>
         </View>
         <ScrollView>
           <View style={styles.formArea}>
@@ -242,7 +243,7 @@ const DeliveryConfirmation = ({
                 <View style={GlobalStyles.iconBack}>
                   <HomeIcon />
                 </View>
-                <Text style={GlobalStyles.textDisable}>{fromLocationReferBuilding}</Text>
+                <Text style={GlobalStyles.textDisable}>{fromLocationReferBuilding ? fromLocationReferBuilding : "N/A"}</Text>
               </View>
               <View style={[styles.textWithIcon, { marginTop: 5 }]}>
                 <View style={GlobalStyles.iconBack}>
@@ -274,7 +275,7 @@ const DeliveryConfirmation = ({
                 <View style={GlobalStyles.iconBack}>
                   <HomeIcon />
                 </View>
-                <Text style={GlobalStyles.textDisable}>{toLocationReferBuilding}</Text>
+                <Text style={GlobalStyles.textDisable}>{toLocationReferBuilding ? toLocationReferBuilding : "N/A"}</Text>
               </View>
               <View style={[styles.textWithIcon, { marginTop: 5 }]}>
                 <View style={GlobalStyles.iconBack}>
@@ -304,15 +305,15 @@ const DeliveryConfirmation = ({
               </View>
               <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
                 <Text style={GlobalStyles.textDisable}>Delivery Charges</Text>
-                <Text style={GlobalStyles.textDisable}>{`MZN ${price}`}</Text>
+                <Text style={GlobalStyles.textDisable}>{`${CommonFunctions.getLocalNumberValue(price)}`}</Text>
               </View>
               <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
                 <Text style={GlobalStyles.textDisable}>Discount</Text>
                 <Text style={GlobalStyles.textDisable}>{'0 %'}</Text>
               </View>
               <View style={[styles.textWithIcon, { justifyContent: 'space-between' }]}>
-                <Text style={GlobalStyles.textDisable}>Total Payment</Text>
-                <Text style={GlobalStyles.textDisable}>{`MZN ${price}`}</Text>
+                <Text style={GlobalStyles.textBold}>Total Payment</Text>
+                <Text style={GlobalStyles.textBold}>{`${CommonFunctions.getLocalNumberValue(price)}`}</Text>
               </View>
             </View>
 
@@ -332,7 +333,7 @@ const DeliveryConfirmation = ({
             {/* Payment Option section end */}
           </View>
           <View style={[styles.buttonRow, { marginTop: 50 }]}>
-            <PrimaryButton buttonText="PROCEED" handler={handleNext} />
+            <PrimaryButton buttonText="Proceed" handler={handleNext} />
           </View>
         </ScrollView>
         {activityIndicator && (

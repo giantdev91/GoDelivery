@@ -215,6 +215,12 @@ const BigDocumentIcon = () => {
     )
 }
 
+const RedCheckMarker = () => {
+    return (
+        <Ionicons name="checkmark-outline" size={20} color={GoDeliveryColors.primary} />
+    )
+}
+
 export {
     BackIcon,
     ConfirmCheckIcon,
@@ -245,5 +251,6 @@ export {
     RadioOnIcon,
     RadioOffIcon,
     HeaderOptionIcon,
-    BigDocumentIcon
+    BigDocumentIcon,
+    RedCheckMarker
 }
