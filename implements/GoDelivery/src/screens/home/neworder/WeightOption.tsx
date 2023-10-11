@@ -63,7 +63,7 @@ const WeightOption = ({ navigation }: {
                 {
                     options.map((option, index) => (
                         <View key={index} style={{}}>
-                            <TouchableOpacity style={[styles.selectRow, { paddingVertical: selectedOption == option["weight"] ? 20 : 10 }]} activeOpacity={0.5} onPress={() => { setSelectedOption(option["weight"]) }} >
+                            <TouchableOpacity style={[styles.selectRow]} activeOpacity={0.5} onPress={() => { setSelectedOption(option["weight"]) }} >
                                 <Text style={styles.title}>{option["weight"]}</Text>
                                 {
                                     (selectedOption == option["weight"]) && (

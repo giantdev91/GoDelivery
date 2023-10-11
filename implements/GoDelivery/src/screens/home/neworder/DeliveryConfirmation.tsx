@@ -231,7 +231,7 @@ const DeliveryConfirmation = ({
                 <View style={GlobalStyles.iconBack}>
                   <UserIcon />
                 </View>
-                <Text style={GlobalStyles.textDisable}>{username}</Text>
+                <Text style={[GlobalStyles.textDisable, { marginRight: 40 }]}>{username}</Text>
               </View>
               <View style={styles.textWithIcon}>
                 <View style={GlobalStyles.iconBack}>
@@ -243,13 +243,13 @@ const DeliveryConfirmation = ({
                 <View style={GlobalStyles.iconBack}>
                   <HomeIcon />
                 </View>
-                <Text style={GlobalStyles.textDisable}>{fromLocationReferBuilding ? fromLocationReferBuilding : "N/A"}</Text>
+                <Text style={[GlobalStyles.textDisable, { marginRight: 40 }]}>{fromLocationReferBuilding ? fromLocationReferBuilding : "N/A"}</Text>
               </View>
               <View style={[styles.textWithIcon, { marginTop: 5 }]}>
                 <View style={GlobalStyles.iconBack}>
                   <FromLocationIcon />
                 </View>
-                <Text style={GlobalStyles.textDisable}>{from}</Text>
+                <Text style={[GlobalStyles.textDisable, { marginRight: 40 }]}>{from}</Text>
               </View>
             </View>
 
@@ -263,7 +263,7 @@ const DeliveryConfirmation = ({
                 <View style={GlobalStyles.iconBack}>
                   <UserIcon />
                 </View>
-                <Text style={GlobalStyles.textDisable}>{receiverName}</Text>
+                <Text style={[GlobalStyles.textDisable, { marginRight: 40 }]}>{receiverName}</Text>
               </View>
               <View style={styles.textWithIcon}>
                 <View style={GlobalStyles.iconBack}>
@@ -275,13 +275,13 @@ const DeliveryConfirmation = ({
                 <View style={GlobalStyles.iconBack}>
                   <HomeIcon />
                 </View>
-                <Text style={GlobalStyles.textDisable}>{toLocationReferBuilding ? toLocationReferBuilding : "N/A"}</Text>
+                <Text style={[GlobalStyles.textDisable, { marginRight: 40 }]}>{toLocationReferBuilding ? toLocationReferBuilding : "N/A"}</Text>
               </View>
               <View style={[styles.textWithIcon, { marginTop: 5 }]}>
                 <View style={GlobalStyles.iconBack}>
                   <ToLocationIcon />
                 </View>
-                <Text style={GlobalStyles.textDisable}>{to}</Text>
+                <Text style={[GlobalStyles.textDisable, { marginRight: 40 }]}>{to}</Text>
               </View>
             </View>
 

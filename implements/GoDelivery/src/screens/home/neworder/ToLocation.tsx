@@ -7,10 +7,12 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     Image,
+    BackHandler
 } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import storage from '@react-native-firebase/storage';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import GlobalStyles from '../../../styles/style';
 import GoDeliveryColors from '../../../styles/colors';
 import MapView, { PROVIDER_GOOGLE, Marker, Polyline, Circle } from 'react-native-maps';
@@ -130,7 +132,16 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
     }
 
     const handleConfirmButton = async () => {
-        setClickedConfirm(true);
+        if (orderInfo["fromStr"] == toStr) {
+            Dialog.show({
+                type: ALERT_TYPE.DANGER,
+                title: 'GoDelivery',
+                textBody: "Pick up and drop off locations cannot be the same. Please choose different locations.",
+                button: 'OK',
+            })
+        } else {
+            setClickedConfirm(true);
+        }
     };
 
     const handleNextButton = async () => {
@@ -161,7 +172,11 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
     }
 
     const handleBack = () => {
-        navigation.goBack();
+        if (!clickedConfirm) {
+            navigation.goBack();
+        } else {
+            setClickedConfirm(false);
+        }
     }
 
     const handleRegionChange = (region: any) => {
@@ -183,9 +198,32 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
         return returnVal;
     };
 
+    const backAction = () => {
+        if (navigation.isFocused()) {
+            if (!clickedConfirm) {
+                return false;
+            } else {
+                setClickedConfirm(false);
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    useEffect(() => {
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction,
+        );
+        return () => backHandler.remove();
+    }, [clickedConfirm]);
+
     useEffect(() => {
         getCurrentLocation();
         checkSystemSetting();
+
+
     }, []);
 
     useFocusEffect(
@@ -215,85 +253,86 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
     );
     const DirectionRoutes = [...directions].reverse();
     return (
-        <View style={GlobalStyles.container}>
-            {/* header section start */}
-            <View style={[GlobalStyles.headerSection]}>
-                <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
-                    <BackIcon />
-                </TouchableOpacity>
-                <Text style={GlobalStyles.whiteHeaderTitle}>Drop Off Location</Text>
-            </View>
-            {/* header section end */}
-            <View style={{ flex: 1 }}>
+        <AlertNotificationRoot>
+            <View style={GlobalStyles.container}>
+                {/* header section start */}
+                <View style={[GlobalStyles.headerSection]}>
+                    <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
+                        <BackIcon />
+                    </TouchableOpacity>
+                    <Text style={GlobalStyles.whiteHeaderTitle}>Drop Off Location</Text>
+                </View>
+                {/* header section end */}
+                <View style={{ flex: 1 }}>
 
-                <ViewShot ref={ref} options={{ fileName: "Your-File-Name", format: "jpg", quality: 0.3 }} style={{ flex: 1, }}>
-                    {
-                        region.latitude != null && (
-                            <MapView
-                                ref={mapViewRef}
-                                style={{ flex: 1.5, borderColor: 'red', borderWidth: 1 }}
-                                provider={PROVIDER_GOOGLE}
-                                loadingEnabled
-                                onRegionChangeComplete={handleRegionChange}
-                                customMapStyle={mapstyle}
-                                region={region}>
-                                <Marker
-                                    coordinate={orderInfo["fromLocation"]}
-                                >
-                                    <View style={{ width: 50, height: 60, }}>
-                                        <Image source={require("../../../../assets/images/map-marker.png")} style={GlobalStyles.mapMarker} resizeMode='contain' />
-                                        <Text style={GlobalStyles.markerLabel}>Pick</Text>
-                                    </View>
+                    <ViewShot ref={ref} options={{ fileName: "Your-File-Name", format: "jpg", quality: 0.3 }} style={{ flex: 1, }}>
+                        {
+                            region.latitude != null && (
+                                <MapView
+                                    ref={mapViewRef}
+                                    style={{ flex: 1.5, borderColor: 'red', borderWidth: 1 }}
+                                    provider={PROVIDER_GOOGLE}
+                                    loadingEnabled
+                                    onRegionChangeComplete={handleRegionChange}
+                                    customMapStyle={mapstyle}
+                                    region={region}>
+                                    <Marker
+                                        coordinate={orderInfo["fromLocation"]}
+                                    >
+                                        <View style={{ width: 50, height: 60, }}>
+                                            <Image source={require("../../../../assets/images/map-marker.png")} style={GlobalStyles.mapMarker} resizeMode='contain' />
+                                            <Text style={GlobalStyles.markerLabel}>Pick</Text>
+                                        </View>
 
-                                </Marker>
-                                {
-                                    clickedConfirm && (
-                                        <Marker
-                                            coordinate={region}
-                                        >
-                                            <View style={{ width: 50, height: 60, }}>
-                                                <Image source={require("../../../../assets/images/map-marker.png")} style={GlobalStyles.mapMarker} resizeMode='contain' />
-                                                <Text style={GlobalStyles.markerLabel}>Drop</Text>
-                                            </View>
+                                    </Marker>
+                                    {
+                                        clickedConfirm && (
+                                            <Marker
+                                                coordinate={region}
+                                            >
+                                                <View style={{ width: 50, height: 60, }}>
+                                                    <Image source={require("../../../../assets/images/map-marker.png")} style={GlobalStyles.mapMarker} resizeMode='contain' />
+                                                    <Text style={GlobalStyles.markerLabel}>Drop</Text>
+                                                </View>
 
-                                        </Marker>
-                                    )
-                                }
+                                            </Marker>
+                                        )
+                                    }
 
-                                {
-                                    directions.length == 0 && clickedConfirm && (
-                                        <MapViewDirections
-                                            origin={orderInfo["fromLocation"]}
-                                            destination={region}
-                                            apikey={GOOGLE_API_KEY} // insert your API Key here
-                                            strokeWidth={4}
+                                    {
+                                        (clickedConfirm) && (
+                                            <MapViewDirections
+                                                origin={orderInfo["fromLocation"]}
+                                                destination={region}
+                                                apikey={GOOGLE_API_KEY} // insert your API Key here
+                                                strokeWidth={5}
+                                                strokeColor={GoDeliveryColors.primary}
+                                                onReady={result => {
+                                                    setDirections(result.coordinates);
+                                                    setEstimationTime(`${Math.ceil(result.duration + DEFAULT_ARRIVAL_TIME).toString()}`);
+                                                    const distanceVal = result.distance.toFixed(2).toString();
+                                                    setDistance(distanceVal);
+                                                    const priceVal = calculatePriceByDistance(distanceVal);
+                                                    setPrice(priceVal);
+                                                }}
+                                            />
+                                        )
+                                    }
+                                    {
+                                        (directions.length > 0 && clickedConfirm) && (<Polyline
+                                            coordinates={directions}
                                             strokeColor={GoDeliveryColors.primary}
-                                            onReady={result => {
-                                                setDirections(result.coordinates);
-                                                setEstimationTime(`${Math.ceil(result.duration + DEFAULT_ARRIVAL_TIME).toString()}`);
-                                                const distanceVal = result.distance.toFixed(2).toString();
-                                                setDistance(distanceVal);
-                                                const priceVal = calculatePriceByDistance(distanceVal);
-                                                setPrice(priceVal);
-                                            }}
-                                        />
-                                    )
-                                }
-                                {
-                                    directions.length > 0 && (<Polyline
-                                        coordinates={directions}
-                                        strokeColor={GoDeliveryColors.primary}
-                                        strokeWidth={5}
+                                            strokeWidth={5}
 
-                                    />)
-                                }
-                                {/* Animating polyline */}
-                                {
-                                    directions.length > 0 && (
-                                        <AnimatingPolylineComponent Direction={DirectionRoutes} />
-                                    )
-                                }
-                                {/* <Circle
+                                        />)
+                                    }
+                                    {/* Animating polyline */}
+                                    {
+                                        (directions.length > 0 && clickedConfirm) && (
+                                            <AnimatingPolylineComponent Direction={DirectionRoutes} />
+                                        )
+                                    }
+                                    {/* <Circle
                                     center={orderInfo["fromLocation"]}
                                     radius={5}
                                     strokeColor={"#484848"}
@@ -302,8 +341,8 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
                                     zIndex={1}
                                 /> */}
 
-                                {/* Destination Circle */}
-                                {/* <Circle
+                                    {/* Destination Circle */}
+                                    {/* <Circle
                                     center={region}
                                     radius={5}
                                     strokeColor={"#484848"}
@@ -311,90 +350,90 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
                                     fillColor={"#fff"}
                                     zIndex={1}
                                 /> */}
-                            </MapView>
+                                </MapView>
+                            )
+                        }
+
+                    </ViewShot>
+                    {/* map marker start */}
+                    {
+                        !clickedConfirm && (
+                            <View style={GlobalStyles.markerContainer}>
+                                <Image source={require("../../../../assets/images/map-marker.png")} style={GlobalStyles.mapMarker} resizeMode='contain' />
+                                <Text style={GlobalStyles.markerLabel}>Drop</Text>
+                            </View>
                         )
                     }
+                    {/* map marker end */}
 
-                </ViewShot>
-                {/* map marker start */}
-                {
-                    !clickedConfirm && (
-                        <View style={GlobalStyles.markerContainer}>
-                            <Image source={require("../../../../assets/images/map-marker.png")} style={GlobalStyles.mapMarker} resizeMode='contain' />
-                            <Text style={GlobalStyles.markerLabel}>Drop</Text>
-                        </View>
-                    )
-                }
-                {/* map marker end */}
-
-                {/* location string board start */}
-                <View style={{ position: 'absolute', width: '100%', paddingHorizontal: 20, marginTop: 10, }}>
-                    <View style={[{ backgroundColor: GoDeliveryColors.white, borderRadius: 5, }, GlobalStyles.shadowProp]}>
-                        <View style={[GlobalStyles.locationStrContainer]}>
-                            <View style={{ width: 25, alignItems: 'center' }}>
-                                <FromLocationIcon />
-                            </View>
-                            <Text style={GlobalStyles.locationStr}>{orderInfo["fromStr"]}</Text>
-                        </View>
-                        <Divider style={styles.divider} />
-                        <TouchableOpacity onPress={toLocationSearch} disabled={clickedConfirm}>
-                            <View style={GlobalStyles.locationStrContainer}>
+                    {/* location string board start */}
+                    <View style={{ position: 'absolute', width: '100%', paddingHorizontal: 20, marginTop: 10, }}>
+                        <View style={[{ backgroundColor: GoDeliveryColors.white, borderRadius: 5, }, GlobalStyles.shadowProp]}>
+                            <View style={[GlobalStyles.locationStrContainer]}>
                                 <View style={{ width: 25, alignItems: 'center' }}>
-                                    <ToLocationIcon />
+                                    <FromLocationIcon />
                                 </View>
-                                <Text style={GlobalStyles.locationStr}>{toStr}</Text>
+                                <Text style={GlobalStyles.locationStr}>{orderInfo["fromStr"]}</Text>
                             </View>
-                        </TouchableOpacity>
+                            <Divider style={styles.divider} />
+                            <TouchableOpacity onPress={toLocationSearch} disabled={clickedConfirm}>
+                                <View style={GlobalStyles.locationStrContainer}>
+                                    <View style={{ width: 25, alignItems: 'center' }}>
+                                        <ToLocationIcon />
+                                    </View>
+                                    <Text style={GlobalStyles.locationStr}>{toStr}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
                     </View>
+
+                    {/* location string board end */}
+
+                    {/* my location button start */}
+                    <TouchableOpacity style={styles.mylocationBtn} onPress={() => {
+                        route.params = undefined;
+                        getCurrentLocation();
+                    }}>
+                        <MyLocationIcon />
+                    </TouchableOpacity>
+                    {/* my location button end */}
+
+                    {
+                        !clickedConfirm && <View style={styles.buttonRow}>
+                            <PrimaryButton buttonText="Confirm" handler={handleConfirmButton} />
+                        </View>
+                    }
+
+                    {clickedConfirm && (
+                        <View style={styles.informationPad}>
+                            <View style={{ flexDirection: 'row', gap: 5 }}>
+                                <Text style={GlobalStyles.textBold}>Distance:</Text>
+                                <Text style={GlobalStyles.text}>{distance}Km</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', gap: 5 }}>
+                                <Text style={GlobalStyles.textBold}>Price:</Text>
+                                <Text style={GlobalStyles.text}>{CommonFunctions.getLocalNumberValue(price)}</Text>
+                            </View>
+                        </View>
+                    )}
+
+                    {
+                        clickedConfirm && <View style={styles.buttonRow}>
+                            <PrimaryButton buttonText="Next" handler={handleNextButton} />
+                        </View>
+                    }
+
+
+
+                    {activityIndicator && (
+                        <ActivityIndicator
+                            size={'large'}
+                            style={{ position: 'absolute', alignSelf: 'center', bottom: 200 }}
+                        />
+                    )}
                 </View>
-
-                {/* location string board end */}
-
-                {/* my location button start */}
-                <TouchableOpacity style={styles.mylocationBtn} onPress={() => {
-                    route.params = undefined;
-                    getCurrentLocation();
-                }}>
-                    <MyLocationIcon />
-                </TouchableOpacity>
-                {/* my location button end */}
-
-                {
-                    !clickedConfirm && <View style={styles.buttonRow}>
-                        <PrimaryButton buttonText="Confirm" handler={handleConfirmButton} />
-                    </View>
-                }
-
-                {clickedConfirm && (
-                    <View style={styles.informationPad}>
-                        <View style={{ flexDirection: 'row', gap: 5 }}>
-                            <Text style={GlobalStyles.textBold}>Distance:</Text>
-                            <Text style={GlobalStyles.text}>{distance}Km</Text>
-                        </View>
-                        <View style={{ flexDirection: 'row', gap: 5 }}>
-                            <Text style={GlobalStyles.textBold}>Price:</Text>
-                            <Text style={GlobalStyles.text}>{CommonFunctions.getLocalNumberValue(price)}</Text>
-                        </View>
-                    </View>
-                )}
-
-                {
-                    clickedConfirm && <View style={styles.buttonRow}>
-                        <PrimaryButton buttonText="Next" handler={handleNextButton} />
-                    </View>
-                }
-
-
-
-                {activityIndicator && (
-                    <ActivityIndicator
-                        size={'large'}
-                        style={{ position: 'absolute', alignSelf: 'center', bottom: 200 }}
-                    />
-                )}
             </View>
-
-        </View>
+        </AlertNotificationRoot>
     );
 };
 

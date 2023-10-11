@@ -6,11 +6,15 @@ import {
   BackHandler,
   StatusBar,
   StyleSheet,
-  StatusBarStyle
+  StatusBarStyle,
+  View,
+  Text,
+  TouchableOpacity
 } from 'react-native';
 import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
+import { useNavigation } from '@react-navigation/native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from './src/screens/authentication/Splash';
@@ -21,6 +25,7 @@ import TabNavigator from './src/navigators/TabNavigator';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import store from './src/redux/store';
+import Modal from "react-native-modal";
 import { enableLatestRenderer } from 'react-native-maps';
 import messaging from '@react-native-firebase/messaging';
 import ForgetPasswordScreen from './src/screens/authentication/ForgetPassword';
@@ -29,6 +34,7 @@ import ResetPasswordScreen from './src/screens/authentication/ResetPassword';
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import HomeStackNavigator from './src/navigators/HomeStackNavigator';
 import GoDeliveryColors from './src/styles/colors';
+import GlobalStyles from './src/styles/style';
 
 PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
@@ -49,6 +55,8 @@ function App(): JSX.Element {
   const [statusBarTransition, setStatusBarTransition] = useState<
     'fade' | 'slide' | 'none'
   >(TRANSITIONS[0]);
+  const [isModalVisible, setModalVisible] = useState(false);
+
   enableLatestRenderer();
 
   const isDarkMode = useColorScheme() === 'dark';
@@ -58,14 +66,7 @@ function App(): JSX.Element {
   };
 
   const backAction = () => {
-    Alert.alert("Hold on!", "Are you sure you want to exit?", [
-      {
-        text: "Cancel",
-        onPress: () => null,
-        style: "cancel"
-      },
-      { text: "YES", onPress: () => BackHandler.exitApp() }
-    ]);
+    setModalVisible(true);
     return true;
   };
 
@@ -113,6 +114,17 @@ function App(): JSX.Element {
           </NavigationContainer>
         </SafeAreaProvider>
       </Provider>
+
+      <Modal isVisible={isModalVisible}>
+        <View style={styles.alertDialog}>
+          <Text style={GlobalStyles.subTitle}>Hold on!</Text>
+          <Text style={[GlobalStyles.textMedium, { marginTop: 10 }]}>Are you sure you want to exit?</Text>
+          <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 40, marginTop: 30 }}>
+            <TouchableOpacity onPress={() => setModalVisible(false)}><Text style={[GlobalStyles.textMedium, { color: GoDeliveryColors.primary }]}>No</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => { setModalVisible(false); BackHandler.exitApp(); }}><Text style={[GlobalStyles.textMedium, { color: GoDeliveryColors.primary }]}>Yes</Text></TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </GestureHandlerRootView >
   );
 }
@@ -129,6 +141,14 @@ const styles = StyleSheet.create({
   textStyle: {
     textAlign: 'center',
     marginBottom: 8,
+  },
+  alertDialog: {
+    alignSelf: 'center',
+    width: '80%',
+    backgroundColor: GoDeliveryColors.white,
+    borderRadius: 5,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
   },
 });
 

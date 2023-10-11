@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, View, Image, ScrollView, Text, TextInput, BackHandler } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Image, ScrollView, Text, TextInput, BackHandler, AppState } from 'react-native';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import RadioGroup from 'react-native-radio-buttons-group';
 import { useFocusEffect } from '@react-navigation/native';
@@ -189,8 +189,13 @@ const DeliveryDetail = ({ navigation }: {
     }
 
     const backAction = () => {
-        setModalVisible(true);
-        return true;
+        if (navigation.isFocused()) {
+            setModalVisible(true);
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     useEffect(() => {
@@ -232,7 +237,7 @@ const DeliveryDetail = ({ navigation }: {
                                     <TextInput
                                         value={senderName}
                                         placeholder='Ex: Jose Manuel'
-                                        style={GlobalStyles.textInput}
+                                        style={[GlobalStyles.textInput, { marginRight: 40 }]}
                                         placeholderTextColor={GoDeliveryColors.placeHolder}
                                         onChangeText={setSenderName}
                                     />
@@ -272,7 +277,7 @@ const DeliveryDetail = ({ navigation }: {
                                     <TextInput
                                         value={fromLocationReferBuilding}
                                         placeholder='Build Name / No / Flat / Floor - Optional'
-                                        style={GlobalStyles.textInput}
+                                        style={[GlobalStyles.textInput, { marginRight: 40 }]}
                                         placeholderTextColor={GoDeliveryColors.placeHolder}
                                         onChangeText={setFromLocationReferBuilding} />
                                 </View>
@@ -297,7 +302,7 @@ const DeliveryDetail = ({ navigation }: {
                                     <TextInput
                                         value={receiverName}
                                         placeholder='Ex: Jose Manuel'
-                                        style={GlobalStyles.textInput}
+                                        style={[GlobalStyles.textInput, { marginRight: 40 }]}
                                         placeholderTextColor={GoDeliveryColors.placeHolder}
                                         onChangeText={setReceiverName} />
                                 </View>
@@ -335,7 +340,7 @@ const DeliveryDetail = ({ navigation }: {
                                     <TextInput
                                         value={toLocationReferBuilding}
                                         placeholder='Build Name / No / Flat / Floor - Optional'
-                                        style={GlobalStyles.textInput}
+                                        style={[GlobalStyles.textInput, { marginRight: 40 }]}
                                         placeholderTextColor={GoDeliveryColors.placeHolder}
                                         onChangeText={setToLocationReferBuilding} />
                                 </View>
@@ -489,7 +494,7 @@ const DeliveryDetail = ({ navigation }: {
                 <Modal isVisible={isModalVisible}>
                     <View style={styles.alertDialog}>
                         <Text style={GlobalStyles.subTitle}>Discard Alert</Text>
-                        <Text style={GlobalStyles.textMedium}>Are you sure to exit?</Text>
+                        <Text style={[GlobalStyles.textMedium, { marginTop: 10 }]}>Are you sure to exit?</Text>
                         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 40, marginTop: 30 }}>
                             <TouchableOpacity onPress={() => setModalVisible(false)}><Text style={[GlobalStyles.textMedium, { color: GoDeliveryColors.primary }]}>No</Text></TouchableOpacity>
                             <TouchableOpacity onPress={() => { setModalVisible(false); handleBack() }}><Text style={[GlobalStyles.textMedium, { color: GoDeliveryColors.primary }]}>Yes</Text></TouchableOpacity>

@@ -12,6 +12,8 @@ import PrimaryButton from '../../components/PrimaryButton';
 import mapstyle from "../../common/mapStyles";
 import { BackIcon } from '../../common/Icons';
 import AnimatingPolylineComponent from '../../common/AnimatedPolylineComponent';
+import { WebView } from 'react-native-webview';
+import { RedSpining } from '../../common/SVGComponent';
 
 interface ScreenProps {
     navigation: any;
@@ -52,7 +54,6 @@ const LATITUDE_DELTA = 0.01; //Very high zoom level
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 console.log("GOOGLE_API_KEY: ", GOOGLE_API_KEY);
-
 
 const DistanceComponent = (props: DistanceComponentProps) => (
     <View style={[styles.distanceComponent, GlobalStyles.shadowProp]}>
@@ -217,6 +218,9 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
     const DirectionRoutes = [...directions].reverse();
     return (
         <View style={[GlobalStyles.container]}>
+
+
+
             <MapView
                 ref={mapViewRef}
                 style={{ flex: 1.5, borderColor: 'red', borderWidth: 1 }}
@@ -244,7 +248,13 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
                     coordinate={deliverymanPosition}
                     title={'delivery man'}
                 >
-                    {/* <Image source={require("../../../assets/images/delivery-man-location.gif")} style={{ width: 40, height: 40, justifyContent: 'center', alignItems: 'center', backgroundColor: 'yellow', padding: 0 }} /> */}
+                    <View style={{ width: 25, height: 25, justifyContent: 'center', alignItems: 'center' }}>
+                        <WebView
+                            style={[{ width: 25, height: 25, backgroundColor: 'transparent' }]}
+                            scrollenabled={false}
+                            source={{ html: RedSpining }}
+                        />
+                    </View>
                 </Marker>
                 {orderStatus == 1 && (<MapViewDirections
                     origin={deliverymanPosition}
@@ -288,6 +298,8 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
             <TouchableOpacity style={[GlobalStyles.headerBackButton, { backgroundColor: '#FFFFFFB0', borderRadius: 100, }]} onPress={handleBack}>
                 <BackIcon />
             </TouchableOpacity>
+
+
             {/* <DistanceComponent locationStr={deliverymanPositionStr} estimationTime={estimationTime} /> */}
             <DeliveryManDetailDialog
                 avartar={deliveryman.avatar}
@@ -305,6 +317,7 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
                     </View>
                 )
             }
+
             {
                 activityIndicator && (
                     <ActivityIndicator style={{ position: 'absolute', justifyContent: 'center', alignSelf: 'center', bottom: 200 }} size="large" />

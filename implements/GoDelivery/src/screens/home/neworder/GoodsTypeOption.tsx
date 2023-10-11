@@ -64,7 +64,7 @@ const GoodsTypeOption = ({ navigation }: {
                 {
                     options.map((option, index) => (
                         <View key={index} style={{}}>
-                            <TouchableOpacity style={[styles.selectRow, { paddingVertical: selectedOption == option["type"] ? 20 : 10 }]} activeOpacity={0.5} onPress={() => { setSelectedOption(option["type"]) }} >
+                            <TouchableOpacity style={[styles.selectRow]} activeOpacity={0.5} onPress={() => { setSelectedOption(option["type"]) }} >
                                 <Text style={styles.title}>{option["type"]}</Text>
                                 {
                                     (selectedOption == option["type"]) && (
