@@ -8,6 +8,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import Action from '../../service';
 import store from '../../redux/store';
 import CustomIndicator from '../../common/CustomIndicator';
+import { Divider } from 'react-native-paper';
 
 interface ScreenProps {
     navigation: any;
@@ -63,14 +64,17 @@ const NotificationsScreen = ({ navigation }: ScreenProps): JSX.Element => {
             <ScrollView style={styles.scrollArea}>
                 {
                     notifications.map((notif, index) => (
-                        <View style={styles.dataCard} key={index}>
-                            <View style={{ width: '100%', height: 35, }}>
-                                <Text style={GlobalStyles.text} numberOfLines={2}>{notif["content"]}</Text>
+                        <View key={index}>
+                            <View style={styles.dataCard} key={index}>
+                                <View style={{ width: '100%', height: 35, }}>
+                                    <Text style={GlobalStyles.text} numberOfLines={2}>{notif["content"]}</Text>
+                                </View>
+                                <View style={styles.notificationDetailArea}>
+                                    <Text style={GlobalStyles.textBold}>Order {notif["orders"]?.orderNo}</Text>
+                                    <Text style={GlobalStyles.textDisable}>{renderCreatedAtTime(notif["createdAt"])}</Text>
+                                </View>
                             </View>
-                            <View style={styles.notificationDetailArea}>
-                                <Text style={GlobalStyles.textBold}>Order {notif["orders"]?.orderNo}</Text>
-                                <Text style={GlobalStyles.textDisable}>{renderCreatedAtTime(notif["createdAt"])}</Text>
-                            </View>
+                            <Divider style={GlobalStyles.dividerStyle} />
                         </View>
                     ))
                 }
@@ -101,30 +105,13 @@ const styles = StyleSheet.create({
     },
     dataCard: {
         marginVertical: 10,
-        marginHorizontal: 10,
-        paddingHorizontal: 20,
+        paddingHorizontal: 15,
         paddingVertical: 5,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'flex-start',
         backgroundColor: GoDeliveryColors.white,
         height: 80,
-        borderRadius: 5,
-        ...Platform.select({
-            ios: {
-                shadowColor: GoDeliveryColors.secondary,
-                shadowOffset: {
-                    width: 0,
-                    height: 8,
-                },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-            },
-            android: {
-                elevation: 8,
-                shadowColor: GoDeliveryColors.secondary
-            },
-        }),
     },
     notificationDetailArea: {
         flexDirection: 'row',

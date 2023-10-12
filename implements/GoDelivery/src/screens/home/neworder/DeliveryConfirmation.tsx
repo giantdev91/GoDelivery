@@ -51,6 +51,7 @@ const DeliveryConfirmation = ({
   navigation: any;
 }) => {
   const {
+    senderName,
     senderPhone,
     receiver,
     receiverName,
@@ -163,6 +164,7 @@ const DeliveryConfirmation = ({
       var expectDateTime = new Date(currentDate.getTime() + estimationTime * 60000);
       const param = {
         sender: store.getState().CurrentUser.user.id,
+        senderName: senderName,
         senderPhone: senderPhone,
         receiver: receiver,
         receiverName: receiverName,

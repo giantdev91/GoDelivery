@@ -236,7 +236,7 @@ const DeliveryDetail = ({ navigation }: {
                                     <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Full Name</Text>
                                     <TextInput
                                         value={senderName}
-                                        placeholder='Ex: Jose Manuel'
+                                        placeholder='Ex: Gabriella Karina Dias'
                                         style={[GlobalStyles.textInput, { marginRight: 40 }]}
                                         placeholderTextColor={GoDeliveryColors.placeHolder}
                                         onChangeText={setSenderName}
@@ -301,7 +301,7 @@ const DeliveryDetail = ({ navigation }: {
                                     <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Full Name</Text>
                                     <TextInput
                                         value={receiverName}
-                                        placeholder='Ex: Jose Manuel'
+                                        placeholder='Ex: Thiago Jose Dias'
                                         style={[GlobalStyles.textInput, { marginRight: 40 }]}
                                         placeholderTextColor={GoDeliveryColors.placeHolder}
                                         onChangeText={setReceiverName} />

@@ -218,7 +218,7 @@ const ProfileEdit = ({ navigation }: ScreenProps): JSX.Element => {
                                     <Text style={[GlobalStyles.textBold, { color: GoDeliveryColors.disabled }]}>Full Name</Text>
                                     <TextInput
                                         value={username}
-                                        placeholder='Ex: Jose Manuel'
+                                        placeholder='Ex: Gabriella Karina Dias'
                                         style={GlobalStyles.textInput}
                                         placeholderTextColor={GoDeliveryColors.placeHolder}
                                         onChangeText={setUsername} />

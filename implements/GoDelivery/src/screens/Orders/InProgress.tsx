@@ -88,7 +88,7 @@ const InProgress = ({ navigation }: {
                                             order["status"] >= 1 ? <RadioOnIcon /> : <RadioOffIcon />
                                         }
                                         <View style={{ width: '90%' }}>
-                                            <Text style={GlobalStyles.textBold}>{CommonFunctions.formatDateToString(new Date(order["expectationTime"]))}</Text>
+                                            <Text style={GlobalStyles.textBold}>{CommonFunctions.formatDateToString(new Date(order["createdAt"]))}</Text>
                                             <Text numberOfLines={3} style={GlobalStyles.textDisable}>{order["from"]}</Text>
                                         </View>
                                     </View>

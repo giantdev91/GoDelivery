@@ -9,6 +9,14 @@ const Order = sequelize.define("order", {
         type: DataTypes.INTEGER,
         allowNull: true,
     },
+    senderName: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    senderPhone: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     receiver: {
         type: DataTypes.STRING,
         allowNull: true,
@@ -114,9 +122,9 @@ const Order = sequelize.define("order", {
         allowNull: true,
     },
     screenShot: {
-      type: DataTypes.STRING,
-      allowNull: true,
-  },
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     distance: {
         type: DataTypes.DOUBLE,
         allowNull: true,

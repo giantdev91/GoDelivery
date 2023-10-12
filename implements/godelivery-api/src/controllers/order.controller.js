@@ -24,6 +24,8 @@ exports.create = async (req, res) => {
     try {
         const {
             sender,
+            senderName,
+            senderPhone,
             receiver,
             receiverName,
             from,
@@ -73,6 +75,8 @@ exports.create = async (req, res) => {
             // create order
             order = await Order.create({
                 sender: sender,
+                senderName: senderName,
+                senderPhone: senderPhone,
                 receiver: receiver,
                 receiverName: receiverName,
                 from: from,
