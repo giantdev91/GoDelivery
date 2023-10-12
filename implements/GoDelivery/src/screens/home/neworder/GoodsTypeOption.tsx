@@ -9,6 +9,7 @@ import Action from '../../../service';
 import store from '../../../redux/store';
 import allActions from '../../../redux/actions';
 import { BackIcon, ConfirmCheckIcon, RedCheckMarker } from '../../../common/Icons';
+import CustomIndicator from '../../../common/CustomIndicator';
 
 const GoodsTypeOption = ({ navigation }: {
     navigation: any,
@@ -78,10 +79,7 @@ const GoodsTypeOption = ({ navigation }: {
                 }
             </ScrollView>
             {activityIndicator && (
-                <ActivityIndicator
-                    size={'large'}
-                    style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
-                />
+                <CustomIndicator />
             )}
         </View>
     )
@@ -93,7 +91,8 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: 30
+        paddingHorizontal: 30,
+        height: 50
     },
     title: {
         fontSize: 14,

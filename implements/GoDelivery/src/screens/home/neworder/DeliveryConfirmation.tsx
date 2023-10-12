@@ -19,6 +19,7 @@ import { Divider } from 'react-native-paper';
 import PrimaryButton from '../../../components/PrimaryButton';
 import { BackIcon, CheckRectangle, FromLocationIcon, HomeIcon, PhoneIcon, ToLocationIcon, UserIcon } from '../../../common/Icons';
 import CommonFunctions from '../../../common/CommonFunctions';
+import CustomIndicator from '../../../common/CustomIndicator';
 
 // Function to get the day suffix (e.g., 1st, 2nd, 3rd, etc.)
 function getDaySuffix(day: number) {
@@ -337,10 +338,7 @@ const DeliveryConfirmation = ({
           </View>
         </ScrollView>
         {activityIndicator && (
-          <ActivityIndicator
-            size={'large'}
-            style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
-          />
+          <CustomIndicator />
         )}
       </View>
     </AlertNotificationRoot>

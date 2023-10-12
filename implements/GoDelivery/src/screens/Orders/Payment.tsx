@@ -71,7 +71,7 @@ const Payment = ({ navigation, route }: {
                     <Divider style={styles.divider} />
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20 }}>
                         <Text style={GlobalStyles.subTitle}>Total</Text>
-                        <Text style={GlobalStyles.subTitle}>MZN {CommonFunctions.getLocalNumberValue(price)}</Text>
+                        <Text style={GlobalStyles.subTitle}>{CommonFunctions.getLocalNumberValue(price)}</Text>
                     </View>
                     <Divider style={styles.divider} />
                     <View style={{ paddingHorizontal: 20 }}>

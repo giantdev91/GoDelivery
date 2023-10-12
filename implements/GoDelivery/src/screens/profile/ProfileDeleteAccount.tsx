@@ -8,6 +8,7 @@ import Action from '../../service';
 import LargeLabelButton from '../../components/LargeLabelButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Modal from 'react-native-modal';
+import CustomIndicator from '../../common/CustomIndicator';
 
 const ProfileDeleteAccount = ({ navigation }: {
     navigation: any;
@@ -23,7 +24,7 @@ const ProfileDeleteAccount = ({ navigation }: {
     }
 
     const toggleModal = () => {
-        if(!activityIndicator) {
+        if (!activityIndicator) {
             setModalVisible(!isModalVisible);
         }
     }
@@ -100,10 +101,7 @@ const ProfileDeleteAccount = ({ navigation }: {
                     <Text style={[GlobalStyles.subTitle, { textAlign: 'center', color: GoDeliveryColors.disabled }]}>This action cannot be undone. This will permanently delete your account and remove your data from our servers.</Text>
 
                     {activityIndicator && (
-                        <ActivityIndicator
-                            size={'large'}
-                            style={{ position: 'absolute', alignSelf: 'center', bottom: 100 }}
-                        />
+                        <CustomIndicator />
                     )}
 
                     <View style={styles.controlButtonRow}>

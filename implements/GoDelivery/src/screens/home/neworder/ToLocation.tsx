@@ -31,6 +31,8 @@ import { Divider } from 'react-native-paper';
 import { BackIcon, FromLocationIcon, MyLocationIcon, ToLocationIcon } from '../../../common/Icons';
 import CommonFunctions from '../../../common/CommonFunctions';
 import AnimatingPolylineComponent from '../../../common/AnimatedPolylineComponent';
+import CustomIndicator from '../../../common/CustomIndicator';
+import { getDistance } from 'geolib';
 
 const MAP_WIDTH = Dimensions.get('screen').width - 40;
 const MAP_HEIGHT = 350;
@@ -60,6 +62,7 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
     const [activityIndicator, setActivityIndicator] = useState(false);
     const [screenShotUrl, setScreenShotUrl] = useState("");
     const [directions, setDirections] = useState([]);
+    const [isMapLoading, setIsMapLoading] = useState(true);
 
     const ref = useRef();
 
@@ -131,15 +134,44 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
         //     .catch(error => console.error('Error:', error));
     }
 
+    const calculateMapRegion = (origin, destination) => {
+        const coordinates = [origin, destination];
+
+        const minLat = Math.min(...coordinates.map((coord) => coord.latitude));
+        const maxLat = Math.max(...coordinates.map((coord) => coord.latitude));
+        const minLng = Math.min(...coordinates.map((coord) => coord.longitude));
+        const maxLng = Math.max(...coordinates.map((coord) => coord.longitude));
+
+        const region = {
+            latitude: (minLat + maxLat) / 2,
+            longitude: (minLng + maxLng) / 2,
+            latitudeDelta: maxLat - minLat + 0.03, // Add some padding
+            longitudeDelta: maxLng - minLng + 0.03, // Add some padding
+        };
+        mapViewRef.current?.animateToRegion(region, 2000); // Adjust the duration as needed
+    };
+
     const handleConfirmButton = async () => {
-        if (orderInfo["fromStr"] == toStr) {
+        const location1 = orderInfo["fromLocation"];
+        const location2 = region;
+        const distance = getDistance(location1, location2);
+        console.log("distance between two locations: ", distance);
+        if (distance < 50) {
             Dialog.show({
                 type: ALERT_TYPE.DANGER,
                 title: 'GoDelivery',
                 textBody: "Pick up and drop off locations cannot be the same. Please choose different locations.",
                 button: 'OK',
             })
+        } else if (distance > 100000) {
+            Dialog.show({
+                type: ALERT_TYPE.DANGER,
+                title: 'GoDelivery',
+                textBody: "The shipping distance must be under 100 kilometers.",
+                button: 'OK',
+            })
         } else {
+            calculateMapRegion(orderInfo["fromLocation"], region);
             setClickedConfirm(true);
         }
     };
@@ -231,7 +263,6 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
             if (route.params) {
                 const location = route.params.location;
                 const locationString = route.params.locationString;
-
                 if (location) {
                     setRegion(prevState => ({
                         ...prevState,
@@ -249,7 +280,7 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
                     setToStr(locationString);
                 }
             }
-        }, [])
+        }, [route])
     );
     const DirectionRoutes = [...directions].reverse();
     return (
@@ -270,9 +301,10 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
                             region.latitude != null && (
                                 <MapView
                                     ref={mapViewRef}
+                                    onMapReady={() => setIsMapLoading(false)}
                                     style={{ flex: 1.5, borderColor: 'red', borderWidth: 1 }}
                                     provider={PROVIDER_GOOGLE}
-                                    loadingEnabled
+                                    loadingEnabled={false}
                                     onRegionChangeComplete={handleRegionChange}
                                     customMapStyle={mapstyle}
                                     region={region}>
@@ -426,12 +458,12 @@ const ToLocation = ({ route, navigation }: { route: any, navigation: any }) => {
 
 
                     {activityIndicator && (
-                        <ActivityIndicator
-                            size={'large'}
-                            style={{ position: 'absolute', alignSelf: 'center', bottom: 200 }}
-                        />
+                        <CustomIndicator />
                     )}
                 </View>
+                {
+                    isMapLoading && <CustomIndicator />
+                }
             </View>
         </AlertNotificationRoot>
     );

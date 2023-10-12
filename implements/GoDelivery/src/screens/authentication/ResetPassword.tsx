@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import LargeLabelButton from '../../components/LargeLabelButton';
 import PasswordInput from '../../components/PasswordInput';
 import Action from '../../service';
+import CustomIndicator from '../../common/CustomIndicator';
 
 const ResetPasswordScreen = ({ route, navigation }: { route: any; navigation: any }) => {
   const { phone } = route.params;
@@ -121,10 +122,7 @@ const ResetPasswordScreen = ({ route, navigation }: { route: any; navigation: an
               <LargeLabelButton buttonText="Save" handler={handleSave} />
             </View>
             {activityIndicator && (
-              <ActivityIndicator
-                size={'large'}
-                style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
-              />
+              <CustomIndicator />
             )}
           </View>
         </ScrollView>

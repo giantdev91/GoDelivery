@@ -15,6 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator } from 'react-native';
 import Action from '../../service';
 import allActions from '../../redux/actions';
+import CustomIndicator from '../../common/CustomIndicator';
 
 const SplashScreen = ({ navigation }: { navigation: any }): JSX.Element => {
   const [loginFlag, setLoginFlag] = useState(false);
@@ -92,10 +93,7 @@ const SplashScreen = ({ navigation }: { navigation: any }): JSX.Element => {
         </View>
       </View>
       {activityIndicator && (
-        <ActivityIndicator
-          size={'large'}
-          style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
-        />
+        <CustomIndicator />
       )}
       <View style={styles.footerButton}>
         {loginFlag && (

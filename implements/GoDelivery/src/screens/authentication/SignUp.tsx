@@ -18,6 +18,7 @@ import Action from '../../service';
 import TwillioService from '../../service/TwillioService';
 import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
 import LargeLabelButton from '../../components/LargeLabelButton';
+import CustomIndicator from '../../common/CustomIndicator';
 
 const SignUpScreen = ({ navigation }: { navigation: any }) => {
   const [phone, setPhone] = useState('');
@@ -177,10 +178,7 @@ const SignUpScreen = ({ navigation }: { navigation: any }) => {
               </Text>
             </View>
             {activityIndicator && (
-              <ActivityIndicator
-                size="large"
-                style={{ position: 'absolute', alignSelf: 'center', bottom: 300 }}
-              />
+              <CustomIndicator />
             )}
             <View style={{ marginBottom: 50, }}>
               <LargeLabelButton buttonText="Sign Up" handler={navigateToOTP} />

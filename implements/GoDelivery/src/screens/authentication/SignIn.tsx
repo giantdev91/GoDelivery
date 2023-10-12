@@ -20,6 +20,7 @@ import Action from '../../service';
 import allActions from '../../redux/actions';
 import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
 import LargeLabelButton from '../../components/LargeLabelButton';
+import CustomIndicator from '../../common/CustomIndicator';
 
 const SignInScreen = ({ route, navigation }: { route: any; navigation: any }) => {
   const [phone, setPhone] = useState('');
@@ -174,10 +175,7 @@ const SignInScreen = ({ route, navigation }: { route: any; navigation: any }) =>
               </View>
             </View>
             {activityIndicator && (
-              <ActivityIndicator
-                size={'large'}
-                style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
-              />
+              <CustomIndicator />
             )}
           </View>
         </ScrollView>

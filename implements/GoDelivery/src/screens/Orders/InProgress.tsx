@@ -11,6 +11,7 @@ import store from '../../redux/store';
 import CommonFunctions from '../../common/CommonFunctions';
 import { BigDocumentIcon, HeaderOptionIcon, RadioOffIcon, RadioOnIcon } from '../../common/Icons';
 import { Divider } from 'react-native-paper';
+import CustomIndicator from '../../common/CustomIndicator';
 
 const InProgress = ({ navigation }: {
     navigation: any;
@@ -130,10 +131,7 @@ const InProgress = ({ navigation }: {
                 }
             </ScrollView>
             {activityIndicator && (
-                <ActivityIndicator
-                    size={'large'}
-                    style={{ position: 'absolute', alignSelf: 'center', top: 300 }}
-                />
+                <CustomIndicator />
             )}
         </View>
     )

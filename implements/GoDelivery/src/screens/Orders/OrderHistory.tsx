@@ -10,6 +10,8 @@ import Action from '../../service';
 import store from '../../redux/store';
 import CommonFunctions from '../../common/CommonFunctions';
 import { BigDocumentIcon, HeaderOptionIcon, RadioOffIcon, RadioOnIcon } from '../../common/Icons';
+import { Divider } from 'react-native-paper';
+import CustomIndicator from '../../common/CustomIndicator';
 
 const OrderHistory = ({ navigation }: {
     navigation: any;
@@ -132,6 +134,7 @@ const OrderHistory = ({ navigation }: {
                                     </View>
                                 </View>
                             </View>
+                            <Divider style={GlobalStyles.dividerStyle} />
                         </TouchableOpacity>
                     ))
                 }
@@ -145,10 +148,7 @@ const OrderHistory = ({ navigation }: {
                 }
             </ScrollView>
             {activityIndicator && (
-                <ActivityIndicator
-                    size={'large'}
-                    style={{ position: 'absolute', alignSelf: 'center', top: 300 }}
-                />
+                <CustomIndicator />
             )}
         </View>
     )
@@ -189,25 +189,6 @@ const styles = StyleSheet.create({
         backgroundColor: GoDeliveryColors.white,
         marginHorizontal: 10,
         marginVertical: 7,
-        ...Platform.select({
-            ios: {
-                shadowColor: GoDeliveryColors.secondary,
-                shadowOffset: {
-                    width: 0,
-                    height: 8,
-                },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-            },
-            android: {
-                elevation: 8,
-                shadowOffset: {
-                    width: 0,
-                    height: 8,
-                },
-                shadowColor: GoDeliveryColors.secondary,
-            },
-        }),
     },
     textSection: {
         flex: 1,

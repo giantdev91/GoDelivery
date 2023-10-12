@@ -15,6 +15,7 @@ import LargeLabelButton from '../../components/LargeLabelButton';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import TwillioService from '../../service/TwillioService';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
+import CustomIndicator from '../../common/CustomIndicator';
 
 const BackButton = ({ navigation }: {
   navigation: any
@@ -147,10 +148,7 @@ const ForgotOTPCheckScreen = ({ route, navigation }: { route: any; navigation: a
             <LargeLabelButton buttonText="Confirm" handler={confirmCode} />
           </View>
           {activityIndicator && (
-            <ActivityIndicator
-              size={'large'}
-              style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
-            />
+            <CustomIndicator />
           )}
         </View>
       </AlertNotificationRoot>

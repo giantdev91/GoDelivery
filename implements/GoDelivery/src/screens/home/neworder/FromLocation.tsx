@@ -20,6 +20,7 @@ import Geocoder from 'react-native-geocoding';
 import allActions from '../../../redux/actions';
 import mapstyle from "../../../common/mapStyles";
 import { FromLocationIcon, MyLocationIcon, NotificationIcon } from '../../../common/Icons';
+import CustomIndicator from '../../../common/CustomIndicator';
 
 const MAP_WIDTH = Dimensions.get('screen').width - 40;
 const MAP_HEIGHT = 350;
@@ -37,6 +38,7 @@ const FromLocation = ({ route, navigation }: { route: any, navigation: any }) =>
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
     });
+    const [isMapLoading, setIsMapLoading] = useState(true);
     const mapViewRef = useRef<MapView>(null);
 
     const [fromStr, setFromStr] = useState('Pickup Location');
@@ -158,9 +160,10 @@ const FromLocation = ({ route, navigation }: { route: any, navigation: any }) =>
                     region.latitude != null && (
                         <MapView
                             ref={mapViewRef}
+                            onMapReady={() => setIsMapLoading(false)}
                             style={{ flex: 1.5, borderColor: 'red', borderWidth: 1 }}
                             provider={PROVIDER_GOOGLE}
-                            loadingEnabled
+                            loadingEnabled={false}
                             onRegionChangeComplete={handleRegionChange}
                             customMapStyle={mapstyle}
                             region={region}>
@@ -203,6 +206,9 @@ const FromLocation = ({ route, navigation }: { route: any, navigation: any }) =>
                     <PrimaryButton buttonText="Confirm" handler={handleNextButton} />
                 </View>
             </View>
+            {
+                isMapLoading && <CustomIndicator />
+            }
         </View>
     );
 };

@@ -8,6 +8,7 @@ import PasswordInput from '../../components/PasswordInput';
 import Action from '../../service';
 import { BackIcon, ConfirmCheckIcon, PasswordIcon, WarningIcon } from '../../common/Icons';
 import { TextInput } from 'react-native-gesture-handler';
+import CustomIndicator from '../../common/CustomIndicator';
 
 const ProfileChangePassword = ({ navigation }: {
     navigation: any;
@@ -172,10 +173,7 @@ const ProfileChangePassword = ({ navigation }: {
                         </View>
                     </View>
                     {activityIndicator && (
-                        <ActivityIndicator
-                            size={'large'}
-                            style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
-                        />
+                        <CustomIndicator />
                     )}
                 </View>
             </AlertNotificationRoot>

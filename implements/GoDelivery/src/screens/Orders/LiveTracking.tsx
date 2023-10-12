@@ -14,6 +14,7 @@ import { BackIcon } from '../../common/Icons';
 import AnimatingPolylineComponent from '../../common/AnimatedPolylineComponent';
 import { WebView } from 'react-native-webview';
 import { RedSpining } from '../../common/SVGComponent';
+import CustomIndicator from '../../common/CustomIndicator';
 
 interface ScreenProps {
     navigation: any;
@@ -119,6 +120,7 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
     const [estimationTime, setEstimationTime] = useState('');
     const [activityIndicator, setActivityIndicator] = useState(false);
     const [directions, setDirections] = useState([]);
+    const [isMapLoading, setIsMapLoading] = useState(true);
 
     const mapViewRef = useRef<MapView>(null);
     const markerRef = useRef<MapMarker>(null);
@@ -223,9 +225,10 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
 
             <MapView
                 ref={mapViewRef}
+                onMapReady={() => setIsMapLoading(false)}
                 style={{ flex: 1.5, borderColor: 'red', borderWidth: 1 }}
                 provider={PROVIDER_GOOGLE}
-                loadingEnabled
+                loadingEnabled={false}
                 customMapStyle={mapstyle}
                 // onRegionChangeComplete={handleRegionChange}
                 region={{
@@ -253,6 +256,8 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
                             style={[{ width: 25, height: 25, backgroundColor: 'transparent' }]}
                             scrollenabled={false}
                             source={{ html: RedSpining }}
+                            showsHorizontalScrollIndicator={false}
+                            showsVerticalScrollIndicator={false}
                         />
                     </View>
                 </Marker>
@@ -320,8 +325,11 @@ const OrderDetailScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
 
             {
                 activityIndicator && (
-                    <ActivityIndicator style={{ position: 'absolute', justifyContent: 'center', alignSelf: 'center', bottom: 200 }} size="large" />
+                    <CustomIndicator />
                 )
+            }
+            {
+                isMapLoading && <CustomIndicator />
             }
         </View>
     )

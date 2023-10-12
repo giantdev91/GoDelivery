@@ -9,6 +9,7 @@ import TwillioService from '../../service/TwillioService';
 import { ActivityIndicator } from 'react-native';
 import Action from '../../service';
 import LargeLabelButton from '../../components/LargeLabelButton';
+import CustomIndicator from '../../common/CustomIndicator';
 
 const BackButton = ({ navigation }: {
     navigation: any
@@ -167,10 +168,7 @@ const OTPScreen = ({ route, navigation }: {
                         </View>
                     </View>
                     {activityIndicator && (
-                        <ActivityIndicator
-                            size="large"
-                            style={{ position: 'absolute' }}
-                        />
+                        <CustomIndicator />
                     )}
                 </View>
             </AlertNotificationRoot>

@@ -14,6 +14,7 @@ import allActions from '../../redux/actions';
 import { useDispatch } from 'react-redux';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import { BackIcon, CameraIcon, CameraIconWhite, ConfirmCheckIcon, ImageIcon, PasswordIcon, PhoneIcon, UserIcon, WarningIcon } from '../../common/Icons';
+import CustomIndicator from '../../common/CustomIndicator';
 
 interface ScreenProps {
     navigation: any;
@@ -267,7 +268,7 @@ const ProfileEdit = ({ navigation }: ScreenProps): JSX.Element => {
                 </ScrollView>
             </AlertNotificationRoot>
             {
-                activiIndicator && <ActivityIndicator size="large" style={{ position: 'absolute', bottom: 150, alignSelf: 'center' }} />
+                activiIndicator && <CustomIndicator />
             }
             <Modal
                 isVisible={isModalVisible}
@@ -278,14 +279,7 @@ const ProfileEdit = ({ navigation }: ScreenProps): JSX.Element => {
                 style={styles.modalContainer}>
                 <View style={styles.modalContentContainer}>
                     {modalActivitiIndicator && (
-                        <ActivityIndicator
-                            size="large"
-                            style={{
-                                position: 'absolute',
-                                left: '50%',
-                                top: '50%',
-                            }}
-                        />
+                        <CustomIndicator />
                     )}
                     <View
                         style={{

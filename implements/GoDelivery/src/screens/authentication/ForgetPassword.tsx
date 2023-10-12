@@ -17,6 +17,7 @@ import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
 import LargeLabelButton from '../../components/LargeLabelButton';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import TwillioService from '../../service/TwillioService';
+import CustomIndicator from '../../common/CustomIndicator';
 
 const BackButton = ({ navigation }: {
   navigation: any
@@ -145,10 +146,7 @@ const ForgetPasswordScreen = ({ navigation }: { navigation: any }) => {
               <LargeLabelButton buttonText="Send" handler={checkPhone} />
             </View>
             {activityIndicator && (
-              <ActivityIndicator
-                size={'large'}
-                style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
-              />
+              <CustomIndicator />
             )}
           </View>
         </ScrollView>

@@ -105,7 +105,7 @@ const OrderDetail = ({ route, navigation }: {
                             </TouchableOpacity>
                             <View style={{ justifyContent: 'space-between', flexDirection: 'row', marginTop: 10, }}>
                                 <Text style={GlobalStyles.subTitle}>{CommonFunctions.formatDateToString(new Date(order["expectationTime"]))}</Text>
-                                <Text style={GlobalStyles.subTitle}>MZN {CommonFunctions.getLocalNumberValue(order["price"])}</Text>
+                                <Text style={GlobalStyles.subTitle}>{CommonFunctions.getLocalNumberValue(order["price"])}</Text>
                             </View>
                             <Text style={GlobalStyles.textBold}>{order["goodsType"]}</Text>
                             <Text style={GlobalStyles.textDisable}>{order["description"]}</Text>

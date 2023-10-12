@@ -7,6 +7,7 @@ import GoDeliveryColors from '../../styles/colors';
 import { useFocusEffect } from '@react-navigation/native';
 import Action from '../../service';
 import store from '../../redux/store';
+import CustomIndicator from '../../common/CustomIndicator';
 
 interface ScreenProps {
     navigation: any;
@@ -84,12 +85,11 @@ const NotificationsScreen = ({ navigation }: ScreenProps): JSX.Element => {
                     )
                 }
             </ScrollView>
+
             {activityIndicator && (
-                <ActivityIndicator
-                    size={'large'}
-                    style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
-                />
+                <CustomIndicator />
             )}
+
         </View>
     )
 }
