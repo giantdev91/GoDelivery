@@ -20,6 +20,9 @@ exports.sendNotification = (fcmTokens, title, body, orderId, receiverIds, type) 
             title: title,
             body: body
         },
+        data: {
+            notifType: type.toString()
+        },
         tokens: fcmTokens
     };
     admin.messaging().sendMulticast(message)
