@@ -21,7 +21,8 @@ exports.sendNotification = (fcmTokens, title, body, orderId, receiverIds, type) 
             body: body
         },
         data: {
-            notifType: type.toString()
+            orderId: orderId.toString(),
+            notifType: type.toString(),
         },
         tokens: fcmTokens
     };
