@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Linking, Platform, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import { View } from 'react-native';
 import GlobalStyles from '../../styles/style';
@@ -10,7 +10,7 @@ import Action from '../../service';
 import store from '../../redux/store';
 import CommonFunctions from '../../common/CommonFunctions';
 import PrimaryButton from '../../components/PrimaryButton';
-import { BackIcon, FromLocationIcon, ToLocationIcon } from '../../common/Icons';
+import { BackIcon, FromLocationIcon, PhoneCallIcon, SMSIcon, ToLocationIcon } from '../../common/Icons';
 import { Divider } from 'react-native-paper';
 
 const OrderDetail = ({ route, navigation }: {
@@ -25,7 +25,7 @@ const OrderDetail = ({ route, navigation }: {
         navigation.goBack();
     }
 
-    const handleGoToDetail = () => {
+    const goToLiveTracking = () => {
         if (order["status"] == 0) {
             Dialog.show({
                 type: ALERT_TYPE.SUCCESS,
@@ -76,6 +76,15 @@ const OrderDetail = ({ route, navigation }: {
         navigation.navigate("Payment", params);
     }
 
+    const handleCall = () => {
+        // Use the `tel:` scheme to initiate a phone call
+        Linking.openURL(`tel:${order?.delivery_man?.phone}`);
+    }
+    const handleSMS = () => {
+        // Use the `sms:` scheme to open the SMS application with a pre-filled message
+        Linking.openURL(`sms:${order?.delivery_man?.phone}`);
+    }
+
     useEffect(() => {
         getOrderDetail();
     }, []);
@@ -93,7 +102,7 @@ const OrderDetail = ({ route, navigation }: {
                 <ScrollView>
                     <View >
                         <View style={{ marginHorizontal: 20, marginTop: 20 }}>
-                            <TouchableOpacity onPress={handleGoToDetail}>
+                            <TouchableOpacity onPress={goToLiveTracking}>
                                 {
                                     order["screenShot"] ? (
                                         <Image source={{ uri: order["screenShot"] }} style={styles.mapThumbnail} />
@@ -140,20 +149,33 @@ const OrderDetail = ({ route, navigation }: {
                         <Divider style={GlobalStyles.dividerStyle} />
                         <View style={{ paddingVertical: 20, marginHorizontal: 20 }}>
                             <Text style={GlobalStyles.textMedium}>Driver</Text>
-                            <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', gap: 10, marginTop: 10 }}>
-                                <View style={{ width: 70, height: 70 }}>
-                                    {
-                                        !order?.delivery_man?.avatar && (<Image source={require('../../../assets/images/user_default_avatar.png')} style={styles.avatarImg} />)
-                                    }
-                                    {
-                                        order?.delivery_man?.avatar && (<Image source={{ uri: order?.delivery_man?.avatar }} style={styles.avatarImg} />)
-                                    }
+                            {
+                                (order?.delivery_man) && <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', gap: 10, marginTop: 10 }}>
+                                    <View style={{ width: 70, height: 70 }}>
+                                        {
+                                            !order?.delivery_man?.avatar && (<Image source={require('../../../assets/images/user_default_avatar.png')} style={styles.avatarImg} />)
+                                        }
+                                        {
+                                            order?.delivery_man?.avatar && (<Image source={{ uri: order?.delivery_man?.avatar }} style={styles.avatarImg} />)
+                                        }
+                                    </View>
+                                    <View>
+                                        <Text style={GlobalStyles.textBold}>{order?.delivery_man?.name}</Text>
+                                        <Text style={GlobalStyles.textDisable}>{order?.delivery_man?.motor?.plate}</Text>
+                                    </View>
+                                    <View style={{ gap: 5, flex: 1, justifyContent: 'center', alignItems: 'flex-end' }}>
+                                        <TouchableOpacity style={styles.callButton} onPress={handleCall}>
+                                            <PhoneCallIcon />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={styles.callButton} onPress={handleSMS}>
+                                            <SMSIcon />
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
-                                <View>
-                                    <Text style={GlobalStyles.textBold}>{order?.delivery_man?.name}</Text>
-                                    <Text style={GlobalStyles.textDisable}>{order?.delivery_man?.motor?.plate}</Text>
-                                </View>
-                            </View>
+                            }
+                            {
+                                (!order?.delivery_man) && <Text style={GlobalStyles.textDisable}>Your order has not been assigned yet. Our support team will handle it shortly.</Text>
+                            }
                         </View>
                         <View style={{ marginHorizontal: 20 }}>
                             {
@@ -192,6 +214,29 @@ const styles = StyleSheet.create({
         height: 70,
         borderRadius: 100,
     },
+    callButton: {
+        width: 40,
+        height: 30,
+        backgroundColor: GoDeliveryColors.primary,
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        ...Platform.select({
+            ios: {
+                shadowColor: GoDeliveryColors.secondary,
+                shadowOffset: {
+                    width: 0,
+                    height: 8,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+            },
+            android: {
+                elevation: 8,
+                shadowColor: GoDeliveryColors.secondary,
+            },
+        }),
+    }
 });
 
 export default OrderDetail;

@@ -221,6 +221,18 @@ const RedCheckMarker = () => {
     )
 }
 
+const PhoneCallIcon = () => {
+    return (
+        <MaterialIcons name="phone" size={20} color={GoDeliveryColors.white} />
+    )
+}
+
+const SMSIcon = () => {
+    return (
+        <MaterialIcons name="message" size={20} color={GoDeliveryColors.white} />
+    )
+}
+
 export {
     BackIcon,
     ConfirmCheckIcon,
@@ -252,5 +264,7 @@ export {
     RadioOffIcon,
     HeaderOptionIcon,
     BigDocumentIcon,
-    RedCheckMarker
+    RedCheckMarker,
+    PhoneCallIcon,
+    SMSIcon
 }
