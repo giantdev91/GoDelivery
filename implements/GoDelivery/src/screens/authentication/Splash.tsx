@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -10,14 +10,14 @@ import {
 } from 'react-native';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
-import { useDispatch } from 'react-redux';
+import {useDispatch} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ActivityIndicator } from 'react-native';
+import {ActivityIndicator} from 'react-native';
 import Action from '../../service';
 import allActions from '../../redux/actions';
 import CustomIndicator from '../../common/CustomIndicator';
 
-const SplashScreen = ({ navigation }: { navigation: any }): JSX.Element => {
+const SplashScreen = ({navigation}: {navigation: any}): JSX.Element => {
   const [loginFlag, setLoginFlag] = useState(false);
   const [activityIndicator, setActivityIndicator] = useState(true);
   const dispatch = useDispatch();
@@ -25,14 +25,14 @@ const SplashScreen = ({ navigation }: { navigation: any }): JSX.Element => {
   const navigateToSignin = () => {
     navigation.reset({
       index: 0,
-      routes: [{ name: 'SignIn' }],
+      routes: [{name: 'SignIn'}],
     });
   };
 
   const navigateToSignup = () => {
     navigation.reset({
       index: 0,
-      routes: [{ name: 'SignUp' }],
+      routes: [{name: 'SignUp'}],
     });
   };
 
@@ -41,7 +41,7 @@ const SplashScreen = ({ navigation }: { navigation: any }): JSX.Element => {
     if (userDataStr) {
       const userData = JSON.parse(userDataStr);
       Action.client
-        .getById({ id: userData.id })
+        .getById({id: userData.id})
         .then(response => {
           const responseData = response.data;
           dispatch(allActions.UserAction.setUser(responseData.data));
@@ -49,7 +49,7 @@ const SplashScreen = ({ navigation }: { navigation: any }): JSX.Element => {
           setActivityIndicator(false);
           navigation.reset({
             index: 0,
-            routes: [{ name: 'Main' }],
+            routes: [{name: 'Main'}],
           });
         })
         .catch(err => {
@@ -78,27 +78,25 @@ const SplashScreen = ({ navigation }: { navigation: any }): JSX.Element => {
     <ImageBackground
       source={require('../../../assets/images/splash.png')}
       style={GlobalStyles.container}>
-      <StatusBar
-        animated={true}
-        backgroundColor="#FFFFFF"
-        hidden={true}
-      />
+      <StatusBar animated={true} backgroundColor="#FFFFFF" hidden={true} />
       <View style={styles.logoSection}>
         <View style={styles.logoBack}>
           <Text style={styles.headerTitle}>Let's Go</Text>
           <Image
-            source={require('../../../assets/images/new-logo-white.png')}
+            source={require('../../../assets/images/login.png')}
             style={styles.logo}
+          />
+          <Image
+            source={require('../../../assets/images/company-logo.png')}
+            style={{width: 250, height: 80, resizeMode: 'contain'}}
           />
         </View>
       </View>
-      {activityIndicator && (
-        <CustomIndicator />
-      )}
+      {activityIndicator && <CustomIndicator />}
       <View style={styles.footerButton}>
         {loginFlag && (
-          <View style={{ gap: 30 }}>
-            <TouchableOpacity
+          <View style={{gap: 30}}>
+            {/* <TouchableOpacity
               style={[
                 GlobalStyles.primaryButton,
                 styles.buttonStyle,
@@ -106,26 +104,20 @@ const SplashScreen = ({ navigation }: { navigation: any }): JSX.Element => {
               ]}
               onPress={navigateToSignin}>
               <Text
-                style={[
-                  styles.buttonText,
-                  { color: GoDeliveryColors.primary },
-                ]}>
+                style={[styles.buttonText, {color: GoDeliveryColors.primary}]}>
                 Login
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity
               style={[
                 GlobalStyles.primaryButton,
-                styles.signupButton,
+                styles.getStartedButton,
                 GlobalStyles.shadowProp,
               ]}
-              onPress={navigateToSignup}>
+              onPress={navigateToSignin}>
               <Text
-                style={[
-                  styles.buttonText,
-                  { color: GoDeliveryColors.white },
-                ]}>
-                Sign Up
+                style={[styles.buttonText, {color: GoDeliveryColors.white}]}>
+                Get Started
               </Text>
             </TouchableOpacity>
           </View>
@@ -138,7 +130,6 @@ const SplashScreen = ({ navigation }: { navigation: any }): JSX.Element => {
 export default SplashScreen;
 
 const styles = StyleSheet.create({
-
   logoSection: {
     flex: 1,
     alignItems: 'center',
@@ -152,15 +143,15 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 46,
     fontWeight: '700',
-    color: GoDeliveryColors.white
+    color: GoDeliveryColors.white,
   },
   buttonText: {
     fontSize: 18,
     fontWeight: '700',
-
   },
   logo: {
-    width: 270,
+    width: 250,
+    height: 250,
     resizeMode: 'contain',
   },
   footerButton: {
@@ -170,9 +161,7 @@ const styles = StyleSheet.create({
   buttonStyle: {
     backgroundColor: GoDeliveryColors.white,
   },
-  signupButton: {
+  getStartedButton: {
     backgroundColor: GoDeliveryColors.primary,
-    borderWidth: 2,
-    borderColor: GoDeliveryColors.white
-  }
+  },
 });

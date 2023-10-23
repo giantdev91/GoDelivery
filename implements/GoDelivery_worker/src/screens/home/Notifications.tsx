@@ -57,7 +57,7 @@ const NotificationsScreen = ({ navigation }: ScreenProps): JSX.Element => {
                                 <Text style={GlobalStyles.text} numberOfLines={2}>{notif["content"]}</Text>
                             </View>
                             <View style={styles.notificationDetailArea}>
-                                <Text style={GlobalStyles.textBold}>Order {notif["orders"].orderNo}</Text>
+                                <Text style={GlobalStyles.textBold}>Order {notif["orders"]?.orderNo}</Text>
                                 <Text style={GlobalStyles.textDisable}>{renderCreatedAtTime(notif["createdAt"])}</Text>
                             </View>
                         </View>

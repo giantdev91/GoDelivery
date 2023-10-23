@@ -11,7 +11,7 @@ const GlobalStyles = StyleSheet.create({
     paddingVertical: 40,
   },
   authenticationScreenLogoBack: {
-    backgroundColor: GoDeliveryColors.primary,
+    // backgroundColor: GoDeliveryColors.primary,
     alignItems: 'center',
     height: 200,
     justifyContent: 'center',

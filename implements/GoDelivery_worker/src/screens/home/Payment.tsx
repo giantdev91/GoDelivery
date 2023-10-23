@@ -49,7 +49,7 @@ const Payment = ({ navigation, route }: {
                 <TouchableOpacity style={GlobalStyles.headerBackButton} onPress={handleBack}>
                     <Icons name='chevron-back-outline' size={30} color={GoDeliveryColors.secondary} />
                 </TouchableOpacity>
-                <Text style={GlobalStyles.whiteHeaderTitle}>COLLECT PAYMENT</Text>
+                <Text style={GlobalStyles.whiteHeaderTitle}>Collect Payment</Text>
             </View>
             <ScrollView style={{ flex: 1 }}>
                 <View style={{ marginHorizontal: 20, marginBottom: 20 }}>
@@ -71,34 +71,12 @@ const Payment = ({ navigation, route }: {
                     </View>
                     <Divider style={styles.divider} />
                     <View style={{ flexDirection: 'row', gap: 10, justifyContent: 'flex-start', alignItems: 'center' }}>
-                        <Text style={GlobalStyles.textMedium}>Payment secured by</Text>
-                        <Image source={require("../../../assets/images/xpay.png")} style={styles.paymentLogo} />
+                        <Text style={GlobalStyles.subTitle}>Cash Payment</Text>
                     </View>
-                    <Text style={GlobalStyles.textDisable}>The payment is 100% safe and secure. xPay don't share your personal financial information with Go Delivery.</Text>
+                    <Text style={GlobalStyles.textDisable}>By Collecting the Payment in cash you must tell us the reason. Only accept Payment in cash in extreme system failure case.</Text>
                     <Divider style={styles.divider} />
                     <Text style={GlobalStyles.textMedium}>Payment Method</Text>
-                    <Text style={GlobalStyles.textDisable}>It's safe to pay. Please choose below your payment method.</Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', }}>
-                        <Checkbox
-                            status={mpesaCheck ? 'checked' : 'unchecked'}
-                            onPress={() => { setMpesaCheck(!mpesaCheck); setCashCheck(false); setEmolaCheck(false); }}
-                        />
-                        <Image source={require("../../../assets/images/mpesa.png")} style={styles.paymentLogo} />
-                    </View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', }}>
-                        <Checkbox
-                            status={emolaCheck ? 'checked' : 'unchecked'}
-                            onPress={() => { setEmolaCheck(!emolaCheck); setCashCheck(false); setMpesaCheck(false); }}
-                        />
-                        <Image source={require("../../../assets/images/emola.png")} style={styles.paymentLogo} />
-                    </View>
-                    <View style={{ zIndex: 100 }}>
-                        <CustomizedPhoneInput value='' placeholder='Phone Number' handler={() => { }} />
-                        {phoneError && (<View style={[GlobalStyles.errorTooltip, { top: 20 }]}>
-                            <Icons name="alert-outline" size={20} color={GoDeliveryColors.white} style={GlobalStyles.errorIcon} />
-                            <View style={GlobalStyles.errorMessageBack} ><Text style={{ color: GoDeliveryColors.white }}>{phoneError}</Text></View>
-                        </View>)}
-                    </View>
+                    
                     <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', }}>
                         <Checkbox
                             status={cashCheck ? 'checked' : 'unchecked'}
@@ -111,8 +89,8 @@ const Payment = ({ navigation, route }: {
                                 setEmolaCheck(false);
                             }}
                         />
-                        <Text style={GlobalStyles.subTitleText}>Cash</Text>
-                        <Text style={[GlobalStyles.subTitleText, { color: GoDeliveryColors.secondary }]}>OnDelivery</Text>
+                        <Text style={GlobalStyles.subTitleText}>Collect</Text>
+                        <Text style={[GlobalStyles.subTitleText, { color: GoDeliveryColors.secondary }]}>Cash</Text>
                     </View>
                     <View style={{ marginTop: 20 }}>
                         <PrimaryButton buttonText='Collect' handler={handleCollect} />
@@ -190,7 +168,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 14,
         fontWeight: '400',
-        color: GoDeliveryColors.labelColor,
+        color: GoDeliveryColors.disabled,
     },
 })
 

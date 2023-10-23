@@ -10,6 +10,7 @@ import GlobalStyles from '../../styles/style';
 import store from '../../redux/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import storage from '@react-native-firebase/storage';
+import CustomIndicator from '../../common/CustomIndicator';
 
 const ProfileHome = ({ navigation }: {
     navigation: any;
@@ -175,14 +176,7 @@ const ProfileHome = ({ navigation }: {
                 style={styles.modalContainer}>
                 <View style={styles.modalContentContainer}>
                     {modalActivitiIndicator && (
-                        <ActivityIndicator
-                            size="large"
-                            style={{
-                                position: 'absolute',
-                                left: '50%',
-                                top: '50%',
-                            }}
-                        />
+                        <CustomIndicator />
                     )}
                     <View
                         style={{

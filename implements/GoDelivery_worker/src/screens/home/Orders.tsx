@@ -9,6 +9,7 @@ import Action from '../../service';
 import store from '../../redux/store';
 import CommonFunctions from '../../common/CommonFunctions';
 import OrderDetail from './InProgressOrderDetail';
+import CustomIndicator from '../../common/CustomIndicator';
 
 interface ScreenProps {
     navigation: any;
@@ -209,10 +210,7 @@ const OrdersScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
                 </View>
             </AlertNotificationRoot>
             {activityIndicator && (
-                <ActivityIndicator
-                    size={'large'}
-                    style={{ position: 'absolute', alignSelf: 'center', top: 300 }}
-                />
+                <CustomIndicator />
             )}
         </View>
     )

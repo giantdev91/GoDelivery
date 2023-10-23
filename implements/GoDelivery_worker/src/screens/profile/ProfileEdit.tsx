@@ -18,6 +18,7 @@ import { useDispatch } from 'react-redux';
 import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
 import Icons from 'react-native-vector-icons/Ionicons';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
+import CustomIndicator from '../../common/CustomIndicator';
 
 interface ScreenProps {
     navigation: any;
@@ -253,7 +254,7 @@ const ProfileEdit = ({ navigation }: ScreenProps): JSX.Element => {
                 </ScrollView>
             </AlertNotificationRoot>
             {
-                activiIndicator && <ActivityIndicator size="large" style={{ position: 'absolute', bottom: 150, alignSelf: 'center' }} />
+                activiIndicator && <CustomIndicator />
             }
             <Modal
                 isVisible={isModalVisible}
@@ -264,14 +265,7 @@ const ProfileEdit = ({ navigation }: ScreenProps): JSX.Element => {
                 style={styles.modalContainer}>
                 <View style={styles.modalContentContainer}>
                     {modalActivitiIndicator && (
-                        <ActivityIndicator
-                            size="large"
-                            style={{
-                                position: 'absolute',
-                                left: '50%',
-                                top: '50%',
-                            }}
-                        />
+                        <CustomIndicator />
                     )}
                     <View
                         style={{

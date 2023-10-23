@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Image,
@@ -7,27 +7,33 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
+import {
+  ALERT_TYPE,
+  Dialog,
+  AlertNotificationRoot,
+  Toast,
+} from 'react-native-alert-notification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
 import PasswordInput from '../../components/PasswordInput';
 import PrimaryButton from '../../components/PrimaryButton';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useDispatch } from 'react-redux';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {useDispatch} from 'react-redux';
 import Action from '../../service';
 import allActions from '../../redux/actions';
 import messaging from '@react-native-firebase/messaging';
-import { requestLocationPermission } from '../../common/RequestPermission';
-import { startBackgroundServiceScheduler } from '../../common/SchedulerService';
+import {requestLocationPermission} from '../../common/RequestPermission';
+import {startBackgroundServiceScheduler} from '../../common/SchedulerService';
 import CustomizedPhoneInput from '../../components/CustomizedPhoneInput';
+import CustomIndicator from '../../common/CustomIndicator';
 
 interface SignInScreenProps {
   route: any;
   navigation: any;
 }
 
-const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => {
+const SignInScreen = ({route, navigation}: SignInScreenProps): JSX.Element => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [phoneError, setPhoneError] = useState('');
@@ -67,7 +73,7 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
         const token = await messaging().getToken();
 
         Action.authentication
-          .login({ phone: argPhone.replace('+', ''), password: password })
+          .login({phone: argPhone.replace('+', ''), password: password})
           .then(response => {
             const responseData = response.data;
             if (responseData.success) {
@@ -90,7 +96,7 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
                     if (res) {
                       navigation.reset({
                         index: 0,
-                        routes: [{ name: 'Main', params: { initialIndex: 0 } }],
+                        routes: [{name: 'Main', params: {initialIndex: 0}}],
                       });
                     }
                   });
@@ -104,7 +110,7 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
                 title: 'GoDelivery',
                 textBody: responseData.message,
                 button: 'OK',
-              })
+              });
             }
             setActivityIndicator(false);
           })
@@ -126,21 +132,26 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
       <AlertNotificationRoot>
         <View style={GlobalStyles.authenticationScreenLogoBack}>
           <Image
-            source={require('../../../assets/images/company-logo-white.png')}
+            source={require('../../../assets/images/company-logo.png')}
             style={GlobalStyles.authenticationScreenLogo}
           />
         </View>
         <ScrollView
           style={[GlobalStyles.container, GlobalStyles.contentAreaPadding]}>
-          <View style={{ height: 350, justifyContent: 'center' }}>
+          <View style={{height: 350, justifyContent: 'center'}}>
             <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <View style={{ flex: 1 }}>
-                <CustomizedPhoneInput value={phone} handler={setPhone} placeholder='phone number' error={phoneError.length > 0} />
+              <View style={{flex: 1}}>
+                <CustomizedPhoneInput
+                  value={phone}
+                  handler={setPhone}
+                  placeholder="phone number"
+                  error={phoneError.length > 0}
+                />
               </View>
             </View>
             <Text style={GlobalStyles.textFieldErrorMsgArea}>{phoneError}</Text>
@@ -151,15 +162,10 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps): JSX.Element => 
             />
             <View style={GlobalStyles.textFieldErrorMsgArea}></View>
           </View>
-          <View style={{ marginBottom: 80 }}>
+          <View style={{marginBottom: 80}}>
             <PrimaryButton buttonText="SignIn" handler={signInUser} />
           </View>
-          {activityIndicator && (
-            <ActivityIndicator
-              size={'large'}
-              style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
-            />
-          )}
+          {activityIndicator && <CustomIndicator />}
         </ScrollView>
       </AlertNotificationRoot>
     </SafeAreaView>

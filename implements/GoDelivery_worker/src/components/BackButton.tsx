@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import GoDeliveryColors from '../styles/colors';
+import { BackIcon } from '../common/Icons';
 
 interface BackButtonProps {
     navigation: any,
@@ -17,11 +16,7 @@ const BackButton = ({ navigation }: BackButtonProps): JSX.Element => {
             style={styles.backButtonBack}
             onPress={backButtonHandler}
         >
-            <FontAwesomeIcon
-                name="chevron-left"
-                size={30}
-                color={GoDeliveryColors.primary}
-            />
+            <BackIcon />
         </TouchableOpacity>
     )
 }

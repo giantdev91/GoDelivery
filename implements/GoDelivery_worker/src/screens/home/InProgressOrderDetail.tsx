@@ -1,8 +1,8 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text, Linking, Dimensions, Image, TextInput, ActivityIndicator } from 'react-native';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { MapMarker, Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import MapViewDirections from 'react-native-maps-directions';
 import store from '../../redux/store';
@@ -14,7 +14,11 @@ import { Divider } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { UPDATE_INTERVAL } from '../../common/Constant';
 import TwillioService from '../../service/TwillioService';
-import mapstyle from"../../common/mapStyles";
+import mapstyle from "../../common/mapStyles";
+import CustomIndicator from '../../common/CustomIndicator';
+import WebView from 'react-native-webview';
+import { RedSpining } from '../../common/SVGComponent';
+import AnimatingPolylineComponent from '../../common/AnimatedPolylineComponent';
 
 const MAP_WIDTH = Dimensions.get('screen').width;
 const MAP_HEIGHT = Dimensions.get('screen').height - 275;
@@ -68,6 +72,10 @@ const OrderDetail = ({ navigation, route }: {
     const [activityIndicator, setActivityIndicator] = useState(false);
     const [showComment, setShowComment] = useState(false);
     const [arriveClick, setArriveClick] = useState('');
+    const [directions, setDirections] = useState([]);
+
+    const mapViewRef = useRef<MapView>(null);
+    const markerRef = useRef<MapMarker>(null);
 
     const deliverymanID = store.getState().CurrentUser.user.id;
 
@@ -91,6 +99,18 @@ const OrderDetail = ({ navigation, route }: {
                 const response = res.data;
                 if (response.data.locationLatitude != null && response.data.locationLongitude != null) {
                     const updatedDeliverymanPosition = { latitude: parseFloat(response.data.locationLatitude), longitude: parseFloat(response.data.locationLongitude) };
+                    const latitude = parseFloat(response.data.locationLatitude);
+                    const longitude = parseFloat(response.data.locationLongitude);
+                    mapViewRef.current?.animateToRegion({
+                        latitude: latitude,
+                        longitude: longitude,
+                        latitudeDelta: LATITUDE_DELTA,
+                        longitudeDelta: LONGITUDE_DELTA,
+                    });
+                    markerRef.current?.animateMarkerToCoordinate({
+                        latitude: latitude,
+                        longitude: longitude,
+                    });
                     setDeliverymanPosition(updatedDeliverymanPosition);
                     setAllPositionDataLoaded(true);
                 }
@@ -104,7 +124,6 @@ const OrderDetail = ({ navigation, route }: {
             .then((res) => {
                 const response = res.data;
                 const orderInfo = response.data;
-                console.log("orderInfo ==> ", orderInfo);
                 if (orderInfo != null) {
                     setMyOrder(orderInfo);
                     setOrderStatus(orderInfo.status);
@@ -188,7 +207,6 @@ const OrderDetail = ({ navigation, route }: {
             to: myOrder.to,
             price: myOrder.price,
         }
-        console.log("params ===> ", params);
         navigation.navigate("Payment", params);
     }
 
@@ -230,6 +248,8 @@ const OrderDetail = ({ navigation, route }: {
         }
     }, []);
 
+    const DirectionRoutes = [...directions].reverse();
+
     return (
         <View style={{ flex: 1, height: MAP_HEIGHT }}>
             <AlertNotificationRoot>
@@ -239,6 +259,7 @@ const OrderDetail = ({ navigation, route }: {
                             <View style={[{ flex: 1 }, GlobalStyles.shadowProp]}>
                                 {allPositionDataLoaded && (
                                     <MapView
+                                        ref={mapViewRef}
                                         style={{ flex: 1, }}
                                         provider={PROVIDER_GOOGLE}
                                         customMapStyle={mapstyle}
@@ -259,22 +280,32 @@ const OrderDetail = ({ navigation, route }: {
                                             pinColor='green'
                                         />
                                         <Marker
+                                            ref={markerRef}
                                             coordinate={deliverymanPosition}
                                             title={'delivery man'}
                                         >
-                                            <Image source={require("../../../assets/images/motor.png")} style={{ width: 40, height: 40, }} />
+                                            <View style={{ width: 25, height: 25, justifyContent: 'center', alignItems: 'center' }}>
+                                                <WebView
+                                                    style={[{ width: 25, height: 25, backgroundColor: 'transparent' }]}
+                                                    scrollenabled={false}
+                                                    source={{ html: RedSpining }}
+                                                    showsHorizontalScrollIndicator={false}
+                                                    showsVerticalScrollIndicator={false}
+                                                />
+                                            </View>
                                         </Marker>
                                         {orderStatus == 1 && (<MapViewDirections
                                             origin={deliverymanPosition}
                                             destination={senderLocation}
                                             apikey={GOOGLE_API_KEY} // insert your API Key here
-                                            strokeWidth={4}
+                                            strokeWidth={5}
                                             strokeColor={GoDeliveryColors.primary}
                                             onReady={result => {
+                                                setDirections(result.coordinates);
                                                 setEstimationTime(result.duration.toString());
                                             }}
                                         />)}
-                                        {orderStatus == 1 && (<MapViewDirections
+                                        {/* {orderStatus == 1 && (<MapViewDirections
                                             origin={senderLocation}
                                             destination={receiverLocation}
                                             apikey={GOOGLE_API_KEY} // insert your API Key here
@@ -283,23 +314,39 @@ const OrderDetail = ({ navigation, route }: {
                                             onReady={result => {
                                                 setEstimationTime(result.duration.toString());
                                             }}
-                                        />)}
+                                        />)} */}
                                         {orderStatus == 2 && (<MapViewDirections
                                             origin={deliverymanPosition}
                                             destination={receiverLocation}
                                             apikey={GOOGLE_API_KEY} // insert your API Key here
-                                            strokeWidth={4}
+                                            strokeWidth={5}
                                             strokeColor={GoDeliveryColors.primary}
                                             onReady={result => {
+                                                setDirections(result.coordinates);
                                                 setEstimationTime(result.duration.toString());
                                             }}
                                         />)}
+
+                                        {
+                                            directions.length > 0 && (<Polyline
+                                                coordinates={directions}
+                                                strokeColor={GoDeliveryColors.primary}
+                                                strokeWidth={5}
+
+                                            />)
+                                        }
+
+                                        {
+                                            directions.length > 0 && (
+                                                <AnimatingPolylineComponent Direction={DirectionRoutes} />
+                                            )
+                                        }
 
                                     </MapView>
                                 )}
                                 <TouchableOpacity onPress={() => setShowComment(true)}>
                                     <View style={styles.orderInfoPadMini}>
-                                        <Divider style={styles.headerDivider} />
+                                        <Divider style={styles.divider} />
                                         <Text style={GlobalStyles.subTitle}>{myOrder["status"] == 1 ? 'PICK-UP LOCATION' : 'DROP OFF LOCATION'}</Text>
                                         <Text style={GlobalStyles.text}>{myOrder["status"] == 1 ? myOrder["from"] : myOrder["to"]}</Text>
                                     </View>
@@ -316,7 +363,7 @@ const OrderDetail = ({ navigation, route }: {
                                         </TouchableOpacity>
                                     </View>
                                     {
-                                        activityIndicator && <ActivityIndicator size="large" style={{ position: 'absolute', bottom: 70, alignSelf: 'center' }} />
+                                        activityIndicator && <CustomIndicator />
                                     }
                                 </View>
                             </Modal>
@@ -333,7 +380,6 @@ const OrderDetail = ({ navigation, route }: {
                             >
                                 <View style={styles.commentModalBack}>
                                     <View style={[styles.locationArea]}>
-                                        <Divider style={styles.headerDivider} />
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 5 }}>
                                             <View style={{ flex: 1, }}>
                                                 <Text style={GlobalStyles.subTitle}>{myOrder["status"] == 1 ? 'PICK-UP LOCATION' : 'DROP OFF LOCATION'}</Text>
@@ -439,7 +485,7 @@ const OrderDetail = ({ navigation, route }: {
                                     </View>
                                 </View>
                                 {
-                                    activityIndicator && <ActivityIndicator size="large" style={{ position: 'absolute', bottom: 70, alignSelf: 'center' }} />
+                                    activityIndicator && <CustomIndicator />
                                 }
                             </Modal>
                             {/* order detail modal end */}
@@ -560,7 +606,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     divider: {
-        borderColor: GoDeliveryColors.disabled,
+        borderColor: GoDeliveryColors.dividerColor,
         borderWidth: 0.25,
         width: '100%',
         alignSelf: 'center',

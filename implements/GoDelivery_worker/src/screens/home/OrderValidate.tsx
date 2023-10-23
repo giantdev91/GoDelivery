@@ -10,6 +10,7 @@ import PrimaryButton from '../../components/PrimaryButton';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import TwillioService from '../../service/TwillioService';
 import store from '../../redux/store';
+import CustomIndicator from '../../common/CustomIndicator';
 
 const OrderValidate = ({ navigation, route }: {
     navigation: any,
@@ -165,7 +166,7 @@ const OrderValidate = ({ navigation, route }: {
                         </View>
                     </View>
                     {
-                        activityIndicator && <ActivityIndicator size="large" style={{ position: 'absolute', bottom: 70, alignSelf: 'center' }} />
+                        activityIndicator && <CustomIndicator />
                     }
                 </ScrollView>
             </AlertNotificationRoot>

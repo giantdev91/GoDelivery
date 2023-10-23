@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -9,18 +9,19 @@ import {
 } from 'react-native';
 import GlobalStyles from '../../styles/style';
 import GoDeliveryColors from '../../styles/colors';
-import { useDispatch } from 'react-redux';
+import {useDispatch} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ActivityIndicator } from 'react-native';
+import {ActivityIndicator} from 'react-native';
 import Action from '../../service';
 import allActions from '../../redux/actions';
-import { startBackgroundServiceScheduler } from '../../common/SchedulerService';
+import {startBackgroundServiceScheduler} from '../../common/SchedulerService';
+import CustomIndicator from '../../common/CustomIndicator';
 
 interface SplashScreenProps {
   navigation: any;
 }
 
-const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
+const SplashScreen = ({navigation}: SplashScreenProps): JSX.Element => {
   const [loginFlag, setLoginFlag] = useState(false);
   const [activityIndicator, setActivityIndicator] = useState(true);
   const dispatch = useDispatch();
@@ -28,7 +29,7 @@ const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
   const navigateToSignin = () => {
     navigation.reset({
       index: 0,
-      routes: [{ name: 'SignIn' }],
+      routes: [{name: 'SignIn'}],
     });
   };
 
@@ -46,7 +47,7 @@ const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
           startBackgroundServiceScheduler();
           navigation.reset({
             index: 0,
-            routes: [{ name: 'Main' }],
+            routes: [{name: 'Main'}],
           });
         })
         .catch(err => {
@@ -77,17 +78,12 @@ const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
       <View style={styles.logoSection}>
         <View style={styles.logoBack}>
           <Image
-            source={require('../../../assets/images/company-logo-white.png')}
+            source={require('../../../assets/images/company-logo.png')}
             style={styles.logo}
           />
         </View>
       </View>
-      {activityIndicator && (
-        <ActivityIndicator
-          size={'large'}
-          style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
-        />
-      )}
+      {activityIndicator && <CustomIndicator />}
       <View style={styles.footerButton}>
         {loginFlag && (
           <TouchableOpacity
@@ -97,13 +93,7 @@ const SplashScreen = ({ navigation }: SplashScreenProps): JSX.Element => {
               GlobalStyles.shadowProp,
             ]}
             onPress={navigateToSignin}>
-            <Text
-              style={[
-                GlobalStyles.primaryLabel,
-                { color: GoDeliveryColors.primary },
-              ]}>
-              START
-            </Text>
+            <Text style={[GlobalStyles.primaryLabel]}>Get Started</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -133,6 +123,6 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   buttonStyle: {
-    backgroundColor: GoDeliveryColors.white,
+    // backgroundColor: GoDeliveryColors.white,
   },
 });

@@ -7,6 +7,7 @@ import Icons from 'react-native-vector-icons/Ionicons';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import PasswordInput from '../../components/PasswordInput';
 import Action from '../../service';
+import CustomIndicator from '../../common/CustomIndicator';
 
 const ProfileChangePassword = ({ navigation }: {
     navigation: any;
@@ -62,7 +63,7 @@ const ProfileChangePassword = ({ navigation }: {
             password: password,
             oldPassword: oldPassword
         }).then((res) => {
-            
+
             const response = res.data;
             if (response.success) {
                 Dialog.show({
@@ -150,10 +151,7 @@ const ProfileChangePassword = ({ navigation }: {
                         </View>)}
                     </View>
                     {activityIndicator && (
-                        <ActivityIndicator
-                            size={'large'}
-                            style={{ position: 'absolute', alignSelf: 'center', bottom: 150 }}
-                        />
+                        <CustomIndicator />
                     )}
                 </View>
             </AlertNotificationRoot>
